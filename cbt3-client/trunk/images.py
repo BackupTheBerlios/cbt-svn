@@ -1,7 +1,5 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
-# Name: 	   images.py
-# Author:	   warp / visualvinyl
+# Author:	   warp / visualvinyl (based on g3torrent source)
 # RCS-ID:	   $Id: images.py 47 2004-08-20 23:18:20Z warp $
 #-----------------------------------------------------------------------------
 

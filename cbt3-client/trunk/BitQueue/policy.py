@@ -57,6 +57,8 @@ WEBSERVICE_GSET = 'webservice_gset'
 CBT_LOGIN = 'cbt_login'
 CBT_PASSWORD = 'cbt_password'
 CBT_SHOWSPLASH = 'cbt_showsplash'
+CBT_RPCURL = 'cbt_rpcurl'
+CBT_LANG = 'cbt_lang'
 
 import sys,os
 import math,re
@@ -285,6 +287,8 @@ class Policy:
                        CBT_LOGIN: '',
                        CBT_PASSWORD: '',
                        CBT_SHOWSPLASH: 1,
+                       CBT_RPCURL: '',
+                       CBT_LANG: '',
                       }
         self.load()
 

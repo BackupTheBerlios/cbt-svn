@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: panel_mytorrents.py 75 2004-08-29 21:21:07Z warp $
@@ -12,7 +11,7 @@ from panel_maketorrent import PanelMakeTorrent
 
 class PanelMyTorrents(wx.MDIChildFrame):
 	def __init__(self, parent, id):
-		wx.MDIChildFrame.__init__(self, parent, id, title="Moje torrenty", style = wx.DEFAULT_FRAME_STYLE)
+		wx.MDIChildFrame.__init__(self, parent, id, title=_("My torrents"), style = wx.DEFAULT_FRAME_STYLE)
 		
 		self.parent = parent
 		
@@ -32,7 +31,7 @@ class PanelMyTorrents(wx.MDIChildFrame):
 		
 	def AddCreatedTorrent(self, rsp):
 		self.parent.btq.do_add(rsp)
-		self.parent.log.AddMsg('BTQueue', 'Dodano utworzonego torrenta: '+rsp)
+		self.parent.log.AddMsg('BTQueue', _('Added created torrent: %s') % rsp)
 		
 	def OnClose(self, evt):
 		self.parent.windows["my"] = 0

@@ -1,6 +1,4 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
-# Name: 	   cbt_widgets.py
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: cbt_widgets.py 98 2004-08-30 21:28:34Z warp $
 #-----------------------------------------------------------------------------
@@ -35,7 +33,7 @@ class CbtNavbar(wx.ListCtrl):
 		self.SetColumnWidth(0, 150)
 
 		imID = 0
-		self.items = [ ("Transfery", 0, "pub"), ("Chat", 1, "log"), ("Torrenty publiczne", 2, "log"), ("Moje torrenty", 3, "log"), ("Opcje", 4, "pub") ]
+		self.items = [ (_("Transfers"), 0, "pub"), (_("Chat"), 1, "log"), (_("Public torrents"), 2, "log"), (_("My torrents"), 3, "log"), (_("Options"), 4, "pub") ]
 		
 		self.Update("pub")
 			

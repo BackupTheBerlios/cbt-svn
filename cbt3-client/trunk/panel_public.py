@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: panel_public.py 106 2004-08-31 00:13:34Z warp $
@@ -13,7 +12,7 @@ from cbt_vars import *
 
 class PanelPublic(wx.MDIChildFrame):
 	def __init__(self, parent, id, btq=None):
-		wx.MDIChildFrame.__init__(self, parent, id, title="Torrenty publiczne", style = wx.DEFAULT_FRAME_STYLE)
+		wx.MDIChildFrame.__init__(self, parent, id, title=_("Public torrents"), style = wx.DEFAULT_FRAME_STYLE)
 		
 		self.images = Images(".")
 		self.SetIcon(self.images.GetImage("icn_public"))
@@ -31,13 +30,13 @@ class PanelPublic(wx.MDIChildFrame):
 		self.btnPubRefresh = XRCCTRL(self, "btnPubRefresh")
 		self.chkPubSeeds = XRCCTRL(self, "chkPubSeeds")
 		
-		cols = [ [0, "Data", wx.LIST_FORMAT_LEFT, 120],
-			[1, "Tytul", wx.LIST_FORMAT_LEFT, 200],
-			[2, "Rozmiar", wx.LIST_FORMAT_LEFT, 70],
-			[3, "Seed", wx.LIST_FORMAT_LEFT, 48],
-			[4, "Peer", wx.LIST_FORMAT_LEFT, 48],
-			[5, "Œci¹gniêæ", wx.LIST_FORMAT_LEFT, 48],
-			[6, "Wystawi³", wx.LIST_FORMAT_LEFT, 80] ]
+		cols = [ [0, _("Date"), wx.LIST_FORMAT_LEFT, 120],
+			[1, _("Title"), wx.LIST_FORMAT_LEFT, 200],
+			[2, _("Size"), wx.LIST_FORMAT_LEFT, 70],
+			[3, _("Seeds"), wx.LIST_FORMAT_LEFT, 48],
+			[4, _("Peers"), wx.LIST_FORMAT_LEFT, 48],
+			[5, _("Downloaded"), wx.LIST_FORMAT_LEFT, 48],
+			[6, _("Uploader"), wx.LIST_FORMAT_LEFT, 80] ]
 	
 		InsertColumns(self.listPub, cols)
 
@@ -47,7 +46,7 @@ class PanelPublic(wx.MDIChildFrame):
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self.PublicChanged, id=XRCID("treePub"))
 
-#~ EVT_TREE_SEL_CHANGED(self, XRCID("treePub"), self.PublicChanged)
+		#~ EVT_TREE_SEL_CHANGED(self, XRCID("treePub"), self.PublicChanged)
 		#~ EVT_CHECKBOX(self, XRCID("chkPubSeeds"), self.PublicChanged) 
 
 	def OnClose(self, evt):
@@ -76,7 +75,7 @@ class PanelPublic(wx.MDIChildFrame):
 		self.cbtFeeds.append(self.LoadFeed('pub', cat='6'))
 		
 		self.treePub.AssignImageList(imglist)
-		root = self.treePub.AddRoot('Torrenty', 0, 1, data=wx.TreeItemData('-1'))
+		root = self.treePub.AddRoot(_('Torrents'), 0, 1, data=wx.TreeItemData('-1'))
 		umt = self.treePub.AppendItem(root, 'umt.pl', 0, 1, data=wx.TreeItemData('own'))
 		self.treePub.AppendItem(umt, 'mp3 (ep) [%s]' % len(self.cbtFeeds[0]['torrents']), 0, 1, data=wx.TreeItemData('0'))
 		self.treePub.AppendItem(umt, 'mp3 (cd) [%s]' % len(self.cbtFeeds[1]['torrents']), 0, 1, data=wx.TreeItemData('1'))

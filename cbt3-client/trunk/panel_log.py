@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: panel_chat.py 47 2004-08-20 23:18:20Z warp $
@@ -12,13 +11,13 @@ from time import time, strftime, localtime
 
 class PanelLog(wx.MDIChildFrame):
 	def __init__(self, parent, id):
-		wx.MDIChildFrame.__init__(self, parent, id, title="Log programu", size = (560,340), style = wx.DEFAULT_FRAME_STYLE)
+		wx.MDIChildFrame.__init__(self, parent, id, title=_("Program log"), size = (560,340), style = wx.DEFAULT_FRAME_STYLE)
 		
 		self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_AUTOARRANGE|wx.LC_VRULES|wx.SUNKEN_BORDER)
 		
-		cols = [ [0, "Godzina", wx.LIST_FORMAT_LEFT, 80],
-				 [1, "Modu³", wx.LIST_FORMAT_LEFT, 80],
-				 [2, "Msg", wx.LIST_FORMAT_LEFT, 300],
+		cols = [ [0, _("Date"), wx.LIST_FORMAT_LEFT, 80],
+				 [1, _("Module"), wx.LIST_FORMAT_LEFT, 80],
+				 [2, _("Message"), wx.LIST_FORMAT_LEFT, 300],
 				 ]
 				 
 		InsertColumns(self.list, cols)

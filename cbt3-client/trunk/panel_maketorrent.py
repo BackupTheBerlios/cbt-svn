@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl (based on bittorrent & g3torrent source)
 # RCS-ID:	   $Id: btcompletedirgui.py,v 1.5 2004/05/18 22:49:18 vvuser Exp $
@@ -51,7 +50,7 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 	def __init__(self, parent, id, addtorrentfunc=None):
 
 		#~ wx.MDIChildFrame.__init__(self, parent, -1, 'Nowy torrent', size = wx.Size(400, 420), pos=wx.DefaultPosition, style= wx.MINIMIZE_BOX | wx.CLOSE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.STAY_ON_TOP)
-		wx.MDIChildFrame.__init__(self, parent, id, title="Nowy torrent", size = (400,420), style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION)
+		wx.MDIChildFrame.__init__(self, parent, id, title=_("New torrent"), size = (400,420), style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION)
 		#~ self.Center(wx.BOTH)
 		
 		self.AddTorrent = addtorrentfunc
@@ -69,21 +68,21 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 
 		self.dirCtl = wx.TextCtrl(panel, -1, '')
 		
-		filebox = wx.StaticBox(panel, -1, "Plik lub katalog Ÿród³owy (wybierz lub przeci¹gnij i upuœæ tutaj)")
+		filebox = wx.StaticBox(panel, -1, _("Source file or directory (select or drag'n'drop here)"))
 		fileboxer = wx.StaticBoxSizer(filebox, wx.VERTICAL)
-		annbox = wx.StaticBox(panel, -1, "URL trackera")
+		annbox = wx.StaticBox(panel, -1, _("Tracker URL"))
 		annboxer = wx.StaticBoxSizer(annbox, wx.VERTICAL)
-		commentbox = wx.StaticBox(panel, -1, "Komentarz (opcjonalnie)")
+		commentbox = wx.StaticBox(panel, -1, _("Comment (optional)"))
 		commentboxer = wx.StaticBoxSizer(commentbox, wx.VERTICAL)
-		piecebox = wx.StaticBox(panel, -1, "Rozmiar czêœci")
+		piecebox = wx.StaticBox(panel, -1, _("Piece size"))
 		pieceboxer = wx.StaticBoxSizer(piecebox, wx.VERTICAL)
 		
 		b = wx.BoxSizer(wx.HORIZONTAL)
-		button = wx.Button(panel, -1, 'Utwórz z pliku')
+		button = wx.Button(panel, -1, _('Create from file') )
 		b.Add(button, 0, wx.EXPAND)
 		EVT_BUTTON(self, button.GetId(), self.select)
 		#~ b.Add(5, 5, 0, wx.EXPAND)
-		c = wx.Button(panel, -1, 'Utwórz z katalogu')
+		c = wx.Button(panel, -1, _('Create from directory') )
 		b.Add(c, 0, wx.EXPAND)
 		EVT_BUTTON(self, c.GetId(), self.selectdir)
 		
@@ -114,14 +113,14 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 
 		#------------------------------------------------------------
 		
-		catbox = wx.StaticBox(panel, -1, "Ustawienia dodatkowe")
+		catbox = wx.StaticBox(panel, -1, _("Additional settings") )
 		catboxer = wx.StaticBoxSizer(catbox, wx.VERTICAL)
 		
 		self.cat_list_choices = ['mp3 (ep)', 'mp3 (cd)', 'mp3 (mix)', 'video', 'nasze wypociny', 'programy', 'inne']
 		self.cat_list = wx.Choice(panel, -1, choices = self.cat_list_choices)
 		self.cat_list.SetSelection(0)
 		
-		self.upl_list_choices = ['Nie publikuj torrenta', 'Torrent publiczny', 'Torrent prywatny']
+		self.upl_list_choices = [_('Do not publish this torrent'), _('Public torrent'), _('Private torrent') ]
 		self.upl_list = wx.Choice(panel, -1, choices = self.upl_list_choices)
 		self.upl_list.SetSelection(0)
 		
@@ -132,9 +131,9 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		#------------------------------------------------------------
 		
 		buttons = wxBoxSizer(wx.HORIZONTAL)
-		self.nextbutt = wx.Button(panel, -1, 'Dalej')
+		self.nextbutt = wx.Button(panel, -1, _('Continue'))
 		EVT_BUTTON(self, self.nextbutt.GetId(), self.complete)
-		self.cancelbutt = wx.Button(panel, -1, 'Zamknij')
+		self.cancelbutt = wx.Button(panel, -1, _('Close'))
 		EVT_BUTTON(self, self.cancelbutt.GetId(), self.cancel)
 		#border.Add(b2, 0, wxALIGN_CENTER | wxSOUTH, 20)
 		buttons.Add(self.nextbutt)
@@ -152,7 +151,7 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		self.Destroy()
 	
 	def select(self, x):
-		dl = wx.FileDialog(self, "Wybierz pliki", '/', "", '*.*', wx.OPEN | wx.MULTIPLE)
+		dl = wx.FileDialog(self, _("Choose file"), '/', "", '*.*', wx.OPEN | wx.MULTIPLE)
 		if dl.ShowModal() == wx.ID_OK:
 			x = self.dirCtl.GetValue() + ';' + ';'.join(dl.GetPaths())
 			if x[0] == ';':
@@ -160,7 +159,7 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 			self.dirCtl.SetValue(x)
 
 	def selectdir(self, x):
-		dl = wx.DirDialog(self, 'Wybierz katalog', '/')
+		dl = wx.DirDialog(self, _('Choose directory'), '/')
 		if dl.ShowModal() == wx.ID_OK:
 			x = self.dirCtl.GetValue() + ';' + dl.GetPath()
 			if x[0] == ';':
@@ -169,8 +168,7 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 
 	def complete(self, x):
 		if self.dirCtl.GetValue() == '':
-			dlg = wx.MessageDialog(self, message = 'Nie wybra³eœ ¿adnego pliku lub katalogu.', 
-				caption = 'Error', style = wx.OK | wx.ICON_ERROR)
+			dlg = wx.MessageDialog(self, message = _("You didn't choose any file or directory."), caption = _('Error'), style = wx.OK | wx.ICON_ERROR)
 			dlg.ShowModal()
 			dlg.Destroy()
 			return
@@ -206,18 +204,18 @@ class CompleteDir(PanelMakeTorrent):
 		self.uls = uls
 		self.cls = cls
 		self.userid = userid
-		frame = wx.Frame(None, -1, 'Tworzenie torrenta', size = wx.Size(400, 150))
+		frame = wx.Frame(None, -1, _('Creating torrent'), size = wx.Size(400, 150))
 		self.frame = frame
 
 		panel = wxPanel(frame, -1)
 
 		gridSizer = wxFlexGridSizer(cols = 1, vgap = 8, hgap = 8)
-		self.currentLabel = wxStaticText(panel, -1, 'Sprawdzam rozmiar plików')
+		self.currentLabel = wxStaticText(panel, -1, _('Checking file size') )
 		gridSizer.Add(self.currentLabel, 0, wx.EXPAND)
 		self.gauge = wxGauge(panel, -1, range = 1000, style = wx.GA_SMOOTH)
 		gridSizer.Add(self.gauge, 0, wx.EXPAND)
 		#~ gridSizer.Add(10, 10, 1, wx.EXPAND)
-		self.button = wxButton(panel, -1, 'Przerwij', size=(120,-1))
+		self.button = wxButton(panel, -1, _('Cancel'), size=(120,-1))
 		gridSizer.Add(self.button, 0, wx.ALIGN_CENTER)
 		gridSizer.AddGrowableRow(2)
 		gridSizer.AddGrowableCol(0)
@@ -249,14 +247,13 @@ class CompleteDir(PanelMakeTorrent):
 		try:
 			completedir(self.d, self.a, self.flag, self.valcallback, self.filecallback, self.pl, comment=self.comment, f2=self.d2)
 			if not self.flag.isSet():
-				self.currentLabel.SetLabel('Zrobione!')
+				self.currentLabel.SetLabel(_('Done!'))
 				self.gauge.SetValue(1000)
-				self.button.SetLabel('Uploaduj torrenta')
+				self.button.SetLabel(_('Upload torrent'))
 		except (OSError, IOError), e:
-			self.currentLabel.SetLabel('Error!')
-			self.button.SetLabel('Zamknij')
-			dlg = wx.MessageDialog(self.frame, message = 'Error - ' + str(e), 
-				caption = 'Error', style = wx.OK | wx.ICON_ERROR)
+			self.currentLabel.SetLabel(_('Error!'))
+			self.button.SetLabel(_('Close'))
+			dlg = wx.MessageDialog(self.frame, message = _('Error') + ' - ' + str(e), caption = _('Error'), style = wx.OK | wx.ICON_ERROR)
 			dlg.ShowModal()
 			dlg.Destroy()
 
@@ -274,7 +271,7 @@ class CompleteDir(PanelMakeTorrent):
 		#self.responsefile = join(d2, f) + '.torrent'
 		self.responsefile = self.d2
 		#self.currentLabel.SetLabel('building ' + join(d2, f) + '.torrent')
-		self.currentLabel.SetLabel('Budowanie ' + self.d2)
+		self.currentLabel.SetLabel(_('Building') + ' ' + self.d2)
 
 	def onInvoke(self, event):
 		if not self.flag.isSet():
@@ -288,7 +285,7 @@ class CompleteDir(PanelMakeTorrent):
 	
 		self.flag.set()
 		self.frame.Destroy()
-		if self.currentLabel.GetLabel() == 'Zrobione!':
+		if self.currentLabel.GetLabel() == _('Done!'):
 			if self.AddTorrent != None:
 				self.UploadTorrent(self.responsefile, self.cls, self.uls)
 				self.AddTorrent(self.responsefile)
@@ -324,15 +321,15 @@ class CompleteDir(PanelMakeTorrent):
 			status = cBTS.TorrentUpload(p(policy.CBT_LOGIN), p(policy.CBT_PASSWORD), {'tdata': a, 'tname':rsp, 'type': flag, 'hash': infohash, 'cat': cls}, self.userid )
 
 			if status['status']:
-				self.parent.parent.log.AddMsg('MakeTorrent', 'Upload torrenta zakonczony.', 'info')
+				self.parent.parent.log.AddMsg('MakeTorrent', _('Torrent upload finished.'), 'info')
 			else:
-				self.parent.parent.log.AddMsg('MakeTorrent', 'B³¹d: ' + str(status['msg']), 'error')
+				self.parent.parent.log.AddMsg('MakeTorrent', _('Error') + ': ' + str(status['msg']), 'error')
 
 			dlg = wx.MessageDialog(self.frame, message = status['msg'], caption = 'Info', style = wx.OK | wx.ICON_INFORMATION)
 			dlg.ShowModal()
 			dlg.Destroy()
 			
 		except Exception, e:
-			dlg = wx.MessageDialog(self.frame, message = 'Error - ' + str(e), caption = 'Error', style = wx.OK | wx.ICON_ERROR)
+			dlg = wx.MessageDialog(self.frame, message = _('Error') + ' - ' + str(e), caption = _('Error'), style = wx.OK | wx.ICON_ERROR)
 			dlg.ShowModal()
 			dlg.Destroy()

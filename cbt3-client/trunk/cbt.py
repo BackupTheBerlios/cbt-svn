@@ -1,4 +1,4 @@
-# -*- coding: cp1250 -*-
+#!/usr/bin/python
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: cbt.py 108 2004-08-31 00:29:20Z warp $
@@ -21,7 +21,6 @@ from images import Images
 
 from cbt_vars import *
 from cbt_widgets import *
-from cbt_jabber import CbtJabber
 
 from panel_transfers import PanelTransfers
 from panel_mytorrents import PanelMyTorrents
@@ -37,8 +36,34 @@ from BitQueue.manager import Console
 from BitQueue.webservice import WebServiceServer, WebServiceRequestHandler
 from BitQueue import version as btqver
 
-import Pyro.core
+from xmlrpclib import Server
+from base64 import encodestring, decodestring
+
 import rotor
+
+#
+
+import gettext
+
+if sys.platform == 'win32' or not os.environ.get('HOME'):
+	root_path = os.path.dirname(os.path.abspath(sys.argv[0]))
+else:
+	root_path = os.path.join(os.environ.get('HOME'),'.cbt')
+
+pol = policy.Policy(root_path)
+pol.set_default()
+
+if not pol(policy.CBT_LANG):
+	lang = "en_US"
+else:
+	lang = pol(policy.CBT_LANG)
+
+p = os.path.join(root_path, "lang")
+t = gettext.translation("cbt", p, [lang])
+t.install()
+_ = t.gettext
+
+#
 
 class ParentFrame(wx.MDIParentFrame):
 	def __init__(self):
@@ -77,15 +102,15 @@ class ParentFrame(wx.MDIParentFrame):
 		self.btq.webservice = WebServiceServer(WebServiceRequestHandler, self.btq.queue)
 		self.btq.webservice.start()
 		
-		self.cBTS = Pyro.core.getProxyForURI(pyroloc)
-
+		self.cBTS = Server(rpc_url)
+		
 		# menu
 		
 		menu = wx.Menu()
-		menu.Append(ID_Exit, "E&xit")
+		menu.Append(ID_Exit, _("E&xit") )
 		
 		menubar = wx.MenuBar()
-		menubar.Append(menu, "&File")
+		menubar.Append(menu, "communityBT")
 		self.SetMenuBar(menubar)
 		
 		self.CreateStatusBar()
@@ -135,35 +160,35 @@ class ParentFrame(wx.MDIParentFrame):
 		# login
 		
 		thread.start_new_thread(self._remoteLogin, ())
-		thread.start_new_thread(self._jabberLogin, ())
+		#~ thread.start_new_thread(self._jabberLogin, ())
 
-	def _jabberLogin(self):
-		try:
-			self.jab = CbtJabber( {"username":self.pol(policy.CBT_LOGIN), "password":self.rt.decrypt(self.pol(policy.CBT_PASSWORD)), "server":jabserv, "resource":"cbt"} )
-			self.log.AddMsg("Jabber", "Zalogowany jako: " + self.pol(policy.CBT_LOGIN), "info")
-		except Exception, e:
-			try:
-				self.log.AddMsg("Jabber", "Got exception: " + str(e), "error")
-			except:
-				pass
+	#~ def _jabberLogin(self):
+		#~ try:
+			#~ self.jab = CbtJabber( {"username":self.pol(policy.CBT_LOGIN), "password":self.rt.decrypt(self.pol(policy.CBT_PASSWORD)), "server":jabserv, "resource":"cbt"} )
+			#~ self.log.AddMsg("Jabber", "Zalogowany jako: " + self.pol(policy.CBT_LOGIN), "info")
+		#~ except Exception, e:
+			#~ try:
+				#~ self.log.AddMsg("Jabber", "Got exception: " + str(e), "error")
+			#~ except:
+				#~ pass
 
 	def _remoteLogin(self):
 		try:
-			remote = self.cBTS.LoginCheck(self.pol(policy.CBT_LOGIN), self.rt.decrypt(self.pol(policy.CBT_PASSWORD)))
+			remote = self.cBTS.LoginCheck( {'login': self.pol(policy.CBT_LOGIN), 'password': self.rt.decrypt(self.pol(policy.CBT_PASSWORD)) } )
 			
 			if remote['status']:
-				self.log.AddMsg("cBT server", "cBTS wersja "+remote['cbts_ver']+" b"+remote['cbts_build']+": po³¹czony.", "info")
+				self.log.AddMsg("cBT server", _("cBTS version %s: connected.") % remote['cbts_ver'], "info")
 				self.userid = remote['userid']
 				self.cbt_login = self.pol(policy.CBT_LOGIN)
 				self.cbt_password = self.rt.decrypt(self.pol(policy.CBT_PASSWORD))
 				self.navbar.Update("all")
 			elif not remote['status']:
 				self.navbar.Update("pub")
-				self.log.AddMsg("cBT server", "B³¹d w trakcie logowania.", "error")
+				self.log.AddMsg("cBT server", _("Login error."), "error")
 		except:
 			try:
 				self.navbar.Update("pub")
-				self.log.AddMsg("cBT server", "B³¹d w trakcie próby po³¹czenia.", "error")
+				self.log.AddMsg("cBT server", _("Connection error."), "error")
 			except:
 				pass
 
@@ -267,7 +292,7 @@ class ParentFrame(wx.MDIParentFrame):
 			x = x + w
 			
 		self._drawTxt(dc, prog_name_full, 10, 0, 24)
-		self._drawTxt(dc, "based on " + btqver, 8, 0, 12)
+		self._drawTxt(dc, _("based on ") + btqver, 8, 0, 12)
 		self._drawTxt(dc, 'Python ' + sys.version.split()[0] + " + wxWidgets " + wx.VERSION_STRING, 8, 0, 0)
 		
 	def _drawTxt(self, dc, txt, size, x, y):
@@ -294,7 +319,7 @@ class ParentFrame(wx.MDIParentFrame):
 				self.iconized = True
 			wx.EVT_ICONIZE(self, self.onIconify)
 		except:
-			print "err"
+			pass
 			
 	def onIconifyDummy(self, evt):
 		return
@@ -313,8 +338,8 @@ class ParentFrame(wx.MDIParentFrame):
 
 	def onTaskBarMenu(self, evt):
 		menu = wx.Menu()
-		menu.Append(self.TBMENU_RESTORE, "Poka¿ g³owne okno")
-		menu.Append(self.TBMENU_CLOSE,   "Zamknij")
+		menu.Append(self.TBMENU_RESTORE, _("Show main window"))
+		menu.Append(self.TBMENU_CLOSE,   _("Close"))
 		self.tray.PopupMenu(menu)
 		menu.Destroy()
 
@@ -357,7 +382,7 @@ class CbtBTQ(Console):
 			try:
 				var['cc'],var['netname'] = self.ipdb[i['ip']].split(':')
 			except (IndexError,TypeError,KeyError,AssertionError):
-				var['cc'],var['netname'] = 'XX','Unknown'
+				var['cc'],var['netname'] = 'XX',_('Unknown')
 			#~ var['client'] = var['client']
 			#~ var['netname'] = var['netname']
 			dataf.append(var)
@@ -501,7 +526,7 @@ if __name__ == '__main__':
 			app = wx.PySimpleApp()
 			frame = wx.Frame(None, -1, '')
 		
-			dlg = wx.MessageDialog(frame, 'Inna instancja programu jest ju¿ uruchomiona.', prog_name_long, wx.OK | wx.ICON_INFORMATION)
+			dlg = wx.MessageDialog(frame, _('Another instance is already running.'), prog_name_long, wx.OK | wx.ICON_INFORMATION)
 		
 			dlg.ShowModal()
 			dlg.Destroy()

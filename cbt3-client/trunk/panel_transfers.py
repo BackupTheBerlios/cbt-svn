@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: panel_transfers.py 109 2004-08-31 01:12:37Z warp $
@@ -12,7 +11,7 @@ from cbt_func import *
 
 class PanelTransfers(wx.MDIChildFrame):
 	def __init__(self, parent, id, btq=None):
-		wx.MDIChildFrame.__init__(self, parent, id, size = (560,340), title="Transfery", style = wx.DEFAULT_FRAME_STYLE)
+		wx.MDIChildFrame.__init__(self, parent, id, size = (560,340), title=_("Transfers"), style = wx.DEFAULT_FRAME_STYLE)
 		
 		self.btq = btq
 		self.parent = parent
@@ -41,16 +40,16 @@ class PanelTransfers(wx.MDIChildFrame):
 		
 		# cols
 		
-		cols = [ [0, "Nazwa", wx.LIST_FORMAT_LEFT, 200],
-				 [1, "Status", wx.LIST_FORMAT_LEFT, 80],
-				 [2, "Postêp", wx.LIST_FORMAT_LEFT, 80],
-				 [3, "Czas", wx.LIST_FORMAT_LEFT, 80],
-				 [4, "DL Speed", wx.LIST_FORMAT_LEFT, 60],
-				 [5, "UP Speed", wx.LIST_FORMAT_LEFT, 60],
-				 [6, "Seed", wx.LIST_FORMAT_LEFT, 48],
-				 [7, "Peer", wx.LIST_FORMAT_LEFT, 48],
-				 [8, "Ratio", wx.LIST_FORMAT_LEFT, 50],
-				 [9, "Msg", wx.LIST_FORMAT_LEFT, 100]
+		cols = [ [0, _("Title"), wx.LIST_FORMAT_LEFT, 200],
+				 [1, _("State"), wx.LIST_FORMAT_LEFT, 80],
+				 [2, _("Progress"), wx.LIST_FORMAT_LEFT, 80],
+				 [3, _("ETA"), wx.LIST_FORMAT_LEFT, 80],
+				 [4, _("DL Spd"), wx.LIST_FORMAT_LEFT, 60],
+				 [5, _("UP Spd"), wx.LIST_FORMAT_LEFT, 60],
+				 [6, _("Seeds"), wx.LIST_FORMAT_LEFT, 48],
+				 [7, _("Peers"), wx.LIST_FORMAT_LEFT, 48],
+				 [8, _("Ratio"), wx.LIST_FORMAT_LEFT, 50],
+				 [9, _("Last message"), wx.LIST_FORMAT_LEFT, 100]
 				 ]
 				 
 		InsertColumns(self.list, cols)
@@ -74,7 +73,7 @@ class PanelTransfers(wx.MDIChildFrame):
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
 			self.btq.do_resume(qid)
-			self.parent.log.AddMsg("BTQueue", "Wznowienie: "+qid)
+			self.parent.log.AddMsg("BTQueue", _("Resumed: %s") % qid)
 			
 	def OnQueuePause(self, evt):
 		id = self.list.GetFirstSelected()
@@ -82,7 +81,7 @@ class PanelTransfers(wx.MDIChildFrame):
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
 			self.btq.do_pause(qid)
-			self.parent.log.AddMsg("BTQueue", "Pauza: "+qid)
+			self.parent.log.AddMsg("BTQueue", _("Paused: %s") % qid)
 		
 	def OnQueueRemove(self, evt):
 		id = self.list.GetFirstSelected()
@@ -90,14 +89,14 @@ class PanelTransfers(wx.MDIChildFrame):
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
 			self.btq.do_remove(qid)
-			self.parent.log.AddMsg("BTQueue", "Usuniêcie: "+qid)
+			self.parent.log.AddMsg("BTQueue", _("Removed: %s") % qid)
 		
 	def OnAddUrl(self, evt):
 		url = self.url.GetValue()
 		if url:
 			status = self.btq.do_add(url)
 			print status
-			self.parent.log.AddMsg("BTQueue", "Dodano URL: "+url)
+			self.parent.log.AddMsg("BTQueue", _("Added URL: %s") % url)
 			self.url.SetValue('')
 		
 	def OnClose(self, evt):

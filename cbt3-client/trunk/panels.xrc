@@ -521,10 +521,10 @@
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
-					<flag>wxGROW|wxALL|wxADJUST_MINSIZE</flag>
+                    <flag>wxGROW|wxALL</flag>
 					<border>1</border>
 					<option>1</option>
-					<object class="wxNotebook" name="ID_NOTEBOOK1">
+                    <object class="wxNotebook" name="opt_notebook">
 						<size>200,200</size>
 							<font>
 								<size>8</size>
@@ -538,7 +538,7 @@
 						<usenotebooksizer>0</usenotebooksizer>
 						<object class="notebookpage">
 							<label>Opcje cBT</label>
-							<object class="wxPanel" name="ID_PANEL8">
+                            <object class="wxPanel" name="ID_PANEL10">
 								<size>100,80</size>
 									<font>
 										<size>8</size>
@@ -570,9 +570,9 @@
 										<flag>wxGROW|wxGROW|wxALL</flag>
 										<border>5</border>
 										<option>1</option>
-										<object class="wxStaticBoxSizer" name="wxID_ANY">
+                                                <object class="wxStaticBoxSizer" name="opt_box1">
 											<orient>wxVERTICAL</orient>
-											<label>UMT.pl</label>
+                                                    <label>:</label>
 											<object class="sizeritem">
 												<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
 												<border>5</border>
@@ -581,10 +581,11 @@
 													<rows>2</rows>
 													<vgap>0</vgap>
 													<hgap>0</hgap>
+                                                            <growablecols>1</growablecols>
 													<object class="sizeritem">
-														<flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                                <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="wxID_STATIC">
+                                                                <object class="wxStaticText" name="opt_lab1">
 															<size>-1,-1</size>
 																<font>
 																	<size>8</size>
@@ -616,9 +617,9 @@
 														</object>
 													</object>
 													<object class="sizeritem">
-														<flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                                <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="wxID_STATIC">
+                                                                <object class="wxStaticText" name="opt_lab2">
 															<size>-1,-1</size>
 																<font>
 																	<size>8</size>
@@ -629,7 +630,7 @@
 																	<face>Tahoma</face>
 																</font>
 															<style></style>
-															<label>Haslo:</label>
+                                                                    <label>Password:</label>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -649,6 +650,40 @@
 															<value></value>
 														</object>
 													</object>
+                                                            <object class="sizeritem">
+                                                                <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                                                <border>5</border>
+                                                                <object class="wxStaticText" name="opt_lab3">
+                                                                    <size>-1,-1</size>
+                                                                        <font>
+                                                                            <size>8</size>
+                                                                            <family>swiss</family>
+                                                                            <style>normal</style>
+                                                                            <weight>normal</weight>
+                                                                            <underlined>0</underlined>
+                                                                            <face>Tahoma</face>
+                                                                        </font>
+                                                                    <style></style>
+                                                                    <label>URL:</label>
+                                                                </object>
+                                                            </object>
+                                                            <object class="sizeritem">
+                                                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                                                <border>5</border>
+                                                                <object class="wxTextCtrl" name="opt_rpcurl">
+                                                                    <size>-1,-1</size>
+                                                                        <font>
+                                                                            <size>8</size>
+                                                                            <family>swiss</family>
+                                                                            <style>normal</style>
+                                                                            <weight>normal</weight>
+                                                                            <underlined>0</underlined>
+                                                                            <face>Tahoma</face>
+                                                                        </font>
+                                                                    <style></style>
+                                                                    <value></value>
+                                                                </object>
+                                                            </object>
 												</object>
 											</object>
 										</object>
@@ -657,17 +692,43 @@
                                         <flag>wxGROW|wxGROW|wxALL</flag>
                                         <border>5</border>
                                         <option>1</option>
-                                        <object class="wxStaticBoxSizer" name="wxID_ANY">
+                                                <object class="wxStaticBoxSizer" name="opt_box2">
                                             <orient>wxVERTICAL</orient>
-                                                    <label>GUI</label>
+                                                    <label>:</label>
                                                     <object class="sizeritem">
                                                         <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
                                                         <border>5</border>
                                                         <object class="wxFlexGridSizer">
-                                                            <cols>1</cols>
+                                                            <cols>2</cols>
                                                             <rows>2</rows>
                                                             <vgap>0</vgap>
                                                             <hgap>0</hgap>
+                                                            <object class="sizeritem">
+                                                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                                <border>5</border>
+                                                                <object class="wxStaticText" name="opt_lab6">
+                                                                    <size>-1,-1</size>
+                                                                    <style></style>
+                                                                    <label>Language:</label>
+                                                                </object>
+                                                            </object>
+                                                            <object class="sizeritem">
+                                                                <flag>wxALIGN_CENTER_HORIZONTAL|wxGROW|wxALL</flag>
+                                                                <border>5</border>
+                                                                <object class="wxComboBox" name="opt_lang">
+                                                                    <size>-1,-1</size>
+                                                                    <style>wxCB_READONLY</style>
+                                                                </object>
+                                                            </object>
+                                                            <object class="sizeritem">
+                                                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                                <border>5</border>
+                                                                <object class="wxStaticText" name="wxID_STATIC">
+                                                                    <size>-1,-1</size>
+                                                                    <style></style>
+                                                                    <label> </label>
+                                                                </object>
+                                                            </object>
                                                             <object class="sizeritem">
                                                                 <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
                                                                 <border>5</border>
@@ -688,9 +749,9 @@
                                         <flag>wxGROW|wxGROW|wxALL</flag>
                                         <border>5</border>
                                         <option>1</option>
-                                        <object class="wxStaticBoxSizer" name="wxID_ANY">
+                                        <object class="wxStaticBoxSizer" name="opt_box3">
                                             <orient>wxVERTICAL</orient>
-                                            <label>Sciezki</label>
+                                            <label>:</label>
                                             <object class="sizeritem">
                                                 <flag>wxGROW|wxALL</flag>
                                                 <border>5</border>
@@ -702,9 +763,9 @@
                                                     <growablecols>1</growablecols>
                                                     <growablerows>0</growablerows>
                                                     <object class="sizeritem">
-                                                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
                                                         <border>5</border>
-                                                        <object class="wxStaticText" name="wxID_STATIC">
+                                                        <object class="wxStaticText" name="opt_lab4">
                                                             <size>-1,-1</size>
                                                                 <font>
                                                                     <size>8</size>
@@ -715,7 +776,7 @@
                                                                     <face>Tahoma</face>
                                                                 </font>
                                                             <style></style>
-                                                            <label>Downloady:</label>
+                                                            <label>:</label>
                                                         </object>
                                                     </object>
                                                     <object class="sizeritem">
@@ -746,9 +807,9 @@
                                                         </object>
                                                     </object>
                                                     <object class="sizeritem">
-                                                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
                                                         <border>5</border>
-                                                        <object class="wxStaticText" name="wxID_STATIC">
+                                                        <object class="wxStaticText" name="opt_lab5">
                                                             <size>-1,-1</size>
                                                                 <font>
                                                                     <size>8</size>
@@ -759,7 +820,7 @@
                                                                     <face>Tahoma</face>
                                                                 </font>
                                                             <style></style>
-                                                            <label>Torrenty:</label>
+                                                            <label>:</label>
                                                         </object>
                                                     </object>
                                                     <object class="sizeritem">

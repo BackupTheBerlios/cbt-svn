@@ -1,0 +1,367 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: communityBT\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2004-09-09 08:10+0100\n"
+"Last-Translator: vvarp <vvarp@aster.pl>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=windows-1250\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Polish\n"
+
+#: cbt.py:110
+msgid "E&xit"
+msgstr "&Wyjœcie"
+
+#: cbt.py:180
+msgid "cBTS version %s: connected."
+msgstr "cBTS wersja %s: po³¹czono."
+
+#: cbt.py:187
+msgid "Login error."
+msgstr "B³¹d w trakcie logowania."
+
+#: cbt.py:191
+msgid "Connection error."
+msgstr "B³¹d w trakcie próby po³¹czenia."
+
+#: cbt.py:295
+msgid "based on "
+msgstr "bazowany na "
+
+#: cbt.py:341
+msgid "Show main window"
+msgstr "Poka¿ okno g³ówne"
+
+#: cbt.py:342
+#: panel_maketorrent.py:136
+#: panel_maketorrent.py:255
+msgid "Close"
+msgstr "Zamknij"
+
+#: cbt.py:385
+msgid "Unknown"
+msgstr "Nieznany"
+
+#: cbt.py:529
+msgid "Another instance is already running."
+msgstr "Inna instancja programu jest ju¿ uruchomiona."
+
+#: cbt_widgets.py:36
+#: panel_chat.py:13
+msgid "Chat"
+msgstr "Czat"
+
+#: cbt_widgets.py:36
+#: panel_mytorrents.py:14
+msgid "My torrents"
+msgstr "Moje torrenty"
+
+#: cbt_widgets.py:36
+#: panel_options.py:15
+#: panel_options.py:104
+msgid "Options"
+msgstr "Opcje"
+
+#: cbt_widgets.py:36
+#: panel_public.py:15
+msgid "Public torrents"
+msgstr "Torrenty publiczne"
+
+#: cbt_widgets.py:36
+#: panel_transfers.py:14
+msgid "Transfers"
+msgstr "Transfery"
+
+#: panel_log.py:14
+msgid "Program log"
+msgstr "Log programu"
+
+#: panel_log.py:18
+#: panel_public.py:33
+msgid "Date"
+msgstr "Data"
+
+#: panel_log.py:19
+msgid "Module"
+msgstr "Modu³"
+
+#: panel_log.py:20
+msgid "Message"
+msgstr ""
+
+#: panel_maketorrent.py:53
+msgid "New torrent"
+msgstr "Nowy torrent"
+
+#: panel_maketorrent.py:71
+msgid "Source file or directory (select or drag'n'drop here)"
+msgstr "Plik lub katalog Ÿród³owy (wybierz lub przeci¹gnij i upuœæ tutaj)"
+
+#: panel_maketorrent.py:73
+msgid "Tracker URL"
+msgstr "URL Trackera"
+
+#: panel_maketorrent.py:75
+msgid "Comment (optional)"
+msgstr "Komentarz (opcjonalnie)"
+
+#: panel_maketorrent.py:77
+msgid "Piece size"
+msgstr "Rozmiar czêœci"
+
+#: panel_maketorrent.py:81
+msgid "Create from file"
+msgstr "Utwórz z pliku"
+
+#: panel_maketorrent.py:85
+msgid "Create from directory"
+msgstr "Utwórz z katalogu"
+
+#: panel_maketorrent.py:116
+msgid "Additional settings"
+msgstr "Ustawienia dodatkowe"
+
+#: panel_maketorrent.py:123
+msgid "Do not publish this torrent"
+msgstr "Nie publikuj torrenta"
+
+#: panel_maketorrent.py:123
+msgid "Private torrent"
+msgstr "Torrent prywatny"
+
+#: panel_maketorrent.py:123
+msgid "Public torrent"
+msgstr "Torrent publiczny"
+
+#: panel_maketorrent.py:134
+msgid "Continue"
+msgstr "Kontynuuj"
+
+#: panel_maketorrent.py:154
+msgid "Choose file"
+msgstr "Wybierz plik"
+
+#: panel_maketorrent.py:162
+#: panel_options.py:141
+msgid "Choose directory"
+msgstr "Wybierz katalog"
+
+#: panel_maketorrent.py:171
+msgid "You didn't choose any file or directory."
+msgstr "Nie wybra³eœ ¿adnego pliku lub katalogu."
+
+#: panel_maketorrent.py:171
+#: panel_maketorrent.py:256
+#: panel_maketorrent.py:326
+#: panel_maketorrent.py:333
+msgid "Error"
+msgstr "B³¹d"
+
+#: panel_maketorrent.py:207
+msgid "Creating torrent"
+msgstr "Tworzenie torrenta"
+
+#: panel_maketorrent.py:213
+msgid "Checking file size"
+msgstr "Sprawdzam rozmiar pliku"
+
+#: panel_maketorrent.py:218
+#: panel_options.py:55
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: panel_maketorrent.py:250
+#: panel_maketorrent.py:288
+msgid "Done!"
+msgstr "Zrobione!"
+
+#: panel_maketorrent.py:252
+msgid "Upload torrent"
+msgstr "Uploaduj torrenta"
+
+#: panel_maketorrent.py:254
+msgid "Error!"
+msgstr "B³¹d!"
+
+#: panel_maketorrent.py:274
+msgid "Building"
+msgstr "Tworzenie"
+
+#: panel_maketorrent.py:324
+msgid "Torrent upload finished."
+msgstr "Uploadowano torrenta."
+
+#: panel_mytorrents.py:34
+msgid "Added created torrent: %s"
+msgstr "Dodano utworzonego torrenta: %s"
+
+#: panel_options.py:39
+#, fuzzy
+msgid "Base options"
+msgstr "Opcje"
+
+#: panel_options.py:40
+msgid "Engine options"
+msgstr ""
+
+#: panel_options.py:42
+msgid "Community settings:"
+msgstr ""
+
+#: panel_options.py:43
+msgid "GUI settings:"
+msgstr "Ustawienia GUI:"
+
+#: panel_options.py:44
+msgid "Paths:"
+msgstr "Œcie¿ki:"
+
+#: panel_options.py:46
+msgid "Login:"
+msgstr "Login:"
+
+#: panel_options.py:47
+msgid "Password:"
+msgstr "Has³o:"
+
+#: panel_options.py:48
+msgid "URL:"
+msgstr "cBT URL:"
+
+#: panel_options.py:49
+msgid "Download dir:"
+msgstr "Œci¹gaj do:"
+
+#: panel_options.py:50
+msgid "Torrents dir:"
+msgstr ""
+
+#: panel_options.py:51
+msgid "Language:"
+msgstr "Jêzyk:"
+
+#: panel_options.py:52
+msgid "Show splash screen"
+msgstr "Pokazuj splash-screen"
+
+#: panel_options.py:54
+msgid "Apply"
+msgstr "Zastosuj"
+
+#: panel_options.py:57
+msgid "Polski"
+msgstr ""
+
+#: panel_options.py:58
+msgid "English"
+msgstr ""
+
+#: panel_options.py:104
+msgid "Saved."
+msgstr "Zapisano."
+
+#: panel_public.py:34
+#: panel_transfers.py:43
+msgid "Title"
+msgstr "Tytu³"
+
+#: panel_public.py:35
+msgid "Size"
+msgstr "Rozmiar"
+
+#: panel_public.py:36
+#: panel_transfers.py:49
+msgid "Seeds"
+msgstr ""
+
+#: panel_public.py:37
+#: panel_transfers.py:50
+msgid "Peers"
+msgstr ""
+
+#: panel_public.py:38
+#: panel_transfer_details.py:55
+msgid "Downloaded"
+msgstr ""
+
+#: panel_public.py:39
+msgid "Uploader"
+msgstr ""
+
+#: panel_public.py:78
+msgid "Torrents"
+msgstr ""
+
+#: panel_transfer_details.py:53
+msgid "IP / Nick"
+msgstr "IP / Nick"
+
+#: panel_transfer_details.py:54
+msgid "% done"
+msgstr ""
+
+#: panel_transfer_details.py:56
+msgid "Sent"
+msgstr ""
+
+#: panel_transfer_details.py:57
+#: panel_transfers.py:48
+msgid "UP Spd"
+msgstr ""
+
+#: panel_transfer_details.py:58
+#: panel_transfers.py:47
+msgid "DL Spd"
+msgstr ""
+
+#: panel_transfer_details.py:59
+msgid "Client"
+msgstr "Klient"
+
+#: panel_transfer_details.py:60
+msgid "Netname"
+msgstr "Sieæ"
+
+#: panel_transfer_details.py:66
+msgid "File"
+msgstr "Plik"
+
+#: panel_transfer_details.py:67
+#: panel_transfers.py:45
+msgid "Progress"
+msgstr "Postêp"
+
+#: panel_transfers.py:44
+msgid "State"
+msgstr "Status"
+
+#: panel_transfers.py:46
+msgid "ETA"
+msgstr "Pozosta³o"
+
+#: panel_transfers.py:51
+msgid "Ratio"
+msgstr "Ratio"
+
+#: panel_transfers.py:52
+msgid "Last message"
+msgstr "Ostatnia informacja"
+
+#: panel_transfers.py:76
+msgid "Resumed: %s"
+msgstr "Wznowienie: %s"
+
+#: panel_transfers.py:84
+msgid "Paused: %s"
+msgstr "Pauza: %s"
+
+#: panel_transfers.py:92
+msgid "Removed: %s"
+msgstr "Usuniêto: %s"
+
+#: panel_transfers.py:99
+msgid "Added URL: %s"
+msgstr "Dodano URL: %s"
+

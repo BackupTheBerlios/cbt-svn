@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: panel_chat.py 93 2004-08-30 17:15:39Z warp $
@@ -11,7 +10,7 @@ from images import Images
 
 class PanelChat(wx.MDIChildFrame):
 	def __init__(self, parent, id):
-		wx.MDIChildFrame.__init__(self, parent, id, title="Chat", style = wx.DEFAULT_FRAME_STYLE)
+		wx.MDIChildFrame.__init__(self, parent, id, title=_("Chat"), style = wx.DEFAULT_FRAME_STYLE)
 		
 		self.parent = parent
 		self.images = Images(".")

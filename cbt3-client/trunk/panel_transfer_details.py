@@ -1,4 +1,3 @@
-# -*- coding: cp1250 -*-
 #-----------------------------------------------------------------------------
 # Author:	   warp / visualvinyl
 # RCS-ID:	   $Id: panel_transfer_details.py 109 2004-08-31 01:12:37Z warp $
@@ -51,21 +50,21 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		# columns
 		
 		cols = [ 
-				 [0, "IP / Nick", wx.LIST_FORMAT_LEFT, 112],
-				 [1, "Posiada", wx.LIST_FORMAT_LEFT, 55],
-				 [2, "Pobra³", wx.LIST_FORMAT_LEFT, 55],
-				 [3, "Wys³a³", wx.LIST_FORMAT_LEFT, 55],
-				 [4, "UP Spd", wx.LIST_FORMAT_LEFT, 52],
-				 [5, "DL Spd", wx.LIST_FORMAT_LEFT, 52],
-				 [6, "Klient", wx.LIST_FORMAT_LEFT, 72],
-				 [7, "Netname", wx.LIST_FORMAT_LEFT, 90],
+				 [0, _("IP / Nick"), wx.LIST_FORMAT_LEFT, 112],
+				 [1, _("% done"), wx.LIST_FORMAT_LEFT, 55],
+				 [2, _("Downloaded"), wx.LIST_FORMAT_LEFT, 55],
+				 [3, _("Sent"), wx.LIST_FORMAT_LEFT, 55],
+				 [4, _("UP Spd"), wx.LIST_FORMAT_LEFT, 52],
+				 [5, _("DL Spd"), wx.LIST_FORMAT_LEFT, 52],
+				 [6, _("Client"), wx.LIST_FORMAT_LEFT, 72],
+				 [7, _("Netname"), wx.LIST_FORMAT_LEFT, 90],
 			]
 		
 		InsertColumns(self.listconn, cols)
 		
 		cols = [
-				[0, "Plik", wx.LIST_FORMAT_LEFT, 450],
-				[1, "Postêp", wx.LIST_FORMAT_LEFT, 70]
+				[0, _("File"), wx.LIST_FORMAT_LEFT, 450],
+				[1, _("Progress"), wx.LIST_FORMAT_LEFT, 70]
 			]
 		
 		InsertColumns(self.listfile, cols)			
