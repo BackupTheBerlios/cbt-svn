@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<resource version="2.3.0.1" xmlns="http://www.wxwidgets.org/wxxrc">
+
+			  <object class="wxPanel" name="panelMT">
+            <size>100,80</size>
+                <font>
+                    <size>8</size>
+                    <family>swiss</family>
+                    <style>normal</style>
+                    <weight>normal</weight>
+                    <underlined>0</underlined>
+                    <face>Tahoma</face>
+                </font>
+            <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+            <object class="wxBoxSizer">
+                <orient>wxHORIZONTAL</orient>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>3</border>
+                    <object class="wxPanel" name="ID_PANEL2">
+                        <size>32,32</size>
+                        <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                        <object class="wxBoxSizer">
+                            <orient>wxVERTICAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnMyRefresh">
+                                    <size>32,32</size>
+                                    <tooltip>Odswiez</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/refresh24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxGROW|wxALL</flag>
+                                <border>4</border>
+                                <object class="wxStaticLine" name="wxID_STATIC">
+                                    <size>-1,-1</size>
+                                    <style>wxLI_HORIZONTAL|wxNO_BORDER</style>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnMyCreate">
+                                    <size>32,32</size>
+                                    <tooltip>Nowy torrent</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/mynew24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnMyUpload">
+                                    <size>32,32</size>
+                                    <tooltip>Upload zewnetrznego torrenta</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/myupload24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxGROW|wxALL</flag>
+                                <border>4</border>
+                                <object class="wxStaticLine" name="wxID_STATIC">
+                                    <size>-1,-1</size>
+                                    <style>wxLI_HORIZONTAL</style>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnMyEdit">
+                                    <size>32,32</size>
+                                    <tooltip>Edytuj torrenta</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/myedit24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnMyDel">
+                                    <size>32,32</size>
+                                    <tooltip>Kasuj torrenta</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/mydelete24.xpm</bitmap>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>2</border>
+                    <option>1</option>
+                    <object class="wxBoxSizer">
+                        <orient>wxHORIZONTAL</orient>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALL</flag>
+                            <border>1</border>
+                            <object class="wxListCtrl" name="listMyCat">
+                                <size>150,100</size>
+                                    <font>
+                                        <size>8</size>
+                                        <family>swiss</family>
+                                        <style>normal</style>
+                                        <weight>normal</weight>
+                                        <underlined>0</underlined>
+                                        <face>Tahoma</face>
+                                    </font>
+                                <style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALL</flag>
+                            <border>1</border>
+                            <option>1</option>
+                            <object class="wxListCtrl" name="listMyTorrent">
+                                <size>100,100</size>
+                                    <font>
+                                        <size>8</size>
+                                        <family>swiss</family>
+                                        <style>normal</style>
+                                        <weight>normal</weight>
+                                        <underlined>0</underlined>
+                                        <face>Tahoma</face>
+                                    </font>
+                                <style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+
+        <object class="wxPanel" name="panelPub">
+            <size>99,80</size>
+                <font>
+                    <size>8</size>
+                    <family>swiss</family>
+                    <style>normal</style>
+                    <weight>normal</weight>
+                    <underlined>0</underlined>
+                    <face>Tahoma</face>
+                </font>
+            <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+            <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>5</border>
+                    <option>1</option>
+                    <object class="wxSplitterWindow" name="ID_SPLITTERWINDOW">
+                        <size>100,100</size>
+                        <style>wxSP_FULLSASH|wxSP_LIVE_UPDATE |wxNO_BORDER</style>
+                        <orientation>vertical</orientation>
+                        <sashpos>160</sashpos>
+                        <object class="wxTreeCtrl" name="treePub">
+                            <size>160,100</size>
+                                <font>
+                                    <size>8</size>
+                                    <family>swiss</family>
+                                    <style>normal</style>
+                                    <weight>normal</weight>
+                                    <underlined>0</underlined>
+                                    <face>Tahoma</face>
+                                </font>
+                            <style>wxTR_HAS_BUTTONS |wxTR_LINES_AT_ROOT|wxTR_ROW_LINES|wxTR_SINGLE</style>
+                        </object>
+                        <object class="wxListCtrl" name="listPub">
+                            <size>100,100</size>
+                                <font>
+                                    <size>8</size>
+                                    <family>swiss</family>
+                                    <style>normal</style>
+                                    <weight>normal</weight>
+                                    <underlined>0</underlined>
+                                    <face>Tahoma</face>
+                                </font>
+                            <style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>1</border>
+                    <object class="wxPanel" name="ID_PANEL">
+                        <size>100,28</size>
+                        <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                        <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>3</border>
+                                <object class="wxButton" name="btnPubRefresh">
+                                    <size>-1,-1</size>
+                                        <font>
+                                            <size>8</size>
+                                            <family>swiss</family>
+                                            <style>normal</style>
+                                            <weight>normal</weight>
+                                            <underlined>0</underlined>
+                                            <face>Tahoma</face>
+                                        </font>
+                                    <style></style>
+                                    <label>Odswiez</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxGROW|wxALL</flag>
+                                <border>5</border>
+                                <object class="wxStaticLine" name="wxID_STATIC">
+                                    <size>-1,-1</size>
+                                    <style>wxLI_VERTICAL</style>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>5</border>
+                                <object class="wxCheckBox" name="chkPubSeeds">
+                                    <size>-1,-1</size>
+                                        <font>
+                                            <size>8</size>
+                                            <family>swiss</family>
+                                            <style>normal</style>
+                                            <weight>normal</weight>
+                                            <underlined>0</underlined>
+                                            <face>Tahoma</face>
+                                        </font>
+                                    <style></style>
+                                    <label>Tylko z seedami</label>
+                                    <checked>0</checked>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+
+    
+        <object class="wxPanel" name="panelDL">
+            <size>99,80</size>
+                <font>
+                    <size>8</size>
+                    <family>swiss</family>
+                    <style>normal</style>
+                    <weight>normal</weight>
+                    <underlined>0</underlined>
+                    <face>Tahoma</face>
+                </font>
+            <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+            <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL|wxFIXED_MINSIZE</flag>
+                    <border>1</border>
+                    <option>1</option>
+                    <object class="wxListCtrl" name="listDL">
+                        <size>100,100</size>
+                            <font>
+                                <size>8</size>
+                                <family>swiss</family>
+                                <style>normal</style>
+                                <weight>normal</weight>
+                                <underlined>0</underlined>
+                                <face>Tahoma</face>
+                            </font>
+                        <style>wxLC_REPORT</style>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>1</border>
+                    <object class="wxPanel" name="ID_PANEL3">
+                        <size>100,33</size>
+                            <font>
+                                <size>8</size>
+                                <family>swiss</family>
+                                <style>normal</style>
+                                <weight>normal</weight>
+                                <underlined>0</underlined>
+                                <face>Tahoma</face>
+                            </font>
+                        <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                        <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnDlResume">
+                                    <size>32,32</size>
+                                    <tooltip>Wznowienie</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/resume24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnDlPause">
+                                    <size>32,32</size>
+                                    <tooltip>Pauza</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/pause24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnDlRemove">
+                                    <size>32,32</size>
+                                    <tooltip>Usuniecie</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/remove24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>1</border>
+                                <object class="wxBitmapButton" name="btnDlDetails">
+                                    <size>32,32</size>
+                                    <tooltip>Szczegoly transferu</tooltip>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>data/details24.xpm</bitmap>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxGROW|wxALL</flag>
+                                <border>5</border>
+                                <object class="wxStaticLine" name="wxID_STATIC">
+                                    <size>-1,-1</size>
+                                    <style>wxLI_VERTICAL</style>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>3</border>
+                                <object class="wxTextCtrl" name="textDLURL">
+                                    <size>200,-1</size>
+                                        <font>
+                                            <size>8</size>
+                                            <family>swiss</family>
+                                            <style>normal</style>
+                                            <weight>normal</weight>
+                                            <underlined>0</underlined>
+                                            <face>Tahoma</face>
+                                        </font>
+                                    <style></style>
+                                    <value></value>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="btnDLAddURL">
+                                    <size>-1,-1</size>
+                                        <font>
+                                            <size>8</size>
+                                            <family>swiss</family>
+                                            <style>normal</style>
+                                            <weight>normal</weight>
+                                            <underlined>0</underlined>
+                                            <face>Tahoma</face>
+                                        </font>
+                                    <style>wxBU_EXACTFIT</style>
+                                    <label>Dodaj URL</label>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+
+        <object class="wxPanel" name="panelTD">
+            <size>100,80</size>
+            <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+            <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>0</border>
+                    <object class="wxBoxSizer">
+                        <orient>wxHORIZONTAL</orient>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                            <border>0</border>
+                            <option>1</option>
+                            <object class="wxPanel" name="ID_PANEL7">
+                                <size>100,42</size>
+                                <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                                <bg>#1c3968</bg>
+                                <object class="wxBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                        <border>4</border>
+                                        <option>1</option>
+                                        <object class="wxStaticText" name="label">
+                                            <size>-1,-1</size>
+                                                <font>
+                                                    <size>12</size>
+                                                    <family>swiss</family>
+                                                    <style>normal</style>
+                                                    <weight>bold</weight>
+                                                    <underlined>0</underlined>
+                                                    <face>Arial</face>
+                                                </font>
+                                            <style>wxALIGN_CENTRE</style>
+                                            <fg>#FFFFFF</fg>
+                                            <bg>#27507f</bg>
+                                            <label>Static text</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>2</border>
+                    <option>7</option>
+                    <object class="wxNotebook" name="ID_NOTEBOOK">
+                        <size>200,200</size>
+                        <style></style>
+                        <usenotebooksizer>0</usenotebooksizer>
+                        <object class="notebookpage">
+                            <label>Informacje o torrencie</label>
+                            <object class="wxPanel" name="ID_PANEL4">
+                                <size>100,80</size>
+                                    <font>
+                                        <size>8</size>
+                                        <family>swiss</family>
+                                        <style>normal</style>
+                                        <weight>bold</weight>
+                                        <underlined>0</underlined>
+                                        <face>Tahoma</face>
+                                    </font>
+                                <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                                <object class="wxBoxSizer">
+                                    <orient>wxVERTICAL</orient>
+                                    <object class="sizeritem">
+                                        <flag>wxGROW|wxALL</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxNotebook" name="ID_NOTEBOOK2">
+                                            <size>200,200</size>
+                                            <style>wxNB_FIXEDWIDTH</style>
+                                            <usenotebooksizer>0</usenotebooksizer>
+                                            <object class="notebookpage">
+                                                <label>Stats</label>
+                                            <object class="wxHtmlWindow" name="htmlStats">
+                                                    <size>200,150</size>
+                                                <style>wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER</style>
+                                                    <bg>#FFFFFF</bg>
+                                                </object>
+                                            </object>
+                                            <object class="notebookpage">
+                                                <label>Parts</label>
+                                            <object class="wxHtmlWindow" name="htmlParts">
+                                                    <size>200,150</size>
+                                                <style>wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER</style>
+                                                    <bg>#FFFFFF</bg>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    </object>
+                            </object>
+                        </object>
+                        <object class="notebookpage">
+                            <label>Polaczenia</label>
+                            <object class="wxPanel" name="ID_PANEL5">
+                                <size>100,80</size>
+                                <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                                <object class="wxBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <object class="sizeritem">
+                                        <flag>wxGROW|wxALL</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxListCtrl" name="listconn">
+                                            <size>100,100</size>
+                                            <style>wxLC_REPORT</style>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                        <object class="notebookpage">
+                            <label>Pliki</label>
+                            <object class="wxPanel" name="ID_PANEL6">
+                                <size>100,80</size>
+                                <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                                <object class="wxBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <object class="sizeritem">
+                                        <flag>wxGROW|wxALL</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxListCtrl" name="listfiles">
+                                            <size>100,100</size>
+                                            <style>wxLC_REPORT</style>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+
+		<object class="wxPanel" name="panelOptions">
+			<size>100,80</size>
+			<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<flag>wxGROW|wxALL|wxADJUST_MINSIZE</flag>
+					<border>1</border>
+					<option>1</option>
+					<object class="wxNotebook" name="ID_NOTEBOOK1">
+						<size>200,200</size>
+							<font>
+								<size>8</size>
+								<family>swiss</family>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<face>Tahoma</face>
+							</font>
+                        <style></style>
+						<usenotebooksizer>0</usenotebooksizer>
+						<object class="notebookpage">
+							<label>Opcje cBT</label>
+							<object class="wxPanel" name="ID_PANEL8">
+								<size>100,80</size>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>Tahoma</face>
+									</font>
+								<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+								<object class="wxFlexGridSizer">
+                                    <cols>1</cols>
+									<rows>2</rows>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+                                    <growablecols>0</growablecols>
+									<growablerows>0,1</growablerows>
+									<object class="sizeritem">
+                                        <flag>wxALIGN_CENTER_HORIZONTAL|wxGROW|wxALL</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxFlexGridSizer">
+                                            <cols>2</cols>
+                                            <rows>1</rows>
+                                            <vgap>0</vgap>
+                                            <hgap>0</hgap>
+                                            <growablecols>0,1</growablecols>
+                                            <object class="sizeritem">
+										<flag>wxGROW|wxGROW|wxALL</flag>
+										<border>5</border>
+										<option>1</option>
+										<object class="wxStaticBoxSizer" name="wxID_ANY">
+											<orient>wxVERTICAL</orient>
+											<label>UMT.pl</label>
+											<object class="sizeritem">
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<cols>2</cols>
+													<rows>2</rows>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<object class="sizeritem">
+														<flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="wxID_STATIC">
+															<size>-1,-1</size>
+																<font>
+																	<size>8</size>
+																	<family>swiss</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>0</underlined>
+																	<face>Tahoma</face>
+																</font>
+															<style></style>
+															<label>Login:</label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>5</border>
+                                                                <object class="wxTextCtrl" name="opt_login">
+															<size>-1,-1</size>
+																<font>
+																	<size>8</size>
+																	<family>swiss</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>0</underlined>
+																	<face>Tahoma</face>
+																</font>
+															<style></style>
+															<value></value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="wxID_STATIC">
+															<size>-1,-1</size>
+																<font>
+																	<size>8</size>
+																	<family>swiss</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>0</underlined>
+																	<face>Tahoma</face>
+																</font>
+															<style></style>
+															<label>Haslo:</label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>5</border>
+                                                                <object class="wxTextCtrl" name="opt_password">
+															<size>-1,-1</size>
+																<font>
+																	<size>8</size>
+																	<family>swiss</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>0</underlined>
+																	<face>Tahoma</face>
+																</font>
+															<style>wxTE_PASSWORD</style>
+															<value></value>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+                                    <object class="sizeritem">
+                                        <flag>wxGROW|wxGROW|wxALL</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxStaticBoxSizer" name="wxID_ANY">
+                                            <orient>wxVERTICAL</orient>
+                                                    <label>GUI</label>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                                                        <border>5</border>
+                                                        <object class="wxFlexGridSizer">
+                                                            <cols>1</cols>
+                                                            <rows>2</rows>
+                                                            <vgap>0</vgap>
+                                                            <hgap>0</hgap>
+                                                            <object class="sizeritem">
+                                                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                                                <border>5</border>
+                                                                <object class="wxCheckBox" name="opt_splash">
+                                                                    <size>-1,-1</size>
+                                                                    <style></style>
+                                                                    <label>Pokazuj splash-screen</label>
+                                                                    <checked>0</checked>
+                                                                </object>
+                                                            </object>
+                                                        </object>
+                                                    </object>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxGROW|wxGROW|wxALL</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxStaticBoxSizer" name="wxID_ANY">
+                                            <orient>wxVERTICAL</orient>
+                                            <label>Sciezki</label>
+                                            <object class="sizeritem">
+                                                <flag>wxGROW|wxALL</flag>
+                                                <border>5</border>
+                                                <object class="wxFlexGridSizer">
+                                                    <cols>3</cols>
+                                                    <rows>2</rows>
+                                                    <vgap>0</vgap>
+                                                    <hgap>0</hgap>
+                                                    <growablecols>1</growablecols>
+                                                    <growablerows>0</growablerows>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                        <border>5</border>
+                                                        <object class="wxStaticText" name="wxID_STATIC">
+                                                            <size>-1,-1</size>
+                                                                <font>
+                                                                    <size>8</size>
+                                                                    <family>swiss</family>
+                                                                    <style>normal</style>
+                                                                    <weight>normal</weight>
+                                                                    <underlined>0</underlined>
+                                                                    <face>Tahoma</face>
+                                                                </font>
+                                                            <style></style>
+                                                            <label>Downloady:</label>
+                                                        </object>
+                                                    </object>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_CENTER_HORIZONTAL|wxGROW|wxALL</flag>
+                                                        <border>5</border>
+                                                        <option>1</option>
+                                                        <object class="wxTextCtrl" name="opt_destdir">
+                                                            <size>-1,-1</size>
+                                                                <font>
+                                                                    <size>8</size>
+                                                                    <family>swiss</family>
+                                                                    <style>normal</style>
+                                                                    <weight>normal</weight>
+                                                                    <underlined>0</underlined>
+                                                                    <face>Tahoma</face>
+                                                                </font>
+                                                            <style>wxTE_READONLY</style>
+                                                            <value></value>
+                                                        </object>
+                                                    </object>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                                        <border>5</border>
+                                                        <object class="wxButton" name="btnPath1">
+                                                            <size>-1,-1</size>
+                                                            <style>wxBU_EXACTFIT</style>
+                                                            <label>...</label>
+                                                        </object>
+                                                    </object>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                                                        <border>5</border>
+                                                        <object class="wxStaticText" name="wxID_STATIC">
+                                                            <size>-1,-1</size>
+                                                                <font>
+                                                                    <size>8</size>
+                                                                    <family>swiss</family>
+                                                                    <style>normal</style>
+                                                                    <weight>normal</weight>
+                                                                    <underlined>0</underlined>
+                                                                    <face>Tahoma</face>
+                                                                </font>
+                                                            <style></style>
+                                                            <label>Torrenty:</label>
+                                                        </object>
+                                                    </object>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_CENTER_HORIZONTAL|wxGROW|wxALL</flag>
+                                                        <border>5</border>
+                                                        <object class="wxTextCtrl" name="opt_torrentdir">
+                                                            <size>-1,-1</size>
+                                                                <font>
+                                                                    <size>8</size>
+                                                                    <family>swiss</family>
+                                                                    <style>normal</style>
+                                                                    <weight>normal</weight>
+                                                                    <underlined>0</underlined>
+                                                                    <face>Tahoma</face>
+                                                                </font>
+                                                            <style>wxTE_READONLY</style>
+                                                            <value></value>
+                                                        </object>
+                                                    </object>
+                                                    <object class="sizeritem">
+                                                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                                        <border>5</border>
+                                                        <object class="wxButton" name="btnPath2">
+                                                            <size>-1,-1</size>
+                                                            <style>wxBU_EXACTFIT</style>
+                                                            <label>...</label>
+                                                        </object>
+                                                    </object>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+								</object>
+							</object>
+						</object>
+						<object class="notebookpage">
+							<label>Opcje BT</label>
+							<object class="wxPanel" name="ID_PANEL9">
+								<size>100,80</size>
+								<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+								<object class="wxFlexGridSizer">
+									<cols>2</cols>
+									<rows>2</rows>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+									<growablecols>0,1</growablecols>
+									<growablerows>0,1</growablerows>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<flag>wxALIGN_RIGHT|wxALL</flag>
+					<border>1</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+							<border>1</border>
+                            <object class="wxButton" name="btnSave">
+								<size>-1,-1</size>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+										<face>Tahoma</face>
+									</font>
+								<style></style>
+								<label>Zapisz</label>
+								<default>1</default>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+							<border>1</border>
+                            <object class="wxButton" name="btnCancel">
+								<size>-1,-1</size>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>Tahoma</face>
+									</font>
+								<style></style>
+								<label>Anuluj</label>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+
+
+
+</resource>
