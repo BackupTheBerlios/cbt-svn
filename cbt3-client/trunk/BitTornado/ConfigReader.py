@@ -37,9 +37,6 @@ def hex2(c):
 def ColorToHex(c):
     return hex2(c.Red()) + ' ' + hex2(c.Green()) + ' ' + hex2(c.Blue())
 
-_CHECKINGCOLOR = ColorToHex(wxSystemSettings_GetColour(wxSYS_COLOUR_3DSHADOW))
-_DOWNLOADCOLOR = ColorToHex(wxSystemSettings_GetColour(wxSYS_COLOUR_ACTIVECAPTION))
-
 ratesettingslist = []
 for x in connChoices:
     if not x.has_key('super-seed'):
@@ -62,9 +59,9 @@ configFileDefaults = [
          "what rate setting controls to display; options are 'none', 'basic', and 'full'"),
     ('gui_forcegreenonfirewall', 0,
          "forces the status icon to be green even if the client seems to be firewalled"),
-    ('gui_checkingcolor', _CHECKINGCOLOR,
+    ('gui_checkingcolor', None, # set later
          "progress bar checking color"),
-    ('gui_downloadcolor', _DOWNLOADCOLOR,
+    ('gui_downloadcolor', None, # set later
          "progress bar downloading color"),
     ('gui_seedingcolor', '00 FF 00',
          "progress bar seeding color"),
@@ -91,6 +88,12 @@ class configReader:
 
         defaults.extend(configFileDefaults)
         self.defaults = defaultargs(defaults)
+
+        self.defaults['gui_checkingcolor'] = ColorToHex(
+            wxSystemSettings_GetColour(wxSYS_COLOUR_3DSHADOW))
+        self.defaults['gui_downloadcolor'] = ColorToHex(
+            wxSystemSettings_GetColour(wxSYS_COLOUR_ACTIVECAPTION))
+
         self.configDir = ConfigDir('gui')
         self.configDir.setDefaults(defaults,defaultsToIgnore)
         if self.configDir.checkConfig():

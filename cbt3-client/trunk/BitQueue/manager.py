@@ -375,10 +375,15 @@ class Manager:
         return CommandResponse({'version':version})
 
     def do_shell(self,line=None):
-        import popen2
-        fp = popen2.Popen4(line,0)
-        fp.wait()
-        return CommandResponse({'text':fp.fromchild.read()})
+        #import popen2
+        #fp = popen2.Popen4(line,0)
+        #fp.wait()
+        #return CommandResponse({'text':fp.fromchild.read()})
+        import os
+        fp = os.popen(line,'r',-1)
+        text = fp.read()
+        fp.close()
+        return CommandResponse({'text':text})
 
     def do_last_banned(self,line=None):
         '''show last banned ip'''
@@ -386,11 +391,10 @@ class Manager:
         options,args = parser.parse_args(line)
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
-        line = args[0]
 
         try:
-            n = int(line)
-        except ValueError:
+            n = int(args[0])
+        except (IndexError,ValueError):
             n = self.max_last_banned
         info = []
         for ip in self.last_banned[-n:]:
@@ -407,8 +411,10 @@ class Manager:
         options,args = parser.parse_args(line)
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
-        file = args[0]
 
+        if not args:
+            return CommandResponse(error='need file or url')
+        file = args[0]
         if file.find('://') == -1:
             file = os.path.realpath(file)
         try:
@@ -498,6 +504,8 @@ class Manager:
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
 
+        if len(args) != 2:
+            return CommandResponse(error='invalid arguments')
         try:
             key,value = args
         except ValueError,why:
@@ -512,15 +520,14 @@ class Manager:
         options,args = parser.parse_args(line)
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
-        line = args[0]
 
         ret = []
         try:
-            value = self.policy(line)
+            value = self.policy(args[0])
             if value == None:
                 raise ValueError
-            ret.append((line,str(value)))
-        except ValueError,why:
+            ret.append({'key':args[0],'value':str(value)})
+        except (IndexError,ValueError),why:
             gkeys = self.policy.keys()
             gkeys.sort()
             for key in gkeys:
@@ -534,8 +541,10 @@ class Manager:
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
 
+        if len(args) != 3:
+            return CommandResponse(error='invalid arguments')
         try:
-            jid,key,value = args,
+            jid,key,value = args
         except ValueError,why:
             return CommandResponse(error=str(why))
         j = self.queue.job(jid)
@@ -552,7 +561,7 @@ class Manager:
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
 
-        if len(args) < 1:
+        if not args:
             return CommandResponse(error='need id')
         j = self.queue.job(args[0])
         if not j:
@@ -578,7 +587,7 @@ class Manager:
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
 
-        if len(args) < 3:
+        if len(args) != 3:
             return CommandResponse(error='need an id, an attribute and a value')
         id,attr,value = args
         j = self.queue.job(id)
@@ -617,7 +626,7 @@ class Manager:
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
 
-        if len(args) < 1:
+        if not args:
             return CommandResponse(error='need an id and an optional attribute')
         try:
             id,attr = args
@@ -723,10 +732,10 @@ Clients:
         options,args = parser.parse_args(line)
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
-        line = args[0]
 
-        if not line:
+        if not args:
             return CommandResponse(error='need id')
+        line = args[0]
         j = self.queue.job(line)
         if not j:
             return CommandResponse(error='%s not found' % line)
@@ -750,8 +759,10 @@ Clients:
         options,args = parser.parse_args(line)
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
-        line = args[0]
 
+        if not args:
+            return CommandResponse(error='need ip')
+        line = args[0]
         try:
             ip = socket.gethostbyname(line)
         except:
@@ -846,10 +857,10 @@ Clients:
         options,args = parser.parse_args(line)
         if parser.is_error():
             return CommandResponse(error=parser.get_error())
-        id = args[0]
 
-        if not id:
+        if not args:
             return CommandResponse(error='need id')
+        id = args[0]
         j = self.queue.job(id)
         if not j:
             return CommandResponse(error='%s not found' % id)
@@ -1021,8 +1032,10 @@ Clients:
         self.queue.save()
         self.controller.stop()
         self.queue.stop()
-        self.webservice.stop()
-        self.xmlrpc.stop()
+        if hasattr(self,'webservice'):
+            self.webservice.stop()
+        if hasattr(self,'xmlrpc'):
+            self.xmlrpc.stop()
         self.policy.save()
         self.cb_quit()
         return CommandResponse()
@@ -1136,10 +1149,15 @@ class Console(cmd.Cmd):
 
     def mainloop(self):
         try:
-            self.manager.init()
+            try:
+                self.manager.init()
+            except Exception,why:
+                print why,
+                sys.exit(1)
+
             self.manager.start()
             self.cmdloop()
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt,SystemExit):
             pass
         except ValueError:
             import traceback
@@ -1478,6 +1496,8 @@ Stopped:               %(stopped_time)s
 
         return 1
 
+    do_exit = do_quit
+    do_info = do_detail
     do_EOF = do_quit
 
     def default(self,line=None):
@@ -1582,7 +1602,10 @@ class XMLRPCConsole:
 
     def do_gget(self,line=None):
         '''get global policy'''
-        res = self.manager.do_gset(line)
+        res = self.manager.do_gget(line)
+        if res.geterror():
+            print res.geterror()
+            return
         for data in res.getreply():
             data['key'] += ':'
             print '%(key)-20s %(value)s' % data
@@ -1595,7 +1618,7 @@ class XMLRPCConsole:
 
     def do_lget(self,line=None):
         '''get local policy'''
-        res = self.manager.do_lset(line)
+        res = self.manager.do_lget(line)
         if res.geterror():
             print res.geterror()
             return
@@ -1840,6 +1863,8 @@ Stopped:               %(stopped_time)s
         '''detach'''
         return 1
 
+    do_exit = do_quit
+    do_info = do_detail
     do_EOF = do_quit
 
     def default(self,line=None):

@@ -8,6 +8,26 @@ import string
 import urllib
 import misc
 
+def quote_dict(dict):
+    out = {}
+    for key in dict.keys():
+        value = misc.string(dict[key]).encode('iso-8859-1')
+        if key in ['link']:
+            out[key] = value
+        else:
+            out[key] = urllib.quote(value)
+    return out
+
+def unquote_dict(dict):
+    out = {}
+    for key in dict.keys():
+        value = misc.string(dict[key]).encode('iso-8859-1')
+        if key in ['link']:
+            out[key] = value
+        else:
+            out[key] = urllib.unquote(value)
+    return out
+
 class Element:
     "Class represent each element"
     def __init__(self, tag=None, attrs={}, content='') :
@@ -49,7 +69,8 @@ class Element:
             handler.startDocument()
 
         handler.ignorableWhitespace(prefix)
-        handler.startElement(self.tag, self.attrs)
+        dict = quote_dict(self.attrs)
+        handler.startElement(self.tag,dict)
         if self.content.find('<') >= 0 or self.content.find('>') >= 0:
             handler.startCDATA()
         handler.characters(self.content)
@@ -106,9 +127,10 @@ class ElementContentHandler(ContentHandler,LexicalHandler) :
 
     def startElement(self, tag, attrs={}) :
         self.push(self.current)
-        dict = {}
-        for key in attrs.keys():
-            dict[key] = urllib.unquote(misc.string(attrs[key]))
+        dict = unquote_dict(attrs)
+        #dict = {}
+        #for key in attrs.keys():
+        #    dict[key] = urllib.unquote(misc.string(attrs[key]))
         self.current = Element(tag,dict)
         if not self.root:
             self.root = self.current

@@ -3,6 +3,10 @@
 import SocketServer
 from threading import Thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer,SimpleXMLRPCRequestHandler
+try:
+    from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+except ImportError:
+    pass
 import xmlrpclib
 import select
 import socket
@@ -106,7 +110,13 @@ class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     def _dispatch(self,method,params):
         if len(params) < 1 or not params[0] in self.id:
             raise Exception('unauthorized')
-        res = SimpleXMLRPCRequestHandler._dispatch(self,method,params[1:])
+        if hasattr(SimpleXMLRPCRequestHandler,'_dispatch'):
+            dispatch = SimpleXMLRPCRequestHandler._dispatch
+            instance = self
+        else:
+            dispatch = SimpleXMLRPCDispatcher._dispatch
+            instance = self.server
+        res = dispatch(instance,method,params[1:])
         if isinstance(res,CommandResponse):
             res = res.encode()
         return res

@@ -9,7 +9,7 @@ REMOTE = "xmlrpc"
 prog_name_long = "communityBT"
 prog_name = "cbt"
 prog_ver = "0.3.1-dev"
-prog_build = "64"
+prog_build = "65"
 
 if PSYCO:
 	prog_name_full = prog_name_long + " v" + prog_ver + " b" + prog_build + "-psyco"

@@ -152,10 +152,10 @@ class ListFilter(BaseFilter):
 
 class BTAFilter(BaseFilter):
 
-    table_item_reg = r'<tr>\s*<td bgcolor="#[^\"]+"><center><b>(?P<id>\d+)</b></center></td>\s*<td bgcolor="#[^\"]+">(?P<date>[^<]+)</td>'+ \
-         r'\s*<td bgcolor="#[^\"]+">(<a href="[^\"]+">)?(<b>)?(?P<title>[^<]+)(</a>)? - (?P<episode>\d+)</td>'+ \
-         r'\s*<td bgcolor="#[^\"]+">(<a href=[^>]+>)?(?P<publisher>[^<]+)?(</a>)?\s*</td>' + \
-         r'\s*<td bgcolor="#[^\"]+"><a href="(?P<dllink>[^"]+)" target="outhere">Here</a></td><tr>'
+    table_item_reg = r'<tr>\s*<td bgcolor="#[^\"]+"><center><b>(?P<id>\d+)</b></center></td>\s*<td bgcolor="#[^\"]+">(?P<date>[^<]+)</td>' + \
+           r'\s*<td bgcolor="#[^\"]+">(<a href="[^\"]+">)?(<b>)?(?P<title>.*?)(</a>)? - (?P<episode>\d+)</td>' + \
+           r'\s*<td bgcolor="#[^\"]+">(<a href=[^>]+>)?(?P<publisher>[^<]+)?(</a>)?\s*</td>' + \
+           r'\s*<td bgcolor="#[^\"]+"><a href="(?P<download>[^"]+)" target="outhere">Here</a></td><tr>'
 
     table_item_cre = re.compile(table_item_reg,re.IGNORECASE | re.MULTILINE)
 
@@ -166,7 +166,7 @@ class BTAFilter(BaseFilter):
             self.log.debug('%s %s\n' % \
                            (m.group('title'),
                             m.group('publisher')))
-            link = urlparse.urljoin(self.baseurl,m.group('dllink'))
+            link = urlparse.urljoin(self.baseurl,m.group('download'))
             attrs = {'title': m.group('title'),
                      'episode': m.group('episode'),
                      'link': link}

@@ -117,8 +117,8 @@ class ParentFrame(wx.MDIParentFrame):
 		menubar.Append(menu, "communityBT")
 		self.SetMenuBar(menubar)
 		
-		self.CreateStatusBar(3)
-		self.SetStatusWidths([100,-1,180])
+		self.CreateStatusBar(2)
+		self.SetStatusWidths([100,-1])
 		
 		self.Bind(wx.EVT_MENU, self.OnNewTorrent, id=ID_New)
 		self.Bind(wx.EVT_MENU, self.OnExit, id=ID_Exit)
@@ -177,9 +177,9 @@ class ParentFrame(wx.MDIParentFrame):
 		# login
 		
 		try:
-			self.cBTS = Server( self.pol(policy.CBT_RPCURL) )
+			self.remote = Server( self.pol(policy.CBT_RPCURL) )
 		except Exception, e:
-			self.log.AddMsg( _('cBT server'), _("Error") + ": " + str(e), "error" )
+			self.log.AddMsg( _('Server'), _("Error") + ": " + str(e), "error" )
 		
 		thread.start_new_thread(self._remoteLogin, ())
 		#~ thread.start_new_thread(self._jabberLogin, ())
@@ -196,21 +196,28 @@ class ParentFrame(wx.MDIParentFrame):
 
 	def _remoteLogin(self):
 		try:
-			remote = self.cBTS.LoginCheck( {'login': self.pol(policy.CBT_LOGIN), 'password': self.rt.decrypt(self.pol(policy.CBT_PASSWORD)) } )
+			reply = self.remote.cbt.ServerStatus()
 			
-			if remote['status']:
-				self.log.AddMsg("cBT server", _("cBTS version %s: connected.") % remote['cbts_ver'], "info")
-				self.userid = remote['userid']
-				self.cbt_login = self.pol(policy.CBT_LOGIN)
-				self.cbt_password = self.rt.decrypt(self.pol(policy.CBT_PASSWORD))
-				self.navbar.Update("all")
-			elif not remote['status']:
-				self.navbar.Update("pub")
-				self.log.AddMsg(_('cBT server'), _("Login error."), "error")
-		except:
+			if reply['version']:
+				
+				self.log.AddMsg("Server", "communityBT server v"+reply['version'], "info")
+				
+				reply = self.remote.cbt.LoginCheck( {'login': self.pol(policy.CBT_LOGIN), 'password': self.rt.decrypt(self.pol(policy.CBT_PASSWORD)) } )
+				
+				if reply['status']:
+					self.log.AddMsg("Server", _("cBTS version %s: connected.") % reply['cbts_ver'], "info")
+					self.userid = reply['userid']
+					self.cbt_login = self.pol(policy.CBT_LOGIN)
+					self.cbt_password = self.rt.decrypt(self.pol(policy.CBT_PASSWORD))
+					self.navbar.Update("all")
+				elif not reply['status']:
+					self.navbar.Update("pub")
+					self.log.AddMsg(_('Server'), reply['msg'], "error")
+					
+		except Exception, e:
 			try:
 				self.navbar.Update("pub")
-				self.log.AddMsg(_('cBT server'), _("Connection error."), "error")
+				self.log.AddMsg(_('Server'), _("Connection error: ")+str(e), "error")
 			except:
 				pass
 
@@ -229,7 +236,8 @@ class ParentFrame(wx.MDIParentFrame):
 		try:
 			a = self.btq.m.do_bw().getreply()
 			self.status_txt = _("DL")+': '+str(a['down_rate'])+' '+_("kBps")+' / '+ _("UP") + ': ' + str(a['up_rate'])+' '+_("kBps")
-			self.SetStatusText(self.status_txt , 2)
+			#~ self.status_txt += ' seed_rate: '+str(a['seed_rate'])+' max_seed: '+str(a['max_seed'])+' down_prc: '+str(a['down_percent'])+' up_prc: '+str(a['up_percent'])+' seed_prc:'+str(a['seed_percent'])
+			self.SetStatusText(self.status_txt , 1)
 			
 			if sys.platform == 'win32':
 				self.tray.SetIcon(self.trayicon, prog_name_full+'\n'+self.status_txt)
@@ -391,15 +399,6 @@ class ParentFrame(wx.MDIParentFrame):
 		self.tray.PopupMenu(menu)
 		menu.Destroy()
 
-	#~ def CbtBw(self,line=None):
-		#~ dlspeed = 0
-		#~ ulspeed = 0
-		#~ for j in self.queue.jobs():
-			#~ data = j.get()
-			#~ dlspeed += float(data['dlspeed'].split()[0])
-			#~ ulspeed += float(data['ulspeed'].split()[0])
-		#~ return (dlspeed, 0, ulspeed, 0)
-	
 #----------------------------------------------------------------------
 
 if __name__ == '__main__':

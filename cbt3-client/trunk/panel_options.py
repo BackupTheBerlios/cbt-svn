@@ -5,6 +5,7 @@
 
 import wx, os, sys
 from wxPython.xrc import *
+import wx.lib.scrolledpanel as scrolled
 
 from images import Images
 from BitQueue import policy
@@ -59,6 +60,48 @@ class PanelOptions(wx.MDIChildFrame):
 		
 		XRCCTRL(self, "opt_lang").Insert( _("Polski"), 0 )
 		XRCCTRL(self, "opt_lang").Insert( _("English"), 1 )
+		
+		# opts groups
+		
+		opts = {
+			_("Connection settings") : {
+				1: { "name": _("Min port"), "val": policy.MIN_PORT, "type": "int"},
+				2: { "name": _("Max port"), "val": policy.MAX_PORT, "type": "int"},
+				3: { "name": _("Min peer"), "val": policy.MIN_PEER, "type": "int"},
+				4: { "name": _("Max peer"), "val": policy.MAX_PEER, "type": "int"},
+				},
+			_("Bandwidth") : {
+				1: { "name": _("Max upload rate"), "val": policy.MAX_UPLOAD_RATE, "type": "int"},
+				2: { "name": _("Max download rate"), "val": policy.MAX_DOWNLOAD_RATE, "type": "int"},
+				},
+			_("Seeding") : {
+				1: { "name": _("Minimum share ratio"), "val": policy.MIN_SHARE_RATIO, "type": "int"},
+				2: { "name": _("Maximum share ratio"), "val": policy.MAX_SHARE_RATIO, "type": "int"},
+				}
+			}
+		
+		self.opt_panel = XRCCTRL(self, "optPanel")
+		self.opt_box = scrolled.ScrolledPanel(self.opt_panel, -1, size=(435, 270), style = wx.TAB_TRAVERSAL )
+		self.opt_grid = wx.FlexGridSizer(1,2)
+		
+		for cat, subitems in opts.iteritems():
+			l = wx.StaticText(self.opt_box, -1, str(cat))
+			l.SetFont(defFontB)
+			self.opt_grid.Add( l, 0, wx.ALIGN_LEFT | wx.ALL, 5 )
+			self.opt_grid.Add( (20,20) )
+			
+			for itemid, item in subitems.iteritems():
+				l = wx.StaticText(self.opt_box, -1, str(item['name']))
+				l.SetFont(defFontN)
+				self.opt_grid.Add( l, 0, wx.ALIGN_LEFT | wx.ALL, 5 )
+				
+				if item['type'] == 'int':
+					i = wx.TextCtrl(self.opt_box, -1, value=str(self.parent.pol(item['val'])))
+					self.opt_grid.Add( i, 0, wx.ALIGN_LEFT | wx.ALL, 5 )
+
+		self.opt_box.SetSizer(self.opt_grid)
+		self.opt_box.SetAutoLayout(1)
+		self.opt_box.SetupScrolling()
 		
 		#
 

@@ -855,17 +855,9 @@
 						</object>
 						<object class="notebookpage">
 							<label>Opcje BT</label>
-							<object class="wxPanel" name="ID_PANEL9">
+                            <object class="wxPanel" name="optPanel">
 								<size>100,80</size>
 								<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
-								<object class="wxFlexGridSizer">
-									<cols>2</cols>
-									<rows>2</rows>
-									<vgap>0</vgap>
-									<hgap>0</hgap>
-									<growablecols>0,1</growablecols>
-									<growablerows>0,1</growablerows>
-								</object>
 							</object>
 						</object>
 					</object>

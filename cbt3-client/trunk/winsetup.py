@@ -48,9 +48,10 @@ setup(
 	options = {"py2exe": {"compressed": 1, "optimize": 2, "dist_dir": "../../cbt3-bin/trunk", "packages": ["encodings"]}},
 		
 	windows = [ 
-			{ "other_resources": [(RT_MANIFEST, 1, manifest_template % dict(prog="cbt"))],
-			"script": "cbt.py", 
-			"icon_resources": [(1, "data/icn_cbt.ico")] },
+			{ 'other_resources': [(RT_MANIFEST, 1, manifest_template % dict(prog="cbt"))],
+			'script': 'cbt.py', 
+			'excludes': ["pywin", "pywin.debugger", "pywin.debugger.dbgcon", "pywin.dialogs", "pywin.dialogs.list", "Tkconstants","Tkinter","tcl" ]
+			'icon_resources': [(1, "data/icn_cbt.ico")] },
 				
 			#~ { "script": "cbt_update.py",
 			  #~ "icon_resources": [(1, "data/icn_cbt1.ico")] },
@@ -69,7 +70,8 @@ setup(
 			#~ { "script": "urlqueue.py", "icon_resources": [(1, "_va/torrent.ico")] }
 		#~ ],
 
-	zipfile = "lib.pyz",
+	#~ zipfile = "lib.pyz",
+	zipfile = None,
 	
 	data_files = [
 		("", ["panels.xrc", "tpl.html", "ip2cc.db"])
