@@ -393,6 +393,19 @@ class Console:
             print '%(seeds)6s %(peers)6s %(btstatus)10s %(ratio)6s' % data,
             print '%(activity)s' % vars(j)
 
+    def do_bw(self,line=None):
+        '''Show total upload / download rates'''
+        dlspeed = 0
+        ulspeed = 0
+        for j in self.queue.jobs():
+            data = j.get()
+            dlspeed += float(data['dlspeed'].split()[0])
+            ulspeed += float(data['ulspeed'].split()[0])
+        max_dl = float(self.policy('max_download_rate'))
+        max_ul = float(self.policy('max_upload_rate'))
+        print 'Download Speed: %4s (%4s%%)' % (dlspeed, dlspeed*100/max_dl)
+        print 'Upload Speed:   %4s (%4s%%)'% (ulspeed, ulspeed*100/max_ul)
+            
     def do_spew(self,line=None):
         '''display spew of given torrent id
 Clients:

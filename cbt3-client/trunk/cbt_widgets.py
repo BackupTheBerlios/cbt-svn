@@ -20,7 +20,7 @@ class CbtNavbar(wx.ListCtrl):
 		il.Add(self.images.GetImage("nav_public"))
 		il.Add(self.images.GetImage("nav_my"))
 		il.Add(self.images.GetImage("nav_options"))
-		il
+		#~ il
 		
 		#~ self.AssignImageList(il, wx.IMAGE_LIST_NORMAL) # large icons
 		self.AssignImageList(il, wx.IMAGE_LIST_SMALL) # report

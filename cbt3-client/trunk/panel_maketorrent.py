@@ -58,6 +58,9 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		self.images = Images(".")
 		self.SetIcon(self.images.GetImage("icn_crt"))
 		
+		if not self.parent.userid:
+			self.SetSize((400,340))
+		
 		panel = wx.Panel(self, -1)
 		dt = DropTarget(self)
 		self.SetDropTarget(dt)
@@ -112,20 +115,22 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 
 		#------------------------------------------------------------
 		
-		catbox = wx.StaticBox(panel, -1, _("Additional settings") )
-		catboxer = wx.StaticBoxSizer(catbox, wx.VERTICAL)
+		if self.parent.userid:
 		
-		self.cat_list_choices = ['mp3 (ep)', 'mp3 (cd)', 'mp3 (mix)', 'video', 'nasze wypociny', 'programy', 'inne']
-		self.cat_list = wx.Choice(panel, -1, choices = self.cat_list_choices)
-		self.cat_list.SetSelection(0)
-		
-		self.upl_list_choices = [_('Do not publish this torrent'), _('Public torrent'), _('Private torrent') ]
-		self.upl_list = wx.Choice(panel, -1, choices = self.upl_list_choices)
-		self.upl_list.SetSelection(0)
-		
-		catboxer.Add(self.upl_list, 4, wx.EXPAND|wx.TOP, 4)
-		catboxer.Add(self.cat_list, 4, wx.EXPAND|wx.TOP, 4)
-		gridSizer.Add(catboxer, -1, wx.EXPAND)
+			catbox = wx.StaticBox(panel, -1, _("Additional settings") )
+			catboxer = wx.StaticBoxSizer(catbox, wx.VERTICAL)
+			
+			self.cat_list_choices = ['mp3 (ep)', 'mp3 (cd)', 'mp3 (mix)', 'video', 'nasze wypociny', 'programy', 'inne']
+			self.cat_list = wx.Choice(panel, -1, choices = self.cat_list_choices)
+			self.cat_list.SetSelection(0)
+			
+			self.upl_list_choices = [_('Do not publish this torrent'), _('Public torrent'), _('Private torrent') ]
+			self.upl_list = wx.Choice(panel, -1, choices = self.upl_list_choices)
+			self.upl_list.SetSelection(0)
+			
+			catboxer.Add(self.upl_list, 4, wx.EXPAND|wx.TOP, 4)
+			catboxer.Add(self.cat_list, 4, wx.EXPAND|wx.TOP, 4)
+			gridSizer.Add(catboxer, -1, wx.EXPAND)
 		
 		#------------------------------------------------------------
 		

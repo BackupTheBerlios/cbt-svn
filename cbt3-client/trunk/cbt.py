@@ -19,30 +19,9 @@ import wx, os.path, sys, thread
 from threading import Timer
 from images import Images
 
-from cbt_vars import *
-from cbt_widgets import *
-
-from panel_transfers import PanelTransfers
-from panel_mytorrents import PanelMyTorrents
-from panel_chat import PanelChat
-from panel_public import PanelPublic
-from panel_options import PanelOptions
-from panel_transfer_details import PanelTransferDetails
-from panel_log import PanelLog
-from panel_maketorrent import PanelMakeTorrent
-
-from BitQueue import policy
-from BitQueue.manager import Console
-from BitQueue.webservice import WebServiceServer, WebServiceRequestHandler
-from BitQueue import version as btqver
-
-from xmlrpclib import Server
-from base64 import encodestring, decodestring
-
-import rotor
-
 #
 
+from BitQueue import policy
 import gettext
 
 if sys.platform == 'win32' or not os.environ.get('HOME'):
@@ -64,6 +43,28 @@ t.install()
 _ = t.gettext
 
 #
+
+from cbt_vars import *
+from cbt_widgets import *
+
+from panel_transfers import PanelTransfers
+from panel_mytorrents import PanelMyTorrents
+from panel_chat import PanelChat
+from panel_public import PanelPublic
+from panel_options import PanelOptions
+from panel_transfer_details import PanelTransferDetails
+from panel_log import PanelLog
+from panel_maketorrent import PanelMakeTorrent
+
+from BitQueue.manager import Console
+from BitQueue.webservice import WebServiceServer, WebServiceRequestHandler
+from BitQueue import version as btqver
+from BitQueue.i18n import *
+
+from xmlrpclib import Server
+from base64 import encodestring, decodestring
+
+import rotor
 
 class ParentFrame(wx.MDIParentFrame):
 	def __init__(self):
@@ -105,6 +106,7 @@ class ParentFrame(wx.MDIParentFrame):
 		# menu
 		
 		menu = wx.Menu()
+		menu.Append(ID_New, _("&Create new torrent"))
 		menu.Append(ID_Exit, _("E&xit") )
 		
 		menubar = wx.MenuBar()
@@ -113,6 +115,7 @@ class ParentFrame(wx.MDIParentFrame):
 		
 		self.CreateStatusBar()
 		
+		self.Bind(wx.EVT_MENU, self.OnNewTorrent, id=ID_New)
 		self.Bind(wx.EVT_MENU, self.OnExit, id=ID_Exit)
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -205,7 +208,19 @@ class ParentFrame(wx.MDIParentFrame):
 			win = PanelTransferDetails(self, -1, btq=self.btq, qid=qid)
 			win.Show(True)
 			self.tdwindows[qid] = 1
-	
+
+	# new torrent
+
+	def OnNewTorrent(self, evt=None):
+		win = PanelMakeTorrent(self, -1, addtorrentfunc=self.AddCreatedTorrent)
+		win.Show(True)
+		
+	def AddCreatedTorrent(self, rsp):
+		self.btq.do_add(rsp)
+		self.log.AddMsg('BTQueue', _('Added created torrent: %s') % rsp)
+		
+	#
+
 	def OnSize(self, evt):
 		wx.LayoutAlgorithm().LayoutMDIFrame(self)
 		self.OnEraseBackground()

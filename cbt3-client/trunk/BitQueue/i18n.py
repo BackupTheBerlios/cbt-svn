@@ -1,9 +1,9 @@
-UNIT_kBps = 'kBps'
-UNIT_MB = 'MB'
+UNIT_kBps = _('kBps')
+UNIT_MB = _('MB')
 
-STATE_PAUSED = 'pauza'
-STATE_HOLDED = 'wstrzymany'
-STATE_WAITING = 'oczekuje'
-STATE_RUNNING = 'uruchomiony'
-STATE_FINISHED = 'zakonczony'
-STATE_SEEDING = 'seedowany'
+STATE_PAUSED = _('paused')
+STATE_HOLDED = _('holded')
+STATE_WAITING = _('waiting')
+STATE_RUNNING = _('running')
+STATE_FINISHED = _('finished')
+STATE_SEEDING = _('seeding')

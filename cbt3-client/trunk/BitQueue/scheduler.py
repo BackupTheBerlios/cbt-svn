@@ -221,40 +221,85 @@ class Scheduler(Thread):
         completes = []
         incompletes = []
         used_bw = 0
+        new_up_rates=[]
         for j in self.queue.get():
             j.update_scrape()
             if not j.dow:
                 continue
             if j.state == STATE_RUNNING:
                 incompletes.append(j)
-                used_bw += j.up_rate/1000
+                new_up_rates.append(j.up_rate/1000)
             if j.state == STATE_SEEDING:
                 completes.append(j)
-                used_bw += j.up_rate/1000
+                new_up_rates.append(j.up_rate/1000)
+        used_bw = sum(new_up_rates)
         all = incompletes+completes
-        avail_bw = float(self.policy(policy.MAX_UPLOAD_RATE))
-        if len(all) > 0:
-            avg_rate = avail_bw/len(all)
-#        if len(incompletes) > 0:
-#            avg_rate = avail_bw/len(incompletes)
-#        elif len(completes) > 0:
-#            avg_rate = avail_bw/len(completes)
+        max_bw = float(self.policy(policy.MAX_UPLOAD_RATE))
+        max_seed_rate = float(self.policy(policy.MAX_SEED_RATE))
+        avail_bw = max_bw - used_bw
+        active_ups = len(all)
+        new_up_rates = []
+        if used_bw == 0:
+            return
+        if avail_bw >= max_bw * 0.85 and active_ups > 1:
+            avail_avg_bw = avail_bw / active_ups
+            while avail_bw > 0.5:
+                for uj in range(active_ups):
+                    new_rate = new_up_rates[uj] + avail_avg_bw
+                    if all[uj].state == STATE_RUNNING and new_rate < 0.9 * max_bw:
+                        new_up_rates[uj] = new_rate
+                        avail_bw += -new_rate
+                    elif all[uj].state == STATE_SEEDING and new_rate < 0.9 * max_seed_rate:
+                        new_up_rates[uj] = new_rate
+                        avail_bw += -new_rate
+                    else:
+                        pass
+                    avail_avg_bw = avail_bw / active_ups
         else:
-            avg_rate = avail_bw
-#        fast = []
-        for j in all:
-#            if avail_bw <= 0:
-#                new_up_rate = 3
-#            elif j.up_rate < avg_rate and j.up_rate > 0:
-#                avail_bw -= j.up_rate
-#                new_up_rate = avg_rate
-#            else:
-#                avail_bw -= avg_rate
-#                new_up_rate = avg_rate
-            new_up_rate = avg_rate
-#            print '%s %.1f' % (j.id,new_up_rate)
-            j.dow.setUploadRate(new_up_rate)
+            for j in all:
+                if j.state == STATE_RUNNING:
+                    new_up_rates.append(max_bw)
+                else:
+                    new_up_rates.append(max_seed_rate)       
+        for j in map(None,all,new_up_rates):
+            j[0].dow.setUploadRate(j[1])
 
+    def calculate_download_rate(self):
+        '''Simple download rate adjuster.  Could be enhanced with priorities.'''
+        completes = []
+        incompletes = []
+        used_bw = 0
+        dl_rates = []
+        for j in self.queue.get():
+            j.update_scrape()
+            if not j.dow:
+                continue
+            if j.state == STATE_RUNNING:
+                incompletes.append(j)
+                dr = j.down_rate/1000
+                dl_rates.append(dr)
+        max_bw = float(self.policy(policy.MAX_DOWNLOAD_RATE))
+        active_downs=len(incompletes)
+        average_max_bw = max_bw / active_downs
+        used_bw = sum( dl_rates )
+        if used_bw == 0:
+            return
+        if len(incompletes) > 1 and used_bw >= max_bw * 0.85:
+            avail_bw = max_bw - used_bw
+            avail_avg_bw = avail_bw / active_downs
+            soft_max_perc_allowed = 0.9
+            while avail_bw > 0.5:
+                for act in range(active_downs):
+                    new_rate=dl_rates[act] + avail_avg_bw
+                    if new_rate < (soft_max_perc_allowed + (1 - soft_max_perc_allowed) / active_downs) * max_bw:
+                        dl_rates[act] = new_rate
+                        avail_bw += -avail_avg_bw
+                avail_avg_bw = avail_avg_bw / active_downs
+        else:
+            dl_rates = [max_bw] * len(incompletes)
+        for j in map(None,incompletes,dl_rates):
+                j[0].dow.setDownloadRate(j[1])
+    
     def terminate_seeding(self):
         for j in self.queue.get():
             pol = j.get_policy()
@@ -274,9 +319,10 @@ class Scheduler(Thread):
             if self.num_run >= self.policy(policy.MAX_JOB_RUN):
                 break
             self.dispatch(item)
-        #self.calculate_upload_rate()
-        for j in self.queue.get():
-            j.update_scrape()
+        self.calculate_upload_rate()
+        self.calculate_download_rate()
+        #for j in self.queue.get():
+        #    j.update_scrape()
         self.terminate_seeding()
         self.queue.save()
         self.lock.release()

@@ -15,3 +15,6 @@ if PSYCO:
 	prog_name_full = prog_name_long + " v" + prog_ver + " b" + prog_build + "-psyco"
 else:
 	prog_name_full = prog_name_long + " v" + prog_ver + " b" + prog_build
+	
+tracker_host = "tracker.umt.pl"
+tracker_port = 2710
