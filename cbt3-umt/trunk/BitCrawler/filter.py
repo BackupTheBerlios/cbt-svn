@@ -76,10 +76,11 @@ class BTListHtmlParser(HTMLParser.HTMLParser) :
             self.cur_data = ''
 
 class BaseFilter:
-    def __init__(self,interest_list=[],publisher=None):
+    def __init__(self,interest_list=[],publisher=None,preload=1):
         self.interest_list = interest_list
         self.publisher = publisher
         self.log = log.get_logger()
+        self.preload = preload
 
     def do_interest(self,interest,media):
         if interest.title:
@@ -97,14 +98,25 @@ class BaseFilter:
                 return 0
         return 1
 
-    def process(self,webfd,baseurl=''):
+    def process(self,tracker):
+        self.tracker = tracker
+        self.baseurl = tracker.url
+        self.content = ''
+        try:
+            if self.preload:
+                webfd = urlopen(self.baseurl)
         self.content = webfd.read()
-        self.baseurl = baseurl
+            media_list = self._process()
+        except Exception,why:
+            self.log.error('tracker failed: %s\n' % str(why))
+            media_list = List('MediaList')
+        return media_list
+
+    def _process(self):
+        return List('MediaList')
 
 class ListFilter(BaseFilter):
-    def process(self,webfd,baseurl=''):
-        BaseFilter.process(self,webfd,baseurl)
-
+    def _process(self):
         parser = BTListHtmlParser(baseurl)
         parser.feed(self.content)
         # mangle the link list
@@ -144,8 +156,7 @@ class BTAFilter(BaseFilter):
 
     table_item_cre = re.compile(table_item_reg,re.IGNORECASE | re.MULTILINE)
 
-    def process(self,webfd,baseurl=''):
-        BaseFilter.process(self,webfd,baseurl)
+    def _process(self):
         media_list = List('MediaList')
         m = self.table_item_cre.search(self.content)
         while m:
@@ -187,8 +198,7 @@ class BNBTFilter(BaseFilter):
 
     table_item_cre = re.compile(table_item_reg,re.IGNORECASE | re.MULTILINE)
 
-    def process(self,webfd,baseurl=''):
-        BaseFilter.process(self,webfd,baseurl)
+    def _process(self):
         media_list = List('MediaList')
         m = self.table_item_cre.search(self.content)
         while m:
@@ -227,8 +237,7 @@ class TorrentBitsFilter(BaseFilter):
                      r'\s*</tr>'
     table_item_cre = re.compile(table_item_reg,re.IGNORECASE | re.MULTILINE)
 
-    def process(self,webfd,baseurl=''):
-        BaseFilter.process(self,webfd,baseurl)
+    def _process(self):
         media_list = List('MediaList')
         m = self.table_item_cre.search(self.content)
         while m:
@@ -272,8 +281,7 @@ class InvisionBTFilter(BaseFilter):
                      r'\s*</tr>'
     table_item_cre = re.compile(table_item_reg,re.IGNORECASE | re.MULTILINE)
 
-    def process(self,webfd,baseurl=''):
-        BaseFilter.process(self,webfd,baseurl)
+    def _process(self):
         media_list = List('MediaList')
         m = self.table_item_cre.search(self.content)
         while m:
@@ -302,8 +310,7 @@ class InvisionBTFilter(BaseFilter):
         return media_list
 
 class RSSFilter(BaseFilter):
-    def process(self,webfd,baseurl=''):
-        BaseFilter.process(self,webfd,baseurl)
+    def _process(self):
         fd = StringIO(self.content)
         rss = factory.from_file(fd)
         media_list = List('MediaList')
@@ -325,6 +332,72 @@ class RSSFilter(BaseFilter):
                 if self.filter(media):
                     media_list.append(media)
 
+        return media_list
+
+class UserDefinedFilter(BaseFilter):
+    def __init__(self,interest_list=[],publisher=None):
+        BaseFilter.__init__(self,interest_list,publisher,0)
+        self.attributes = {}
+
+    def _search(self,cre):
+        m = cre.search(self.content)
+        while m:
+            for name in m.groups():
+                self.attributes[name] = m.group(name)
+            m = cre.search(self.content,
+                           m.start(0)+len(m.group(0)))
+
+    def _update_attributes(self,g,url):
+        for name in g.groupdict().keys():
+            value = g.group(name)
+            if name == 'link' or name == 'download':
+                value = urlparse.urljoin(url,value)
+            self.attributes[name] = value
+
+    def _process(self):
+        media_list = List('MediaList')
+        url_list = self.tracker.find_elements('Url')
+        for url in url_list:
+            content = url.urlopen().read()
+            filter_list = url.find_elements('Filter')
+            if len(filter_list) == 0:
+                continue
+            cre = re.compile(filter_list[0].content,re.IGNORECASE|re.MULTILINE)
+            m = cre.search(content)
+            while m:
+                self.attributes = {}
+                self._update_attributes(m,url.url)
+                for filter in filter_list[1:]:
+                    fcre = re.compile(filter.content,re.IGNORECASE|re.MULTILINE)
+                    link = self.attributes.get('link','')
+                    if not link:
+                        break
+                    temp_content = urlopen(link).read()
+                    n = fcre.search(temp_content)
+                    if not n:
+                        break
+                    self._update_attributes(n,link)
+
+                keys = self.attributes.keys()
+                if 'title' in keys and \
+                   'publisher' in keys and \
+                   'category' in keys and \
+                   'download' in keys:
+                    self.log.debug('%s %s %s\n' % \
+                                   (self.attributes['title'],
+                                    self.attributes['publisher'],
+                                    self.attributes['download']))
+                    attrs = {'title': self.attributes.get('title',''),
+                             'description': self.attributes.get('description',''),
+                             'publisher': self.attributes.get('publisher',''),
+                             'link': self.attributes.get('download',''),
+                             'type': self.attributes.get('category','')}
+                    media = GenericMedia('Media',attrs=attrs)
+                    if self.filter(media):
+                        media_list.append(media)
+
+                m = cre.search(content,
+                               m.start(0)+len(m.group(0)))
         return media_list
 
 if __name__ == '__main__' :

@@ -30,12 +30,7 @@ class TrackerLoader:
     def fetch(self):
         self.prefetch()
 
-        try :
-            web = urlopen(self.url)
-        except Exception,why:
-            self.log.error('tracker failed: %s\n' % str(why))
-            return List('MediaList')
-        media_list = self.filter.process(web,baseurl=self.url)
+        media_list = self.filter.process(self.tracker)
         for media in media_list:
             if not (is_movie(media.link) or is_torrent(media.link)) :
                 self.log.warn('link failed: link is not movie or torrent: %s\n' % str(media.link))
@@ -109,7 +104,7 @@ class MetaLoader:
 if __name__ == '__main__' :
     import sys
     from media import Tracker,Interest
-    from filter import BNBTFilter,TorrentBitsFilter,InvisionBTFilter,RSSFilter
+    from filter import BNBTFilter,TorrentBitsFilter,InvisionBTFilter,RSSFilter,UserDefinedFilter
     logger = get_logger()
 
     ilist = List('InterestList')
@@ -156,4 +151,38 @@ if __name__ == '__main__' :
                                filter)
     loader.fetch().to_element().save(sys.stdout)
 
-    test_ibbt(ilist)
+    def test_ud(ilist):
+        filter = UserDefinedFilter(ilist)
+
+        from cStringIO import StringIO
+        from element import Element
+        from media import MediaFactory,GenericMedia,List
+        fd = StringIO('''<TrackerList>
+    <Tracker publisher="th-torrent">
+        <Url name="login" url="http://forums.btthai.com/" method="post">
+            <Param name="UserName" value="%(user)s"/>
+            <Param name="PassWord" value="%(password)s"/>
+            <Param name="act" value="Login"/>
+            <Param name="CODE" value="01"/>
+            <Param name="CookieDate" value="1"/>
+        </Url>
+        <Url name="catalog" url="http://forums.btthai.com/" method="get">
+            <Param name="act" value="bt"/>
+            <Param name="func" value="browse"/>
+            <Filter name="main"><![CDATA[<tr>\s*<td class="[^"]+" align="center"><img src="style_images/[^/]+/cat_(?P<category>[^\.]+).[^<]+" border="0" alt="[^"]+" width="\d+" height="\d+"/></td>\s*<td class="[^"]+" align="left"><a href="(?P<link>[^"]+)">(?P<title>[^<]+)</a></td>\s*<td class="[^"]+" align="right">(?P<files>\d+)</td>\s*<td class="[^"]+" align="center">[^<]+</td>\s*<td class="[^"]+" align="center" nowrap>(?P<date>[^<]+(<br/>| )[^<]*)</td>\s*<td class="[^"]+" align="center">[^<]+</td>\s*<td class="[^"]+" align="center">\d+</td>\s*<td class="[^"]+" align="right">\d+</td>\s*<td class="[^"]+" align="right">\d+</td>\s*<td class="[^"]+" align="center"><a href="[^"]+">(?P<publisher>[^<]+)</a></td>\s*</tr>]]></Filter>
+            <Filter name="detail"><![CDATA[<tr><td align="left" class='pformleft'>Name</td><td class='pformright'><a href="index.php\?showtopic=\d+">(?P<description>[^<]+)</a></td></tr>\s*<tr><td align="left" class='pformleft'>Info Hash</td><td class='pformright'>[^<]+</td></tr>\s*<tr><td align="left" class='pformleft'>Download</td><td class='pformright'><a href="(?P<download>[^\?]+\?act=bt&func=download&id=\d+)">[^<]+</a></td></tr>]]></Filter>
+        </Url>
+        <Url name="logout" url="http://th-torrent.mine.nu/"/>
+    </Tracker>
+</TrackerList>''' % {'user': user,
+                     'password': passwd})
+        element = Element()
+        element.load(fd)
+        factory = MediaFactory(GenericMedia,List)
+        tlist = factory.from_element(element)
+        fd.close()
+
+        loader = TrackerLoader(tlist[0],filter)
+        loader.fetch().to_element().save(sys.stdout)
+
+    test_ud(ilist)

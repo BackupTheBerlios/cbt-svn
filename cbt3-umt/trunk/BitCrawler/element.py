@@ -3,6 +3,7 @@ Media database
 '''
 from xml.sax import parse, saxutils
 from xml.sax.handler import ContentHandler
+from xml.sax.saxlib import LexicalHandler
 import string
 
 class Element:
@@ -40,12 +41,16 @@ class Element:
                 out = open(file, 'w')
             else :
                 out = file
-            handler = saxutils.XMLGenerator(out)
+            handler = saxutils.LexicalXMLGenerator(out)
             handler.startDocument()
 
         handler.ignorableWhitespace(prefix)
         handler.startElement(self.tag, self.attrs)
+        if self.content.find('<') >= 0 or self.content.find('>') >= 0:
+            handler.startCDATA()
         handler.characters(self.content)
+        if self.content.find('<') >= 0 or self.content.find('>') >= 0:
+            handler.endCDATA()
         if self.children:
             handler.ignorableWhitespace('\n')
             for node in self.children :
@@ -73,11 +78,12 @@ class Element:
         except IOError :
             pass
 
-class ElementContentHandler(ContentHandler) :
+class ElementContentHandler(ContentHandler,LexicalHandler) :
     def __init__(self) :
         self.root = None
         self.current = None
         self.data = ''
+        self.in_cdata = 0
         self.stack = []
 
         self.push = self.stack.append
@@ -86,6 +92,13 @@ class ElementContentHandler(ContentHandler) :
     def add(self,obj):
         if len(self.stack) > 0 and self.stack[-1]:
             self.stack[-1].add(obj)
+
+    def startCDATA(self):
+        self.in_cdata = 1
+        self.data = ''
+
+    def endCDATA(self):
+        self.in_cdata = 0
 
     def startElement(self, tag, attrs={}) :
         self.push(self.current)
@@ -101,6 +114,7 @@ class ElementContentHandler(ContentHandler) :
     def endElement(self, tag) :
         self.current.set_content(self.data.strip())
         self.current = self.pop()
+        self.data = ''
 
     def characters(self,content,*args):
         self.data += content
@@ -155,11 +169,15 @@ if __name__ == '__main__' :
     mlist2 = MediaList()
     mlist2.load('out')
     '''
-    import sys
+    test = '''
     mlist = Element('MediaList')
     mlist.add(Element('Media',{'title': 'Gundam Seed', 'episode': '47', 'publisher': 'ShinSub', 'date': '2003-09-10'}))
     mlist.add(Element('Media',{'title': 'Last Exile', 'episode': '22', 'publisher': 'inf & af', 'date': '2003-09-10'}))
     mlist.add(Element('Media',{'title': ' Onegai Twins', 'episode': '7', 'publisher': 'a-keep & a-e', 'date': '2003-09-10'}))
+    '''
+    mlist = Element('MediaList')
+    mlist.add(Element('Media',{'title': 'Gundam Seed', 'episode': '47', 'publisher': 'ShinSub', 'date': '2003-09-10'},content='<table></table>'))
+    import sys
     from cStringIO import StringIO
     fp = StringIO()
     mlist.save(fp)

@@ -1,6 +1,7 @@
 from UserList import UserList
 import copy,re
 import socket,urllib2
+from urllib import urlencode
 import os
 
 from BitQueue import timeoutsocket
@@ -243,13 +244,40 @@ class Series(GenericMedia):
             idx = idx + 1
         return eplist[0] > eplist[1]
 
-class Tracker(Generic):
+class Tracker(List):
     BASE_ATTRIBUTES = {'url': STRING,
                        'loader': STRING,
                        'filter': STRING,
                        'publisher': STRING,
                        'user': STRING,
                        'password': STRING}
+
+class Url(List):
+    BASE_ATTRIBUTES = {'name': STRING,
+                       'url': STRING,
+                       'user': STRING,
+                       'password': STRING,
+                       'method': STRING}
+
+    def urlopen(self,url=None):
+        url = url or self.url
+        method = self.method or 'get'
+        data = {}
+        params = self.find_elements('Param')
+        for param in params:
+            data[param.name] = param.value
+        return urlopen(self.url,
+                       data=urlencode(data),
+                       user=self.user,
+                       passwd=self.password,
+                       method=method)
+
+class Param(List):
+    BASE_ATTRIBUTES = {'name': STRING,
+                       'value': STRING}
+
+class Filter(Generic):
+    BASE_ATTRIBUTES = {'name': STRING}
 
 class Interest(Generic):
     BASE_ATTRIBUTES = {'attribute': STRING,
@@ -333,6 +361,9 @@ factory = MediaFactory(GenericMedia,List)
 factory.register('Series',Series)
 factory.register('Anime',Series)
 factory.register('Tracker',Tracker)
+factory.register('Url',Url)
+factory.register('Param',Param)
+factory.register('Filter',Filter)
 factory.register('Interest',Interest)
 factory.register('InterestSet',InterestSet)
 factory.register('rss',rssRSS)
@@ -359,13 +390,23 @@ if __name__ == '__main__':
     mlist.to_element().save(sys.stdout)
 
     fd = StringIO('''<TrackerList>
-    <Tracker url="http://th-torrent.mine.nu/">
+    <Tracker publisher="th-torrent">
+        <Url name="login" url="http://th-torrent.mine.nu/" method="post">
+            <Param name="user" value="sugree"/>
+            <Param name="password" value="xxxx"/>
+        </Url>
+        <Url name="catalog" url="http://th-torrent.mine.nu/">
+            <Filter name="main"><![CDATA[<tr>\s*<td class="[^"]+" align="center"><img src="style_images/[^/]+/cat_(?P<category>[^\.]+).[^<]+" border="0" alt="[^"]+" width="\d+" height="\d+"/></td>\s*<td class="[^"]+" align="left"><a href="(?P<link>[^"]+)">(?P<title>[^<]+)</a></td>\s*<td class="[^"]+" align="right">(?P<files>\d+)</td>\s*<td class="[^"]+" align="center">[^<]+</td>\s*<td class="[^"]+" align="center" nowrap>(?P<date>[^<]+(<br/>| )[^<]*)</td>\s*<td class="[^"]+" align="center">[^<]+</td>\s*<td class="[^"]+" align="center">\d+</td>\s*<td class="[^"]+" align="right">\d+</td>\s*<td class="[^"]+" align="right">\d+</td>\s*<td class="[^"]+" align="center"><a href="[^"]+">(?P<publisher>[^<]+)</a></td>\s*</tr>]]></Filter>
+            <Filter name="detail"><![CDATA[<a href="(?P<download>[^\?]+\?act=bt&func=download&id=\d+)">]]></Filter>
+        </Url>
+        <Url name="logout" url="http://th-torrent.mine.nu/"/>
     </Tracker>
 </TrackerList>''')
     element.load(fd)
     tlist = factory.from_element(element)
     fd.close()
     tlist.to_element().save(sys.stdout)
+    sys.exit()
 
     mlist = List('InterestList')
     mlist.append(Interest(attrs={'attribute': 'publisher',
