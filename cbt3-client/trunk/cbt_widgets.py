@@ -48,7 +48,7 @@ class CbtNavbar(wx.ListCtrl):
 		
 		for item in self.items:
 			if (show=="pub" and item[2]=="pub") or (show=="all"):
-				self.InsertImageStringItem(imID, item[0], imID)
+				self.InsertImageStringItem(imID, item[0], item[1])
 				self.SetItemData(imID, item[1])
 				imID = imID + 1
 		
