@@ -1,0 +1,382 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: Thu Sep 09 23:47:21 2004\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: cbt.py:108
+msgid "E&xit"
+msgstr ""
+
+#: cbt.py:163 cbt.py:190 cbt.py:194 panel_options.py:92
+msgid "cBT server"
+msgstr ""
+
+#: cbt.py:163 panel_maketorrent.py:171 panel_maketorrent.py:256
+#: panel_maketorrent.py:326 panel_maketorrent.py:333 panel_options.py:92
+msgid "Error"
+msgstr ""
+
+#: cbt.py:183
+msgid "cBTS version %s: connected."
+msgstr ""
+
+#: cbt.py:190
+msgid "Login error."
+msgstr ""
+
+#: cbt.py:194
+msgid "Connection error."
+msgstr ""
+
+#: cbt.py:298
+msgid "based on "
+msgstr ""
+
+#: cbt.py:344
+msgid "Show main window"
+msgstr ""
+
+#: cbt.py:345 panel_maketorrent.py:136 panel_maketorrent.py:255
+msgid "Close"
+msgstr ""
+
+#: cbt.py:388
+msgid "Unknown"
+msgstr ""
+
+#: cbt.py:532
+msgid "Another instance is already running."
+msgstr ""
+
+#: cbt_widgets.py:36 panel_chat.py:13
+msgid "Chat"
+msgstr ""
+
+#: cbt_widgets.py:36 panel_mytorrents.py:14
+msgid "My torrents"
+msgstr ""
+
+#: cbt_widgets.py:36 panel_options.py:16 panel_options.py:116
+msgid "Options"
+msgstr ""
+
+#: cbt_widgets.py:36 panel_public.py:15
+msgid "Public torrents"
+msgstr ""
+
+#: cbt_widgets.py:36 panel_transfers.py:14
+msgid "Transfers"
+msgstr ""
+
+#: panel_log.py:14
+msgid "Program log"
+msgstr ""
+
+#: panel_log.py:18 panel_public.py:33
+msgid "Date"
+msgstr ""
+
+#: panel_log.py:19
+msgid "Module"
+msgstr ""
+
+#: panel_log.py:20
+msgid "Message"
+msgstr ""
+
+#: panel_maketorrent.py:53
+msgid "New torrent"
+msgstr ""
+
+#: panel_maketorrent.py:71
+msgid "Source file or directory (select or drag'n'drop here)"
+msgstr ""
+
+#: panel_maketorrent.py:73
+msgid "Tracker URL"
+msgstr ""
+
+#: panel_maketorrent.py:75
+msgid "Comment (optional)"
+msgstr ""
+
+#: panel_maketorrent.py:77
+msgid "Piece size"
+msgstr ""
+
+#: panel_maketorrent.py:81
+msgid "Create from file"
+msgstr ""
+
+#: panel_maketorrent.py:85
+msgid "Create from directory"
+msgstr ""
+
+#: panel_maketorrent.py:116
+msgid "Additional settings"
+msgstr ""
+
+#: panel_maketorrent.py:123
+msgid "Do not publish this torrent"
+msgstr ""
+
+#: panel_maketorrent.py:123
+msgid "Private torrent"
+msgstr ""
+
+#: panel_maketorrent.py:123
+msgid "Public torrent"
+msgstr ""
+
+#: panel_maketorrent.py:134
+msgid "Continue"
+msgstr ""
+
+#: panel_maketorrent.py:154
+msgid "Choose file"
+msgstr ""
+
+#: panel_maketorrent.py:162 panel_options.py:156
+msgid "Choose directory"
+msgstr ""
+
+#: panel_maketorrent.py:171
+msgid "You didn't choose any file or directory."
+msgstr ""
+
+#: panel_maketorrent.py:207
+msgid "Creating torrent"
+msgstr ""
+
+#: panel_maketorrent.py:213
+msgid "Checking file size"
+msgstr ""
+
+#: panel_maketorrent.py:218 panel_options.py:56
+msgid "Cancel"
+msgstr ""
+
+#: panel_maketorrent.py:250 panel_maketorrent.py:288
+msgid "Done!"
+msgstr ""
+
+#: panel_maketorrent.py:252
+msgid "Upload torrent"
+msgstr ""
+
+#: panel_maketorrent.py:254
+msgid "Error!"
+msgstr ""
+
+#: panel_maketorrent.py:274
+msgid "Building"
+msgstr ""
+
+#: panel_maketorrent.py:324
+msgid "Torrent upload finished."
+msgstr ""
+
+#: panel_mytorrents.py:34
+msgid "Added created torrent: %s"
+msgstr ""
+
+#: panel_options.py:40
+msgid "Base options"
+msgstr ""
+
+#: panel_options.py:41
+msgid "Engine options"
+msgstr ""
+
+#: panel_options.py:43
+msgid "Community settings:"
+msgstr ""
+
+#: panel_options.py:44
+msgid "GUI settings:"
+msgstr ""
+
+#: panel_options.py:45
+msgid "Paths:"
+msgstr ""
+
+#: panel_options.py:47
+msgid "Login:"
+msgstr ""
+
+#: panel_options.py:48
+msgid "Password:"
+msgstr ""
+
+#: panel_options.py:49
+msgid "URL:"
+msgstr ""
+
+#: panel_options.py:50
+msgid "Download dir:"
+msgstr ""
+
+#: panel_options.py:51
+msgid "Torrents dir:"
+msgstr ""
+
+#: panel_options.py:52
+msgid "Language:"
+msgstr ""
+
+#: panel_options.py:53
+msgid "Show splash screen"
+msgstr ""
+
+#: panel_options.py:55
+msgid "Apply"
+msgstr ""
+
+#: panel_options.py:58
+msgid "Polski"
+msgstr ""
+
+#: panel_options.py:59
+msgid "English"
+msgstr ""
+
+#: panel_options.py:95
+msgid "Information"
+msgstr ""
+
+#: panel_options.py:95
+msgid "Please restart cBT for applying your language preferences."
+msgstr ""
+
+#: panel_options.py:116
+msgid "Saved."
+msgstr ""
+
+#: panel_public.py:34 panel_transfers.py:52
+msgid "Title"
+msgstr ""
+
+#: panel_public.py:35
+msgid "Size"
+msgstr ""
+
+#: panel_public.py:36 panel_transfers.py:58
+msgid "Seeds"
+msgstr ""
+
+#: panel_public.py:37 panel_transfers.py:59
+msgid "Peers"
+msgstr ""
+
+#: panel_public.py:38 panel_transfer_details.py:55
+msgid "Downloaded"
+msgstr ""
+
+#: panel_public.py:39
+msgid "Uploader"
+msgstr ""
+
+#: panel_public.py:78
+msgid "Torrents"
+msgstr ""
+
+#: panel_transfer_details.py:53
+msgid "IP / Nick"
+msgstr ""
+
+#: panel_transfer_details.py:54
+msgid "% done"
+msgstr ""
+
+#: panel_transfer_details.py:56
+msgid "Sent"
+msgstr ""
+
+#: panel_transfer_details.py:57 panel_transfers.py:57
+msgid "UP Spd"
+msgstr ""
+
+#: panel_transfer_details.py:58 panel_transfers.py:56
+msgid "DL Spd"
+msgstr ""
+
+#: panel_transfer_details.py:59
+msgid "Client"
+msgstr ""
+
+#: panel_transfer_details.py:60
+msgid "Netname"
+msgstr ""
+
+#: panel_transfer_details.py:66
+msgid "File"
+msgstr ""
+
+#: panel_transfer_details.py:67 panel_transfers.py:54
+msgid "Progress"
+msgstr ""
+
+#: panel_transfers.py:43
+msgid "Resume"
+msgstr ""
+
+#: panel_transfers.py:44
+msgid "Pause"
+msgstr ""
+
+#: panel_transfers.py:45
+msgid "Remove"
+msgstr ""
+
+#: panel_transfers.py:46
+msgid "Details"
+msgstr ""
+
+#: panel_transfers.py:48
+msgid "Add URL"
+msgstr ""
+
+#: panel_transfers.py:53
+msgid "State"
+msgstr ""
+
+#: panel_transfers.py:55
+msgid "ETA"
+msgstr ""
+
+#: panel_transfers.py:60
+msgid "Ratio"
+msgstr ""
+
+#: panel_transfers.py:61
+msgid "Last message"
+msgstr ""
+
+#: panel_transfers.py:85
+msgid "Resumed: %s"
+msgstr ""
+
+#: panel_transfers.py:93
+msgid "Paused: %s"
+msgstr ""
+
+#: panel_transfers.py:101
+msgid "Removed: %s"
+msgstr ""
+
+#: panel_transfers.py:108
+msgid "Added URL: %s"
+msgstr ""
+
