@@ -102,8 +102,6 @@ class ParentFrame(wx.MDIParentFrame):
 		self.btq.webservice = WebServiceServer(WebServiceRequestHandler, self.btq.queue)
 		self.btq.webservice.start()
 		
-		self.cBTS = Server(rpc_url)
-		
 		# menu
 		
 		menu = wx.Menu()
@@ -159,6 +157,11 @@ class ParentFrame(wx.MDIParentFrame):
 			
 		# login
 		
+		try:
+			self.cBTS = Server( self.pol(policy.CBT_RPCURL) )
+		except Exception, e:
+			self.log.AddMsg( _('cBT server'), _("Error") + ": " + str(e), "error" )
+		
 		thread.start_new_thread(self._remoteLogin, ())
 		#~ thread.start_new_thread(self._jabberLogin, ())
 
@@ -184,11 +187,11 @@ class ParentFrame(wx.MDIParentFrame):
 				self.navbar.Update("all")
 			elif not remote['status']:
 				self.navbar.Update("pub")
-				self.log.AddMsg("cBT server", _("Login error."), "error")
+				self.log.AddMsg(_('cBT server'), _("Login error."), "error")
 		except:
 			try:
 				self.navbar.Update("pub")
-				self.log.AddMsg("cBT server", _("Connection error."), "error")
+				self.log.AddMsg(_('cBT server'), _("Connection error."), "error")
 			except:
 				pass
 

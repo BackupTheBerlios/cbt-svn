@@ -8,6 +8,7 @@ from wxPython.xrc import *
 
 from images import Images
 from BitQueue import policy
+from xmlrpclib import Server
 import rotor, thread
 
 class PanelOptions(wx.MDIChildFrame):
@@ -78,16 +79,22 @@ class PanelOptions(wx.MDIChildFrame):
 		
 	def OnSave(self, evt):
 		
-		if self.opt_login.GetValue() != self.deflogin or self.opt_password.GetValue() != self.defpasswd:
+		if self.opt_login.GetValue() != self.deflogin or self.opt_password.GetValue() != self.defpasswd or self.defrpcurl != self.opt_rpcurl.GetValue():
 			self.parent.pol.update(policy.CBT_LOGIN, self.opt_login.GetValue())
 			self.parent.pol.update(policy.CBT_PASSWORD, self.rt.encrypt(self.opt_password.GetValue()) )
-			thread.start_new_thread(self.parent._remoteLogin, ())
-			#~ thread.start_new_thread(self.parent._jabberLogin, ())
+			self.parent.pol.update(policy.CBT_RPCURL, self.opt_rpcurl.GetValue())
+			
+			try:
+				self.parent.cBTS = Server( self.opt_rpcurl.GetValue() )
+				thread.start_new_thread(self.parent._remoteLogin, ())
+				#~ thread.start_new_thread(self.parent._jabberLogin, ())
+			except Exception, e:
+				self.parent.log.AddMsg( _('cBT server'), _('Error') + ": " + str(e), "error" )
+			
 		self.parent.pol.update(policy.DEST_PATH, self.opt_destdir.GetValue())
 		self.parent.pol.update(policy.TORRENT_PATH, self.opt_torrentdir.GetValue())
 		self.parent.pol.update(policy.CBT_SHOWSPLASH, self.opt_splash.GetValue())
-		self.parent.pol.update(policy.CBT_RPCURL, self.opt_rpcurl.GetValue())
-
+		
 		lang = self.opt_lang.GetSelection()
 		
 		if lang == 0:
@@ -108,6 +115,7 @@ class PanelOptions(wx.MDIChildFrame):
 	def SetDefaults(self):
 		self.deflogin = self.parent.pol(policy.CBT_LOGIN)
 		self.defpasswd = self.rt.decrypt(self.parent.pol(policy.CBT_PASSWORD))
+		self.defrpcurl = self.parent.pol(policy.CBT_RPCURL)
 		self.opt_login.SetValue(self.parent.pol(policy.CBT_LOGIN))
 		self.opt_password.SetValue(self.rt.decrypt(self.parent.pol(policy.CBT_PASSWORD)))
 		self.opt_rpcurl.SetValue(self.parent.pol(policy.CBT_RPCURL))
