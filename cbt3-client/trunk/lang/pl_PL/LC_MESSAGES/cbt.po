@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: communityBT\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2004-09-09 12:06+0100\n"
+"PO-Revision-Date: 2004-09-18 06:48+0100\n"
 "Last-Translator: vvarp <vvarp@aster.pl>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -10,57 +10,115 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Polish\n"
 
-#: cbt.py:108
+#: BitQueue\i18n.py:1
+msgid "kBps"
+msgstr ""
+
+#: BitQueue\i18n.py:2
+msgid "MB"
+msgstr ""
+
+#: BitQueue\i18n.py:4
+#: panel_transfers.py:143
+msgid "paused"
+msgstr "pauza"
+
+#: BitQueue\i18n.py:5
+msgid "holded"
+msgstr "wstrzymany"
+
+#: BitQueue\i18n.py:6
+#: panel_transfers.py:151
+msgid "waiting"
+msgstr "oczekuje"
+
+#: BitQueue\i18n.py:7
+#: panel_transfers.py:149
+msgid "running"
+msgstr "uruchomiony"
+
+#: BitQueue\i18n.py:8
+#: panel_transfers.py:145
+msgid "finished"
+msgstr "zakoñczony"
+
+#: BitQueue\i18n.py:9
+#: panel_transfers.py:147
+msgid "seeding"
+msgstr "seedowany"
+
+#: BitQueue\launchmanycore.py:284
+msgid "stopped"
+msgstr "zatrzymany"
+
+#: BitQueue\launchmanycore.py:286
+msgid "waiting for hash check"
+msgstr "Oczekiwanie na weryfikacjê hash'a"
+
+#: BitQueue\launchmanycore.py:310
+msgid "connecting to peers"
+msgstr "£¹czenie z peerami"
+
+#: cbt.py:109
+msgid "&Create new torrent"
+msgstr "&Utwórz nowego torrenta"
+
+#: cbt.py:110
 msgid "E&xit"
 msgstr "&Wyjœcie"
 
-#: cbt.py:163
-#: cbt.py:190
-#: cbt.py:194
+#: cbt.py:166
+#: cbt.py:193
+#: cbt.py:197
 #: panel_options.py:92
 msgid "cBT server"
 msgstr "cBT serwer"
 
-#: cbt.py:163
-#: panel_maketorrent.py:171
-#: panel_maketorrent.py:256
-#: panel_maketorrent.py:326
-#: panel_maketorrent.py:333
+#: cbt.py:166
+#: panel_maketorrent.py:175
+#: panel_maketorrent.py:264
+#: panel_maketorrent.py:334
+#: panel_maketorrent.py:341
 #: panel_options.py:92
 msgid "Error"
 msgstr "B³¹d"
 
-#: cbt.py:183
+#: cbt.py:186
 msgid "cBTS version %s: connected."
 msgstr "cBTS wersja %s: po³¹czono."
 
-#: cbt.py:190
+#: cbt.py:193
 msgid "Login error."
 msgstr "B³¹d w trakcie logowania."
 
-#: cbt.py:194
+#: cbt.py:197
 msgid "Connection error."
 msgstr "B³¹d w trakcie próby po³¹czenia."
 
-#: cbt.py:298
+#: cbt.py:220
+#: panel_mytorrents.py:34
+msgid "Added created torrent: %s"
+msgstr "Dodano utworzonego torrenta: %s"
+
+#: cbt.py:313
 msgid "based on "
 msgstr "bazowany na "
 
-#: cbt.py:344
+#: cbt.py:359
 msgid "Show main window"
 msgstr "Poka¿ okno g³ówne"
 
-#: cbt.py:345
-#: panel_maketorrent.py:136
-#: panel_maketorrent.py:255
+#: cbt.py:360
+#: panel_maketorrent.py:140
+#: panel_maketorrent.py:263
 msgid "Close"
 msgstr "Zamknij"
 
-#: cbt.py:388
+#: cbt.py:403
 msgid "Unknown"
 msgstr "Nieznany"
 
-#: cbt.py:532
+#: cbt.py:547
 msgid "Another instance is already running."
 msgstr "Inna instancja programu jest ju¿ uruchomiona."
 
@@ -107,104 +165,100 @@ msgstr "Modu³"
 msgid "Message"
 msgstr "Wiadomoœæ"
 
-#: panel_maketorrent.py:53
+#: panel_maketorrent.py:52
 msgid "New torrent"
 msgstr "Nowy torrent"
 
-#: panel_maketorrent.py:71
+#: panel_maketorrent.py:73
 msgid "Source file or directory (select or drag'n'drop here)"
 msgstr "Plik lub katalog Ÿród³owy (wybierz lub przeci¹gnij i upuœæ tutaj)"
 
-#: panel_maketorrent.py:73
+#: panel_maketorrent.py:75
 msgid "Tracker URL"
 msgstr "URL Trackera"
 
-#: panel_maketorrent.py:75
+#: panel_maketorrent.py:77
 msgid "Comment (optional)"
 msgstr "Komentarz (opcjonalnie)"
 
-#: panel_maketorrent.py:77
+#: panel_maketorrent.py:79
 msgid "Piece size"
 msgstr "Rozmiar czêœci"
 
-#: panel_maketorrent.py:81
+#: panel_maketorrent.py:83
 msgid "Create from file"
 msgstr "Utwórz z pliku"
 
-#: panel_maketorrent.py:85
+#: panel_maketorrent.py:87
 msgid "Create from directory"
 msgstr "Utwórz z katalogu"
 
-#: panel_maketorrent.py:116
+#: panel_maketorrent.py:120
 msgid "Additional settings"
 msgstr "Ustawienia dodatkowe"
 
-#: panel_maketorrent.py:123
+#: panel_maketorrent.py:127
 msgid "Do not publish this torrent"
 msgstr "Nie publikuj torrenta"
 
-#: panel_maketorrent.py:123
+#: panel_maketorrent.py:127
 msgid "Private torrent"
 msgstr "Torrent prywatny"
 
-#: panel_maketorrent.py:123
+#: panel_maketorrent.py:127
 msgid "Public torrent"
 msgstr "Torrent publiczny"
 
-#: panel_maketorrent.py:134
+#: panel_maketorrent.py:138
 msgid "Continue"
 msgstr "Kontynuuj"
 
-#: panel_maketorrent.py:154
+#: panel_maketorrent.py:158
 msgid "Choose file"
 msgstr "Wybierz plik"
 
-#: panel_maketorrent.py:162
+#: panel_maketorrent.py:166
 #: panel_options.py:156
 msgid "Choose directory"
 msgstr "Wybierz katalog"
 
-#: panel_maketorrent.py:171
+#: panel_maketorrent.py:175
 msgid "You didn't choose any file or directory."
 msgstr "Nie wybra³eœ ¿adnego pliku lub katalogu."
 
-#: panel_maketorrent.py:207
+#: panel_maketorrent.py:215
 msgid "Creating torrent"
 msgstr "Tworzenie torrenta"
 
-#: panel_maketorrent.py:213
+#: panel_maketorrent.py:221
 msgid "Checking file size"
 msgstr "Sprawdzam rozmiar pliku"
 
-#: panel_maketorrent.py:218
+#: panel_maketorrent.py:226
 #: panel_options.py:56
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: panel_maketorrent.py:250
-#: panel_maketorrent.py:288
+#: panel_maketorrent.py:258
+#: panel_maketorrent.py:296
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: panel_maketorrent.py:252
+#: panel_maketorrent.py:260
 msgid "Upload torrent"
 msgstr "Uploaduj torrenta"
 
-#: panel_maketorrent.py:254
+#: panel_maketorrent.py:262
 msgid "Error!"
 msgstr "B³¹d!"
 
-#: panel_maketorrent.py:274
+#: panel_maketorrent.py:282
 msgid "Building"
 msgstr "Tworzenie"
 
-#: panel_maketorrent.py:324
+#: panel_maketorrent.py:332
 msgid "Torrent upload finished."
 msgstr "Uploadowano torrenta."
-
-#: panel_mytorrents.py:34
-msgid "Added created torrent: %s"
-msgstr "Dodano utworzonego torrenta: %s"
 
 #: panel_options.py:40
 msgid "Base options"
@@ -279,7 +333,7 @@ msgid "Saved."
 msgstr "Zapisano."
 
 #: panel_public.py:34
-#: panel_transfers.py:52
+#: panel_transfers.py:61
 msgid "Title"
 msgstr "Tytu³"
 
@@ -288,17 +342,17 @@ msgid "Size"
 msgstr "Rozmiar"
 
 #: panel_public.py:36
-#: panel_transfers.py:58
+#: panel_transfers.py:67
 msgid "Seeds"
 msgstr "Seeds"
 
 #: panel_public.py:37
-#: panel_transfers.py:59
+#: panel_transfers.py:68
 msgid "Peers"
 msgstr "Peers"
 
 #: panel_public.py:38
-#: panel_transfer_details.py:55
+#: panel_transfer_details.py:62
 msgid "Downloaded"
 msgstr "Pobrane"
 
@@ -310,94 +364,110 @@ msgstr "Uploader"
 msgid "Torrents"
 msgstr "Torrenty"
 
-#: panel_transfer_details.py:53
+#: panel_transfer_details.py:39
+msgid "Torrent details"
+msgstr "Szczegó³y"
+
+#: panel_transfer_details.py:40
+msgid "Parts"
+msgstr "Czêœci"
+
+#: panel_transfer_details.py:41
+msgid "Connections"
+msgstr "Po³¹czenia"
+
+#: panel_transfer_details.py:42
+msgid "Files"
+msgstr "Pliki"
+
+#: panel_transfer_details.py:60
 msgid "IP / Nick"
 msgstr "IP / Nick"
 
-#: panel_transfer_details.py:54
+#: panel_transfer_details.py:61
 msgid "% done"
 msgstr "Posiada"
 
-#: panel_transfer_details.py:56
+#: panel_transfer_details.py:63
 msgid "Sent"
 msgstr "Wys³ane"
 
-#: panel_transfer_details.py:57
-#: panel_transfers.py:57
+#: panel_transfer_details.py:64
+#: panel_transfers.py:66
 msgid "UP Spd"
 msgstr "UP Spd"
 
-#: panel_transfer_details.py:58
-#: panel_transfers.py:56
+#: panel_transfer_details.py:65
+#: panel_transfers.py:65
 msgid "DL Spd"
 msgstr "DL Spd"
 
-#: panel_transfer_details.py:59
+#: panel_transfer_details.py:66
 msgid "Client"
 msgstr "Klient"
 
-#: panel_transfer_details.py:60
+#: panel_transfer_details.py:67
 msgid "Netname"
 msgstr "Sieæ"
 
-#: panel_transfer_details.py:66
+#: panel_transfer_details.py:73
 msgid "File"
 msgstr "Plik"
 
-#: panel_transfer_details.py:67
-#: panel_transfers.py:54
+#: panel_transfer_details.py:74
+#: panel_transfers.py:63
 msgid "Progress"
 msgstr "Postêp"
 
-#: panel_transfers.py:43
+#: panel_transfers.py:52
 msgid "Resume"
 msgstr "Wznów"
 
-#: panel_transfers.py:44
+#: panel_transfers.py:53
 msgid "Pause"
 msgstr "Pauza"
 
-#: panel_transfers.py:45
+#: panel_transfers.py:54
 msgid "Remove"
 msgstr "Usuñ"
 
-#: panel_transfers.py:46
+#: panel_transfers.py:55
 msgid "Details"
 msgstr "Szczegó³y"
 
-#: panel_transfers.py:48
+#: panel_transfers.py:57
 msgid "Add URL"
 msgstr "Dodaj URL"
 
-#: panel_transfers.py:53
+#: panel_transfers.py:62
 msgid "State"
 msgstr "Status"
 
-#: panel_transfers.py:55
+#: panel_transfers.py:64
 msgid "ETA"
 msgstr "Pozosta³o"
 
-#: panel_transfers.py:60
+#: panel_transfers.py:69
 msgid "Ratio"
 msgstr "Ratio"
 
-#: panel_transfers.py:61
+#: panel_transfers.py:70
 msgid "Last message"
 msgstr "Ostatnia informacja"
 
-#: panel_transfers.py:85
+#: panel_transfers.py:94
 msgid "Resumed: %s"
 msgstr "Wznowienie: %s"
 
-#: panel_transfers.py:93
+#: panel_transfers.py:102
 msgid "Paused: %s"
 msgstr "Pauza: %s"
 
-#: panel_transfers.py:101
+#: panel_transfers.py:110
 msgid "Removed: %s"
 msgstr "Usuniêto: %s"
 
-#: panel_transfers.py:108
+#: panel_transfers.py:117
 msgid "Added URL: %s"
 msgstr "Dodano URL: %s"
 

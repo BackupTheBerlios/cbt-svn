@@ -10,6 +10,7 @@ from images import Images
 from BitQueue import policy
 from xmlrpclib import Server
 import rotor, thread
+from cbt_func import *
 
 class PanelOptions(wx.MDIChildFrame):
 	def __init__(self, parent, id):
@@ -39,6 +40,7 @@ class PanelOptions(wx.MDIChildFrame):
 		
 		XRCCTRL(self, "opt_notebook").SetPageText( 0, _("Base options") )
 		XRCCTRL(self, "opt_notebook").SetPageText( 1, _("Engine options") )
+		XRCCTRL(self, "opt_notebook").SetFont(defFontB)
 		
 		XRCCTRL(self, "opt_box1").SetLabel( _("Community settings:") )
 		XRCCTRL(self, "opt_box2").SetLabel( _("GUI settings:") )

@@ -25,6 +25,15 @@ class PanelTransfers(wx.MDIChildFrame):
 		self.url = XRCCTRL(self, "textDLURL")
 		#~ self.list.SetWindowStyleFlag(wx.LC_REPORT | wx.LC_VRULES | wx.LC_SINGLE_SEL | wx.FIXED_MINSIZE )
 		self.list.SetFont(defFontN)
+		
+		self.il = wx.ImageList(16, 16)
+		self.il.Add(self.images.GetImage("l_play"))
+		self.il.Add(self.images.GetImage("l_pause"))
+		self.il.Add(self.images.GetImage("l_seed"))
+		self.il.Add(self.images.GetImage("l_queue"))
+		self.il.Add(self.images.GetImage("l_finished"))
+		
+		self.list.AssignImageList(self.il, wx.IMAGE_LIST_SMALL)
 
 		self.Activate()
 		
@@ -125,17 +134,29 @@ class PanelTransfers(wx.MDIChildFrame):
 			else:
 				for d in data:
 					self.ListItem(lst, d, id=int(d['id']), mode="update")
-		except:
+		except Exception, e:
+			print str(e)
 			pass
 
 	def ListItem(self, lst, d, id=None, mode=None):
 		
+		if d['btstatus'] == _('paused'):
+			icon = 1
+		elif d['btstatus'] == _('finished'):
+			icon = 4
+		elif d['btstatus'] == _('seeding'):
+			icon = 2
+		elif d['btstatus'] == _('running'):
+			icon = 0
+		elif d['btstatus'] == _('waiting'):
+			icon = 3
+		
 		if mode=="add":
 			item_idx = lst.GetItemCount()
-			lst.InsertStringItem(item_idx, d['title'])
+			lst.InsertImageStringItem(item_idx, d['title'], icon)
 		elif mode=="update":
 			item_idx = lst.FindItemData(-1, id)
-			lst.SetStringItem(item_idx, 0, d['title'])
+			lst.SetStringItem(item_idx, 0, d['title'], icon)
 		
 		lst.SetStringItem(item_idx, 1, d['btstatus'])
 		lst.SetStringItem(item_idx, 2, d['progress'])

@@ -23,6 +23,8 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		self.xrc.LoadPanel(self, "panelTD")
 		self.SetIcon(self.images.GetImage("icn_info"))
 		
+		self.note1 = XRCCTRL(self, "note1")
+		self.note1.SetFont(defFontB)
 		self.listconn = XRCCTRL(self, "listconn")
 		self.listconn.SetFont(defFontN)
 		self.listfile = XRCCTRL(self, "listfiles")
@@ -33,6 +35,11 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		self.htmlParts.SetBorders(2)
 		self.htmlStats.SetBorders(2)
 		self.tcount = 99
+		
+		self.note1.SetPageText( 0, _("Torrent details") )
+		self.note1.SetPageText( 1, _("Parts") )
+		self.note1.SetPageText( 2, _("Connections") )
+		self.note1.SetPageText( 3, _("Files") )
 
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.Bind(wx.EVT_LEFT_DOWN, self.OnClose, id = XRCID("htmlStats"))

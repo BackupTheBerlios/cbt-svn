@@ -281,9 +281,9 @@ class LaunchManyThread(Thread):
             spew = None
             s = None
             if d.is_dead():
-                status = 'stopped'
+                status = _('stopped')
             elif d.waiting:
-                status = 'waiting for hash check'
+                status = _('waiting for hash check')
             elif d.checking:
                 status = d.status_msg
                 progress = d.status_done
@@ -307,7 +307,7 @@ class LaunchManyThread(Thread):
                         status = ''
                     else:
                         t = -1
-                        status = 'connecting to peers'
+                        status = _('connecting to peers')
                     progress = stats['frac']
 #                    progress = '%.1f%%' % (int(stats['frac']*1000)/10.0)
 #                    seeds = s.numSeeds

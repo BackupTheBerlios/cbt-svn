@@ -425,52 +425,48 @@
                     <flag>wxGROW|wxALL</flag>
                     <border>2</border>
                     <option>7</option>
-                    <object class="wxNotebook" name="ID_NOTEBOOK">
+                    <object class="wxNotebook" name="note1">
                         <size>200,200</size>
                         <style></style>
                         <usenotebooksizer>0</usenotebooksizer>
                         <object class="notebookpage">
-                            <label>Informacje o torrencie</label>
-                            <object class="wxPanel" name="ID_PANEL4">
+                            <label>Stats</label>
+                            <object class="wxPanel" name="ID_PANEL8">
                                 <size>100,80</size>
-                                    <font>
-                                        <size>8</size>
-                                        <family>swiss</family>
-                                        <style>normal</style>
-                                        <weight>bold</weight>
-                                        <underlined>0</underlined>
-                                        <face>Tahoma</face>
-                                    </font>
                                 <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
                                 <object class="wxBoxSizer">
-                                    <orient>wxVERTICAL</orient>
+                                    <orient>wxHORIZONTAL</orient>
+                                    <object class="sizeritem">
+                                        <flag>wxGROW|wxALL|wxFIXED_MINSIZE</flag>
+                                        <border>5</border>
+                                        <option>1</option>
+                                        <object class="wxHtmlWindow" name="htmlStats">
+                                            <size>200,150</size>
+                                            <style>wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER</style>
+                                            <bg>#FFFFFF</bg>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                        <object class="notebookpage">
+                            <label>Parts</label>
+                            <object class="wxPanel" name="ID_PANEL11">
+                                <size>100,80</size>
+                                <style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+                                <object class="wxBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
                                     <object class="sizeritem">
                                         <flag>wxGROW|wxALL</flag>
                                         <border>5</border>
                                         <option>1</option>
-                                        <object class="wxNotebook" name="ID_NOTEBOOK2">
-                                            <size>200,200</size>
-                                            <style>wxNB_FIXEDWIDTH</style>
-                                            <usenotebooksizer>0</usenotebooksizer>
-                                            <object class="notebookpage">
-                                                <label>Stats</label>
-                                            <object class="wxHtmlWindow" name="htmlStats">
-                                                    <size>200,150</size>
-                                                <style>wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER</style>
-                                                    <bg>#FFFFFF</bg>
-                                                </object>
-                                            </object>
-                                            <object class="notebookpage">
-                                                <label>Parts</label>
-                                            <object class="wxHtmlWindow" name="htmlParts">
-                                                    <size>200,150</size>
-                                                <style>wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER</style>
-                                                    <bg>#FFFFFF</bg>
-                                                </object>
-                                            </object>
+                                        <object class="wxHtmlWindow" name="htmlParts">
+                                            <size>200,150</size>
+                                            <style>wxHW_SCROLLBAR_AUTO|wxSIMPLE_BORDER</style>
+                                            <bg>#FFFFFF</bg>
                                         </object>
                                     </object>
-                                    </object>
+                                </object>
                             </object>
                         </object>
                         <object class="notebookpage">
@@ -685,16 +681,16 @@
                                                                     <value></value>
                                                                 </object>
                                                             </object>
-												</object>
-											</object>
-										</object>
-									</object>
-                                    <object class="sizeritem">
-                                        <flag>wxGROW|wxGROW|wxALL</flag>
-                                        <border>5</border>
-                                        <option>1</option>
+                                                        </object>
+                                                    </object>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <flag>wxGROW|wxGROW|wxALL</flag>
+                                                <border>5</border>
+                                                <option>1</option>
                                                 <object class="wxStaticBoxSizer" name="opt_box2">
-                                            <orient>wxVERTICAL</orient>
+                                                    <orient>wxVERTICAL</orient>
                                                     <label>:</label>
                                                     <object class="sizeritem">
                                                         <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
@@ -727,7 +723,7 @@
                                                                 <object class="wxStaticText" name="wxID_STATIC">
                                                                     <size>-1,-1</size>
                                                                     <style></style>
-                                                                    <label> </label>
+                                                                    <label></label>
                                                                 </object>
                                                             </object>
                                                             <object class="sizeritem">
