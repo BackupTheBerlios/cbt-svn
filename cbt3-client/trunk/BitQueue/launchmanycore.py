@@ -215,9 +215,10 @@ class LaunchManyThread(Thread):
                 self.failed("Couldn't listen - " + str(e))
                 return
 
-        self.ratelimiter = RateLimiter(self.rawserver.add_task,
-                                       config['upload_unit_size'])
-        self.ratelimiter.set_upload_rate(config['max_upload_rate'])
+        #self.ratelimiter = RateLimiter(self.rawserver.add_task,
+        #                               config['upload_unit_size'])
+        #self.ratelimiter.set_upload_rate(config['max_upload_rate'])
+        self.ratelimiter = None
 
         self.handler = MultiHandler(self.rawserver, self.doneflag)
         seed(createPeerID())
@@ -408,15 +409,17 @@ class LaunchManyThread(Thread):
 
     def set_upload_rate(self,rate,item=None):
         if not item:
-            self.ratelimiter.set_upload_rate(rate)
+            pass
+            #self.ratelimiter.set_upload_rate(rate)
         else:
             item.dow.setUploadRate(rate)
 
     def set_download_rate(self,rate,item=None):
         if not item:
-            for hash in self.torrent_list:
-                item = self.downloads[hash]
-                item.dow.setDownloadRate(rate)
+            pass
+            #for hash in self.torrent_list:
+            #    item = self.downloads[hash]
+            #    item.dow.setDownloadRate(rate)
         else:
             item.dow.setDownloadRate(rate)
 

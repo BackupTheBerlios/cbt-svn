@@ -235,22 +235,34 @@ class Scheduler(Thread):
         completes = []
         incompletes = []
         used_bw = 0
-        new_up_rates=[]
+        new_up_rates = []
+        upload_rates = []
+        seed_rates = []
+        used_upload_bw = 0
+        used_seed_bw = 0
         for j in self.queue.get():
             # duplicate with download rate
             #j.update_scrape()
-            if not j.dow or not hasattr(j.dow,'downloader'):
+            if not j.dow or not hasattr(j.dow.d,'downloader'):
                 continue
             if j.state == STATE_RUNNING:
                 incompletes.append(j)
                 new_up_rates.append(j.up_rate/1000)
+                upload_rates.append(j.up_rate/1000)
             if j.state == STATE_SEEDING:
                 completes.append(j)
                 new_up_rates.append(j.up_rate/1000)
+                seed_rates.append(j.up_rate/1000)
         used_bw = sum(new_up_rates)
+        used_upload_bw = sum(upload_rates)
+        used_seed_bw = sum(seed_rates)
+
         all = incompletes+completes
+
         max_bw = float(self.policy(policy.MAX_UPLOAD_RATE))
         max_seed_rate = float(self.policy(policy.MAX_SEED_RATE))
+        max_bw -= min(max_seed_rate,used_seed_bw)
+
         avail_bw = max_bw - used_bw
         active_ups = len(all)
         new_up_rates = []
@@ -271,11 +283,14 @@ class Scheduler(Thread):
                         pass
                     avail_avg_bw = avail_bw / active_ups
         else:
+            avg_up_rate = max_bw/max(1,len(incompletes))
+            avg_seed_rate = max_seed_rate/max(1,len(completes))
+            new_up_rates = []
             for j in all:
                 if j.state == STATE_RUNNING:
-                    new_up_rates.append(max_bw)
+                    new_up_rates.append(avg_up_rate)
                 else:
-                    new_up_rates.append(max_seed_rate)       
+                    new_up_rates.append(avg_seed_rate)       
         for j in map(None,all,new_up_rates):
             j[0].dow.setUploadRate(j[1])
 
@@ -288,7 +303,7 @@ class Scheduler(Thread):
         for j in self.queue.get():
             # duplicate with upload rate
             #j.update_scrape()
-            if not j.dow or not hasattr(j.dow,'downloader'):
+            if not j.dow or not hasattr(j.dow.d,'downloader'):
                 continue
             if j.state == STATE_RUNNING:
                 incompletes.append(j)
@@ -296,10 +311,10 @@ class Scheduler(Thread):
                 dl_rates.append(dr)
         max_bw = min(float(self.policy(policy.MAX_DOWNLOAD_RATE)),1000000)
         active_downs=len(incompletes)
-        average_max_bw = max_bw / active_downs
         used_bw = sum( dl_rates )
         if used_bw == 0:
             return
+        average_max_bw = max_bw / active_downs
         if len(incompletes) > 1 and used_bw >= max_bw * 0.85:
             avail_bw = max_bw - used_bw
             avail_avg_bw = avail_bw / active_downs
@@ -312,18 +327,53 @@ class Scheduler(Thread):
                         avail_bw += -avail_avg_bw
                 avail_avg_bw = avail_avg_bw / active_downs
         else:
-            dl_rates = [max_bw] * len(incompletes)
+            dl_rates = [average_max_bw] * len(incompletes)
         for j in map(None,incompletes,dl_rates):
                 j[0].dow.setDownloadRate(j[1])
     
     def terminate_seeding(self):
+        now = time.time()
         for j in self.queue.get():
             pol = j.get_policy()
             if pol(policy.USE_LOCAL_POLICY):
                 min_share_ratio = pol(policy.MIN_SHARE_RATIO)
+                max_share_ratio = pol(policy.MAX_SHARE_RATIO)
+                min_seed_time = pol(policy.MIN_SEED_TIME)
+                max_seed_time = pol(policy.MAX_SEED_TIME)
+                min_seeder = pol(policy.MIN_SEEDER)
+                max_seeder = pol(policy.MAX_SEEDER)
+                min_peer_ratio = pol(policy.MIN_PEER_RATIO)
+                max_peer_ratio = pol(policy.MAX_PEER_RATIO)
             else:
                 min_share_ratio = self.policy(policy.MIN_SHARE_RATIO)
-            if j.state == STATE_SEEDING and j.share_ratio > min_share_ratio:
+                max_share_ratio = self.policy(policy.MAX_SHARE_RATIO)
+                min_seed_time = self.policy(policy.MIN_SEED_TIME)
+                max_seed_time = self.policy(policy.MAX_SEED_TIME)
+                min_seeder = self.policy(policy.MIN_SEEDER)
+                max_seeder = self.policy(policy.MAX_SEEDER)
+                min_peer_ratio = self.policy(policy.MIN_PEER_RATIO)
+                max_peer_ratio = self.policy(policy.MAX_PEER_RATIO)
+            seed_time = now-j.finished_time
+
+            try:
+                seeder = int(j.currentseed)
+            except ValueError:
+                seeder = 0
+
+            try:
+                peer_ratio = seeder/int(j.currentpeer)
+            except (ValueError,ZeroDivisionError):
+                peer_ratio = max_peer_ratio
+
+            if j.state == STATE_SEEDING and \
+               j.share_ratio >= min_share_ratio and \
+               seed_time >= min_seed_time and \
+               seeder >= min_seeder and \
+               peer_ratio >= min_peer_ratio and \
+               (j.share_ratio >= max_share_ratio or \
+                seed_time >= max_share_ratio or \
+                seeder >= max_seeder or \
+                peer_ratio >= max_peer_ratio):
                 self.pause(j)
 
     def schedule(self):
@@ -338,11 +388,12 @@ class Scheduler(Thread):
         # we are using global upload rate
         # modify launchmanycore before enable this feature
         try:
-            if 0:
-                self.calculate_upload_rate()
+            self.calculate_upload_rate()
             self.calculate_download_rate()
         except Exception,why:
-            pass
+            import traceback
+            traceback.print_exc()
+            print why
         for j in self.queue.get():
             j.update_scrape()
         self.terminate_seeding()

@@ -32,7 +32,16 @@ MAX_DOWNLOAD_RATE = 'max_download_rate'
 MAX_SEED_RATE = 'max_seed_rate'
 DEST_PATH = 'dest_path'
 TORRENT_PATH = 'torrent_path'
+
 MIN_SHARE_RATIO = 'min_share_ratio'
+MAX_SHARE_RATIO = 'max_share_ratio'
+MIN_SEED_TIME = 'min_seed_time'
+MAX_SEED_TIME = 'max_seed_time'
+MIN_SEEDER = 'min_seeder'
+MAX_SEEDER = 'max_seeder'
+MIN_PEER_RATIO = 'min_peer_ratio'
+MAX_PEER_RATIO = 'max_peer_ratio'
+
 LOG_UNKNOWN_ID = 'log_unknown_id'
 IGNORE_WAITING_MEDIA = 'ignore_waiting_media'
 ALLOW_ACL = 'allow_acl'
@@ -190,6 +199,13 @@ class ACL(AccessControl):
 class EntryPolicy:
     def __init__(self,conf=None,section=None):
         self.params = {MIN_SHARE_RATIO: 1.0,
+                       MAX_SHARE_RATIO: 2.0,
+                       MIN_SEED_TIME: 0,
+                       MAX_SEED_TIME: 86400,
+                       MIN_SEEDER: 0,
+                       MAX_SEEDER: 4,
+                       MIN_PEER_RATIO: 0,
+                       MAX_PEER_RATIO: 4,
                        USE_LOCAL_POLICY: 0,
                       }
         pol = get_policy()
@@ -269,6 +285,13 @@ class Policy:
                        MAX_DOWNLOAD_RATE: 0,
                        MAX_SEED_RATE: 10,
                        MIN_SHARE_RATIO: 1.25,
+                       MAX_SHARE_RATIO: 2.0,
+                       MIN_SEED_TIME: 0,
+                       MAX_SEED_TIME: 86400,
+                       MIN_SEEDER: 0,
+                       MAX_SEEDER: 4,
+                       MIN_PEER_RATIO: 0,
+                       MAX_PEER_RATIO: 4,
                        DEST_PATH: os.path.join(default_path,'incoming'),
                        TORRENT_PATH: os.path.join(default_path,'torrent'),
                        IGNORE_WAITING_MEDIA: 0,

@@ -96,9 +96,11 @@ class Console:
             timeoutsocket.setDefaultSocketTimeout(self.policy(key))
             del timeoutsocket
         elif key == policy.MAX_UPLOAD_RATE:
-            self.controller.set_upload_rate(self.policy(key))
+            self.queue.calculate_upload_rate()
+            #self.controller.set_upload_rate(self.policy(key))
         elif key == policy.MAX_DOWNLOAD_RATE:
-            self.controller.set_download_rate(self.policy(key))
+            self.queue.calculate_download_rate()
+            #self.controller.set_download_rate(self.policy(key))
         elif key == policy.ALLOW_ACL:
             self.allow_acl = policy.ACL(self.policy(key),self.ipdb)
         elif key == policy.DENY_ACL:
