@@ -68,7 +68,7 @@ import rotor
 
 class ParentFrame(wx.MDIParentFrame):
 	def __init__(self):
-		wx.MDIParentFrame.__init__(self, None, -1, prog_name_full, size=(760,580), style = wx.DEFAULT_FRAME_STYLE)
+		wx.MDIParentFrame.__init__(self, None, -1, prog_name_full, size=(770,590), style = wx.DEFAULT_FRAME_STYLE)
 		
 		ID_New  = wx.NewId()
 		ID_Exit = wx.NewId()
@@ -141,11 +141,6 @@ class ParentFrame(wx.MDIParentFrame):
 		self.log.Show(True)
 		self.log.SetSize((500,320))
 		
-		# timers
-		
-		self.timer1 = wx.PyTimer(self.OnTimer1)
-		self.timer1.Start(3500)
-
 		# tray
 		
 		if (sys.platform == 'win32'):
@@ -163,7 +158,13 @@ class ParentFrame(wx.MDIParentFrame):
 			wx.EVT_TASKBAR_RIGHT_UP(self.tray, self.onTaskBarMenu)
 			wx.EVT_MENU(self.tray, self.TBMENU_RESTORE, self.onTaskBarActivate)
 			wx.EVT_MENU(self.tray, self.TBMENU_CLOSE, self.OnClose)
-			
+
+		# timers
+		
+		self.timer1 = wx.PyTimer(self.OnTimer1)
+		self.timer1.Start(1500)
+		self.OnTimer1()
+
 		# login
 		
 		try:
@@ -217,7 +218,11 @@ class ParentFrame(wx.MDIParentFrame):
 
 	def OnTimer1(self, evt=None):
 		a = self.btq.CbtBw()
-		self.SetStatusText( _("DL Speed")+': '+str(a[0])+' / '+ _("UP Speed") + ': ' + str(a[2]) , 2)
+		self.status_txt = _("DL")+': '+str(a[0])+' '+_("kBps")+' / '+ _("UP") + ': ' + str(a[2])+' '+_("kBps")
+		self.SetStatusText(self.status_txt , 2)
+		
+		if sys.platform == 'win32':
+			self.tray.SetIcon(self.trayicon, prog_name_full+'\n'+self.status_txt)
 
 	# new torrent
 
@@ -241,7 +246,7 @@ class ParentFrame(wx.MDIParentFrame):
 	def OnClose(self, evt):
 		self.btq.do_quit()
 		
-		if (sys.platform == 'win32'):
+		if sys.platform == 'win32':
 			del self.tray
 
 		self.Destroy()
@@ -366,6 +371,9 @@ class ParentFrame(wx.MDIParentFrame):
 
 	def onTaskBarMenu(self, evt):
 		menu = wx.Menu()
+		menu.SetTitle(prog_name_full)
+		menu.Append(wx.NewId(), self.status_txt)
+		menu.AppendSeparator()
 		menu.Append(self.TBMENU_RESTORE, _("Show main window"))
 		menu.Append(self.TBMENU_CLOSE,   _("Close"))
 		self.tray.PopupMenu(menu)

@@ -27,6 +27,13 @@ class PanelTransfers(wx.MDIChildFrame):
 		self.btq = btq
 		self.parent = parent
 		
+		self.TRESUME = wx.NewId()
+		self.TPAUSE = wx.NewId()
+		self.TREMOVE = wx.NewId()
+		self.TSSEED = wx.NewId()
+		self.TDETAILS = wx.NewId()
+		self.TANNOUNCE = wx.NewId()
+		
 		dt = DropTarget(self, btq=btq)
 		self.SetDropTarget(dt)
 		
@@ -60,6 +67,14 @@ class PanelTransfers(wx.MDIChildFrame):
 		self.Bind(wx.EVT_BUTTON, self.OnDisplayDetails, id=XRCID("btnDlDetails"))
 		
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnDisplayDetails, id=XRCID("listDL"))
+		self.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnRightClick, id=XRCID("listDL"))
+		
+		self.Bind(wx.EVT_MENU, self.OnQueueResume, id=self.TRESUME)
+		self.Bind(wx.EVT_MENU, self.OnQueuePause, id=self.TPAUSE)
+		self.Bind(wx.EVT_MENU, self.OnQueueRemove, id=self.TREMOVE)
+		self.Bind(wx.EVT_MENU, self.OnDisplayDetails, id=self.TDETAILS)
+		self.Bind(wx.EVT_MENU, self.OnQueueSuperSeed, id=self.TSSEED)
+		self.Bind(wx.EVT_MENU, self.OnQueueReannounce, id=self.TANNOUNCE)
 		
 		# gettext
 		
@@ -72,16 +87,16 @@ class PanelTransfers(wx.MDIChildFrame):
 				
 		# cols
 		
-		cols = [ [0, _("Title"), wx.LIST_FORMAT_LEFT, 200],
-				 [1, _("State"), wx.LIST_FORMAT_LEFT, 80],
-				 [2, _("Progress"), wx.LIST_FORMAT_LEFT, 80],
-				 [3, _("ETA"), wx.LIST_FORMAT_LEFT, 80],
-				 [4, _("DL Spd"), wx.LIST_FORMAT_LEFT, 60],
-				 [5, _("UP Spd"), wx.LIST_FORMAT_LEFT, 60],
+		cols = [ [0, _("Title"), wx.LIST_FORMAT_LEFT, 210],
+				 [1, _("Size"), wx.LIST_FORMAT_LEFT, 65],
+				 [2, _("Progress"), wx.LIST_FORMAT_LEFT, 60],
+				 [3, _("ETA"), wx.LIST_FORMAT_LEFT, 70],
+				 [4, _("DL Spd"), wx.LIST_FORMAT_LEFT, 50],
+				 [5, _("UP Spd"), wx.LIST_FORMAT_LEFT, 50],
 				 [6, _("Seeds"), wx.LIST_FORMAT_LEFT, 48],
 				 [7, _("Peers"), wx.LIST_FORMAT_LEFT, 48],
-				 [8, _("Ratio"), wx.LIST_FORMAT_LEFT, 50],
-				 [9, _("Last message"), wx.LIST_FORMAT_LEFT, 100]
+				 [8, _("Ratio"), wx.LIST_FORMAT_LEFT, 54],
+				 [9, _("Last message"), wx.LIST_FORMAT_LEFT, 140]
 				 ]
 				 
 		InsertColumns(self.list, cols)
@@ -92,13 +107,42 @@ class PanelTransfers(wx.MDIChildFrame):
 		self.timer1 = wx.PyTimer(self.UpdateList)
 		self.timer1.Start(1500)
 		
+	def OnRightClick(self, evt):
+		id = self.list.GetFirstSelected()
+		if id > -1:
+			menu = wx.Menu()
+			menu.Append(self.TRESUME, _("Resume"))
+			menu.Append(self.TPAUSE, _("Pause"))
+			menu.Append(self.TREMOVE, _("Remove"))
+			menu.AppendSeparator()
+			menu.Append(self.TANNOUNCE, _("Reask tracker"))
+			menu.Append(self.TSSEED, _("Super-seed"))
+			menu.AppendSeparator()
+			menu.Append(self.TDETAILS, _("Details"))
+			self.list.PopupMenu(menu)
+			menu.Destroy()
+		
 	def OnDisplayDetails(self, evt):
 		id = self.list.GetFirstSelected()
 		
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
 			self.parent.OnTransferDisplayDetails(qid=qid)
+
+	def OnQueueSuperSeed(self, evt):
+		id = self.list.GetFirstSelected()
 		
+		if id > -1:
+			qid = str ( self.list.GetItemData(id) )
+			self.btq.do_superseed(qid)
+
+	def OnQueueReannounce(self, evt):
+		id = self.list.GetFirstSelected()
+		
+		if id > -1:
+			qid = str ( self.list.GetItemData(id) )
+			self.btq.do_reannounce(qid)
+
 	def OnQueueResume(self, evt):
 		id = self.list.GetFirstSelected()
 		
@@ -172,7 +216,7 @@ class PanelTransfers(wx.MDIChildFrame):
 			item_idx = lst.FindItemData(-1, id)
 			lst.SetStringItem(item_idx, 0, d['title'], icon)
 		
-		lst.SetStringItem(item_idx, 1, d['btstatus'])
+		lst.SetStringItem(item_idx, 1, d['totalsize']+_('MB'))
 		lst.SetStringItem(item_idx, 2, d['progress'])
 		lst.SetStringItem(item_idx, 3, d['eta'])
 		lst.SetStringItem(item_idx, 4, d['dlspeed'])

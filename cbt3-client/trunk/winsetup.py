@@ -43,7 +43,7 @@ RT_MANIFEST = 24
 
 setup(
 
-	name='communityBT_UMT',
+	name='communityBT',
 	
 	options = {"py2exe": {"compressed": 1, "optimize": 2, "dist_dir": "../../cbt3-bin/trunk", "packages": ["encodings"]}},
 		
@@ -52,8 +52,8 @@ setup(
 			"script": "cbt.py", 
 			"icon_resources": [(1, "data/icn_cbt.ico")] },
 				
-			{ "script": "cbt_update.py",
-			  "icon_resources": [(1, "data/icn_cbt1.ico")] },
+			#~ { "script": "cbt_update.py",
+			  #~ "icon_resources": [(1, "data/icn_cbt1.ico")] },
 
 			#~ { "other_resources": [(RT_MANIFEST, 1, manifest_template % dict(prog="cbt"))],
 			#~ "script": "cbt_options.py", 
@@ -72,7 +72,7 @@ setup(
 	zipfile = "lib.pyz",
 	
 	data_files = [
-		("", ["panels.xrc", "tpl1.html", "tpl2.html", "ip2cc.db"])
+		("", ["panels.xrc", "tpl.html", "ip2cc.db"])
 	]
 	
 	#~ data_files=[
