@@ -16,7 +16,6 @@ from base64 import encodestring, decodestring
 
 from BitQueue import policy
 from images import Images
-import Pyro.core
 from cbt_vars import *
 import string
 
@@ -317,7 +316,7 @@ class CompleteDir(PanelMakeTorrent):
 		p = policy.get_policy()
 
 		try:
-			cBTS = Pyro.core.getProxyForURI(pyroloc)
+			cBTS = Server( p(policy.CBT_RPCURL) )
 			status = cBTS.TorrentUpload(p(policy.CBT_LOGIN), p(policy.CBT_PASSWORD), {'tdata': a, 'tname':rsp, 'type': flag, 'hash': infohash, 'cat': cls}, self.userid )
 
 			if status['status']:
