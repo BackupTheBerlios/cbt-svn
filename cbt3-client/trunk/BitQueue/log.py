@@ -5,6 +5,9 @@ import policy
 progname = os.path.basename(sys.argv[0])
 logger = None
 
+FINEST = 7
+FINER = 6
+FINE = 5
 DEBUG = 4
 VERBOSE = 3
 INFO = 2
@@ -34,6 +37,18 @@ class Logger:
                 fd.close()
             except Exception,why:
                 pass
+
+    def fine(self,msg):
+        self._log(FINE,msg)
+        print msg
+
+    def finer(self,msg):
+        self._log(FINER,msg)
+        print msg
+
+    def finest(self,msg):
+        self._log(FINEST,msg)
+        print msg
 
     def verbose(self,msg):
         self._log(VERBOSE,msg)

@@ -309,6 +309,8 @@ class Scheduler(Thread):
                     if j.is_active() and j.new_up_rate > avg_bw:
                         j.change_up_rate(-step)
                         avail_bw -= step
+                    elif not j.is_active():
+                        j.change_up_rate(+avail_bw)
                 if saved_bw == avail_bw:
                     avg_bw -= step
 
@@ -329,6 +331,8 @@ class Scheduler(Thread):
                     if j.is_active() and j.new_up_rate > avg_bw:
                         j.change_up_rate(-step)
                         avail_bw -= step
+                    elif not j.is_active():
+                        j.change_up_rate(+avail_bw)
                 if saved_bw == avail_bw:
                     avg_bw -= step
 
@@ -352,7 +356,7 @@ class Scheduler(Thread):
                 incompletes.append(j)
                 dr = j.down_rate/1000
                 dl_rates.append(dr)
-        max_bw = min(float(self.policy(policy.MAX_DOWNLOAD_RATE)),1000000)
+        max_bw = float(self.policy(policy.MAX_DOWNLOAD_RATE)) or 1000000
         active_downs=len(incompletes)
         used_bw = sum( dl_rates )
         if used_bw == 0:

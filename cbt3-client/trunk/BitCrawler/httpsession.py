@@ -24,7 +24,7 @@ try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
 __author__ = 'Steve Purcell'
-__version__ = '$Revision: 1.1 $'[11:-2]
+__version__ = '$Revision: 1.2 $'[11:-2]
 __email__ = 'stephen_purcell@yahoo.com'
 
 ##############################################################################
@@ -164,6 +164,13 @@ class HTTPRequest:
     def query_string(self):
         return param_list_to_query_string(self.query_params)
 
+    def add_header(self, key, value):
+        self._extra_headers.append((key,value))
+
+    def add_headers(self, dict):
+        for key, value in dict.items():
+            self.add_header((key,value))
+
     def add_query_param(self, key, value):
         self.query_params.append((key,value))
 
@@ -274,7 +281,7 @@ class PostMultipartRequest(PostRequest):
 
 class HTTPSession:
     def __init__(self, use_cookies=1, debug_level=0):
-        self.cookies = Cookie.SmartCookie()
+        self.cookies = Cookie.SimpleCookie()
         self.use_cookies = use_cookies
         self.debug_level = debug_level
         self.standard_headers = []
@@ -295,7 +302,7 @@ class HTTPSession:
 
     def add_cookie(self, server, header):
         header = string.strip(header)
-        new_cookies = Cookie.SmartCookie()
+        new_cookies = Cookie.SimpleCookie()
         new_cookies.load(header)
         for cookie in new_cookies.values():
             if not cookie.get('domain', None):

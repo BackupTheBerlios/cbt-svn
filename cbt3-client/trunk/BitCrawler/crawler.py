@@ -43,7 +43,8 @@ class XMLWrapper:
         fd.close()
 
 class Crawler:
-    def __init__(self):
+    def __init__(self,test_mode=0):
+        self.test_mode = test_mode
         self.tracker_list = XMLWrapper(cpolicy.TRACKER_FILE,
                                        tag='TrackerList')
         self.interest_list = XMLWrapper(cpolicy.INTEREST_FILE,
@@ -77,6 +78,9 @@ class Crawler:
             self.process_tracker(tracker)
 
         for media in self.wait_list:
+            if self.test_mode:
+                print media
+                continue
             if self.submit(media):
                 self.submitted_list.append(media)
             else:
@@ -108,9 +112,10 @@ class Crawler:
         pass
 
     def postprocess(self):
-        #self.tracker_list.save()
-        self.failed_list.save()
-        self.submitted_list.save()
+        if not self.test_mode:
+            #self.tracker_list.save()
+            self.failed_list.save()
+            self.submitted_list.save()
 
 if __name__ == '__main__':
     c = Crawler()

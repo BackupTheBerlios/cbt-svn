@@ -102,7 +102,7 @@ class Generic:
     def newer(self,other):
         return cmp(self,other) == 0
 
-    def fetch(self):
+    def fetch(self,referer=None):
         if self.exists():
             try:
                 bdecode(open(self.filename(),'rb').read())
@@ -112,7 +112,7 @@ class Generic:
                 pass
 
         try:
-            web = urlopen(self.link)
+            web = urlopen(self.link,referer=referer)
             meta = web.read()
         except Exception,why:
             self.log.error('torrent failed: %s\n' % str(why))
@@ -182,6 +182,12 @@ class MediaFactory:
         self.known_media = {}
         self.default_media_class = default_media_class
         self.default_list_class = default_list_class
+
+    def create(self,media_name,tag,attrs={},content=''):
+        media_class = self.known_media.get(media_name,None)
+        if not media_class:
+            return None
+        return media_class(tag=tag,attrs=attrs,content=content)
 
     def register(self,media_name,media_class):
         self.known_media[media_name] = media_class
@@ -256,7 +262,9 @@ class Tracker(List):
                        'filter': STRING,
                        'publisher': STRING,
                        'user': STRING,
-                       'password': STRING}
+                       'password': STRING,
+                       'media': STRING,
+                       'tag': STRING}
 
 class Url(List):
     BASE_ATTRIBUTES = {'name': STRING,
@@ -265,7 +273,7 @@ class Url(List):
                        'password': STRING,
                        'method': STRING}
 
-    def urlopen(self,url=None):
+    def urlopen(self,url=None,referer=None):
         url = url or self.url
         method = self.method or 'get'
         data = {}
@@ -276,7 +284,8 @@ class Url(List):
                        data=urlencode(data),
                        user=self.user,
                        passwd=self.password,
-                       method=method)
+                       method=method,
+                       referer=referer)
 
 class Param(List):
     BASE_ATTRIBUTES = {'name': STRING,
@@ -364,6 +373,7 @@ class rssEnclosure(List):
                        'type': STRING}
 
 factory = MediaFactory(GenericMedia,List)
+factory.register('GenericMedia',GenericMedia)
 factory.register('Series',Series)
 factory.register('Anime',Series)
 factory.register('Tracker',Tracker)

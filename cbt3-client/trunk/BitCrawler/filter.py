@@ -18,6 +18,7 @@ from aurllib import urlopen
 from BitQueue import timeoutsocket,log
 from media import List,GenericMedia,Series,factory
 from misc import is_movie,is_torrent
+import misc
 
 link_re = re.compile(r'(?P<title>.*[_\-. ]+)(ep|episode)?(?P<episode>\d+)[\[\(_\-. ]+.*', re.IGNORECASE | re.DOTALL)
 content_dispo_re = re.compile(r'.*attachment;.*filename="(?P<filename>[^"]+).*')
@@ -50,7 +51,7 @@ class BTListHtmlParser(HTMLParser.HTMLParser) :
                         self.cur_link = (joined, None)
                     else :
                         try :
-                            link = urllib2.urlopen(joined)
+                            link = urlopen(joined,referer=self.baseurl)
                         except Exception:
                             break
                         if is_torrent(link):
@@ -109,6 +110,8 @@ class BaseFilter:
             media_list = self._process()
         except Exception,why:
             self.log.error('tracker failed: %s\n' % str(why))
+            import traceback
+            traceback.print_exc()
             media_list = List('MediaList')
         return media_list
 
@@ -357,44 +360,50 @@ class UserDefinedFilter(BaseFilter):
     def _process(self):
         media_list = List('MediaList')
         url_list = self.tracker.find_elements('Url')
+        media_name = self.tracker.media or 'GenericMedia'
+        media_tag = self.tracker.tag or 'Media'
         for url in url_list:
-            content = url.urlopen().read()
+            content = url.urlopen(referer=self.tracker.url).read()
             filter_list = url.find_elements('Filter')
             if len(filter_list) == 0:
                 continue
+            self.log.finer(content+'\n')
+            self.log.finest(filter_list[0].content+'\n')
             cre = re.compile(filter_list[0].content,re.IGNORECASE|re.MULTILINE)
             m = cre.search(content)
             while m:
                 self.attributes = {}
                 self._update_attributes(m,url.url)
+                referer = url.url
                 for filter in filter_list[1:]:
                     fcre = re.compile(filter.content,re.IGNORECASE|re.MULTILINE)
                     link = self.attributes.get('link','')
                     if not link:
                         break
-                    temp_content = urlopen(link).read()
+                    temp_content = urlopen(link,referer=url.url).read()
+                    self.log.finer(temp_content+'\n')
+                    self.log.finest(filter.content+'\n')
                     n = fcre.search(temp_content)
                     if not n:
                         break
                     self._update_attributes(n,link)
+                    if 'download' in n.groupdict().keys():
+                        referer = link
 
                 keys = self.attributes.keys()
+                self.log.fine('filter: %s\n' % str(self.attributes))
                 if 'title' in keys and \
-                   'publisher' in keys and \
-                   'category' in keys and \
                    'download' in keys:
                     self.log.debug('filter: %s %s %s\n' % \
-                                   (self.attributes['title'],
-                                    self.attributes['publisher'],
-                                    self.attributes['download']))
-                    attrs = {'title': self.attributes.get('title',''),
-                             'description': self.attributes.get('description',''),
-                             'publisher': self.attributes.get('publisher',''),
-                             'link': self.attributes.get('download',''),
-                             'type': self.attributes.get('category','')}
-                    media = GenericMedia('Media',attrs=attrs)
+                                   (misc.string(self.attributes.get('title','')),
+                                    misc.string(self.attributes.get('publisher','')),
+                                    misc.string(self.attributes.get('download',''))))
+                    self.attributes['type'] = self.attributes.get('category',
+                                                  self.attributes.get('type',''))
+                    self.attributes['link'] = self.attributes.get('download','')
+                    media = factory.create(media_name,media_tag,attrs=self.attributes)
                     if self.filter(media):
-                        media.fetch()
+                        media.fetch(referer=referer)
                         media_list.append(media)
 
                 m = cre.search(content,

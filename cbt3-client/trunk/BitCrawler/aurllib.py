@@ -25,13 +25,17 @@ class AURLOpener:
         global urlopener
         urlopener = self
 
-    def urlopen(self,url,data=None):
+    def urlopen(self,url,data=None,referer=None):
         self.log.debug('urlopen: %s\n' % url)
         if self.user and self.passwd:
             req = urllib2.Request(url)
             raw = '%s:%s' % (self.user,self.passwd)
             auth = 'Basic %s' % base64.encodestring(raw).strip()
             req.add_header('Authorization',auth)
+            if not referer:
+                referer = url
+            if referer:
+                req.add_header('Referer',referer)
             opener = urllib2.build_opener()
             web = opener.open(req,data)
         else:
@@ -48,7 +52,7 @@ class CookieAURLOpener(AURLOpener):
             self.session.set_basic_auth(self.user,self.passwd)
         self.log = get_logger()
 
-    def urlopen(self,url,data=None,method='get'):
+    def urlopen(self,url,data=None,method='get',referer=None):
         self.log.debug('urlopen: %s\n' % url)
         scheme = urlparse(url)[0]
         if not scheme in ['http','https']:
@@ -57,6 +61,12 @@ class CookieAURLOpener(AURLOpener):
             req = self.session.post(url)
         else:
             req = self.session.get(url)
+
+        if not referer:
+            referer = url
+        if referer:
+            req.add_header('Referer',referer)
+
         if data:
             params = urldecode(data)
             req.add_params(params)
@@ -64,7 +74,7 @@ class CookieAURLOpener(AURLOpener):
         fd = req.getfile()
         return addinfourl(fd,hdr,req.url)
 
-def urlopen(uri,data=None,user=None,passwd=None,method='get'):
+def urlopen(uri,data=None,user=None,passwd=None,method='get',referer=None):
     global urlopener
     if not urlopener:
         urlopener = CookieAURLOpener(user,passwd)
@@ -74,4 +84,4 @@ def urlopen(uri,data=None,user=None,passwd=None,method='get'):
         ut[4] = ''
         ut[5] = ''
         uri = urlunparse(tuple(ut))
-    return urlopener.urlopen(uri,data,method=method)
+    return urlopener.urlopen(uri,data,method=method,referer=referer)
