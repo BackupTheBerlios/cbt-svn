@@ -17,6 +17,7 @@ from base64 import encodestring, decodestring
 from BitQueue import policy
 from images import Images
 from cbt_vars import *
+from cbt_func import *
 import string
 
 wx.EVT_INVOKE = wx.NewEventType()
@@ -71,20 +72,26 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		self.dirCtl = wx.TextCtrl(panel, -1, '')
 		
 		filebox = wx.StaticBox(panel, -1, _("Source file or directory (select or drag'n'drop here)"))
+		filebox.SetFont(defFontN)
 		fileboxer = wx.StaticBoxSizer(filebox, wx.VERTICAL)
 		annbox = wx.StaticBox(panel, -1, _("Tracker URL"))
+		annbox.SetFont(defFontN)
 		annboxer = wx.StaticBoxSizer(annbox, wx.VERTICAL)
 		commentbox = wx.StaticBox(panel, -1, _("Comment (optional)"))
+		commentbox.SetFont(defFontN)
 		commentboxer = wx.StaticBoxSizer(commentbox, wx.VERTICAL)
 		piecebox = wx.StaticBox(panel, -1, _("Piece size"))
+		piecebox.SetFont(defFontN)
 		pieceboxer = wx.StaticBoxSizer(piecebox, wx.VERTICAL)
 		
 		b = wx.BoxSizer(wx.HORIZONTAL)
 		button = wx.Button(panel, -1, _('Create from file') )
+		button.SetFont(defFontN)
 		b.Add(button, 0, wx.EXPAND)
 		EVT_BUTTON(self, button.GetId(), self.select)
 		#~ b.Add(5, 5, 0, wx.EXPAND)
 		c = wx.Button(panel, -1, _('Create from directory') )
+		c.SetFont(defFontN)
 		b.Add(c, 0, wx.EXPAND)
 		EVT_BUTTON(self, c.GetId(), self.selectdir)
 		
@@ -110,6 +117,7 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		
 		self.piece_length = wx.Choice(panel, -1, choices = ['2048 KB', '1024 KB', '512 KB', '256 KB', '128 KB'])
 		self.piece_length.SetSelection(2)
+		self.piece_length.SetFont(defFontN)
 		pieceboxer.Add(self.piece_length, 1, wx.EXPAND|wx.TOP, 2)
 		gridSizer.Add(pieceboxer, 1, wx.EXPAND)
 
@@ -118,15 +126,18 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		if self.parent.userid:
 		
 			catbox = wx.StaticBox(panel, -1, _("Additional settings") )
+			catbox.SetFont(defFontN)
 			catboxer = wx.StaticBoxSizer(catbox, wx.VERTICAL)
 			
 			self.cat_list_choices = ['mp3 (ep)', 'mp3 (cd)', 'mp3 (mix)', 'video', 'nasze wypociny', 'programy', 'inne']
 			self.cat_list = wx.Choice(panel, -1, choices = self.cat_list_choices)
 			self.cat_list.SetSelection(0)
+			self.cat_list.SetFont(defFontN)
 			
 			self.upl_list_choices = [_('Do not publish this torrent'), _('Public torrent'), _('Private torrent') ]
 			self.upl_list = wx.Choice(panel, -1, choices = self.upl_list_choices)
 			self.upl_list.SetSelection(0)
+			self.upl_list.SetFont(defFontN)
 			
 			catboxer.Add(self.upl_list, 4, wx.EXPAND|wx.TOP, 4)
 			catboxer.Add(self.cat_list, 4, wx.EXPAND|wx.TOP, 4)
@@ -136,8 +147,10 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 		
 		buttons = wxBoxSizer(wx.HORIZONTAL)
 		self.nextbutt = wx.Button(panel, -1, _('Continue'))
+		self.nextbutt.SetFont(defFontB)
 		EVT_BUTTON(self, self.nextbutt.GetId(), self.complete)
 		self.cancelbutt = wx.Button(panel, -1, _('Close'))
+		self.cancelbutt.SetFont(defFontN)
 		EVT_BUTTON(self, self.cancelbutt.GetId(), self.cancel)
 		#border.Add(b2, 0, wxALIGN_CENTER | wxSOUTH, 20)
 		buttons.Add(self.nextbutt)
@@ -190,7 +203,7 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 				uls = self.upl_list.GetSelection()
 			except:
 				cls = None
-				uls = None
+				uls = 0
 			
 			self.nextbutt.Enable(false)
 			self.cancelbutt.Enable(false)

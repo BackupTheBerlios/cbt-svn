@@ -9,12 +9,26 @@ from wxPython.xrc import *
 from images import Images
 from cbt_func import *
 
+class DropTarget(wx.FileDropTarget):
+	def __init__(self, window, btq=None):
+		wx.FileDropTarget.__init__(self)
+		self.win = window
+		self.btq = btq
+	
+	def OnDropFiles(self, x, y, filenames):
+		for file in filenames:
+			print file
+			self.btq.do_add(file)
+
 class PanelTransfers(wx.MDIChildFrame):
 	def __init__(self, parent, id, btq=None):
 		wx.MDIChildFrame.__init__(self, parent, id, size = (560,340), title=_("Transfers"), style = wx.DEFAULT_FRAME_STYLE)
 		
 		self.btq = btq
 		self.parent = parent
+		
+		dt = DropTarget(self, btq=btq)
+		self.SetDropTarget(dt)
 		
 		self.images = Images(".")
 		self.xrc = wxXmlResource('panels.xrc')

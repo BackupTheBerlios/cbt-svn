@@ -113,7 +113,8 @@ class ParentFrame(wx.MDIParentFrame):
 		menubar.Append(menu, "communityBT")
 		self.SetMenuBar(menubar)
 		
-		self.CreateStatusBar()
+		self.CreateStatusBar(3)
+		self.SetStatusWidths([100,-1,180])
 		
 		self.Bind(wx.EVT_MENU, self.OnNewTorrent, id=ID_New)
 		self.Bind(wx.EVT_MENU, self.OnExit, id=ID_Exit)
@@ -139,6 +140,11 @@ class ParentFrame(wx.MDIParentFrame):
 		self.windows["log"] = 1
 		self.log.Show(True)
 		self.log.SetSize((500,320))
+		
+		# timers
+		
+		self.timer1 = wx.PyTimer(self.OnTimer1)
+		self.timer1.Start(3500)
 
 		# tray
 		
@@ -208,6 +214,10 @@ class ParentFrame(wx.MDIParentFrame):
 			win = PanelTransferDetails(self, -1, btq=self.btq, qid=qid)
 			win.Show(True)
 			self.tdwindows[qid] = 1
+
+	def OnTimer1(self, evt=None):
+		a = self.btq.CbtBw()
+		self.SetStatusText( _("DL Speed")+': '+str(a[0])+' / '+ _("UP Speed") + ': ' + str(a[2]) , 2)
 
 	# new torrent
 
@@ -363,6 +373,20 @@ class ParentFrame(wx.MDIParentFrame):
 
 
 class CbtBTQ(Console):
+	
+	def CbtBw(self,line=None):
+		dlspeed = 0
+		ulspeed = 0
+		for j in self.queue.jobs():
+			data = j.get()
+			dlspeed += float(data['dlspeed'].split()[0])
+			ulspeed += float(data['ulspeed'].split()[0])
+		#~ max_dl = float(self.policy('max_download_rate'))
+		#~ max_ul = float(self.policy('max_upload_rate'))
+		#~ print 'Download Speed: %4s (%4s%%)' % (dlspeed, dlspeed*100/max_dl)
+		#~ print 'Upload Speed:   %4s (%4s%%)'% (ulspeed, ulspeed*100/max_ul)
+		#~ return (dlspeed, dlspeed*100/max_dl, ulspeed, ulspeed*100/max_ul)
+		return (dlspeed, 0, ulspeed, 0)
 	
 	def CbtList(self,line=None):
 		dataf = []
@@ -563,8 +587,15 @@ if __name__ == '__main__':
 		pol.set_default()
 		
 		if command == "add":
-			btq = CbtBTQ()
-			btq.controller.start()
-			btq.queue.start()
-			btq.do_add(' '.join(sys.argv[2:]))
-			btq.do_quit()
+			from BitQueue.webservice import WebInterface
+			app = WebInterface()
+			from BitQueue import timeoutsocket
+			timeoutsocket.setDefaultSocketTimeout(2)
+			ret = app.process(command,sys.argv[2:])
+			timeoutsocket.setDefaultSocketTimeout(None)
+			#~ if sys.platform == 'win32' and command=='add' and ret:
+				#~ if ret.find('timeout') >= 0: 
+					#~ pass
+				#~ else:
+					#~ raw_input()
+
