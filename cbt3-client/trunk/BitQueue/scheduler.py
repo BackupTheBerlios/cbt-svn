@@ -65,6 +65,66 @@ def urlopen(url,data=None):
                 fd = _urlopen('file:'+pathname2url(urllib.unquote(url)))
     return fd
 
+class RateController:
+
+    MINIMUM_RATE = 3
+
+    def __init__(self,job,current_rate):
+        self.job = job
+        self.current_rate = current_rate
+        self.new_rate = current_rate
+
+    def __repr__(self):
+        return '(%s,%0.1f,%0.1f)' % (self.job.id,self.current_rate,self.new_rate)
+
+    def apply(self):
+        pass
+
+    def __cmp__(self,o):
+        return cmp(self.current_rate,o.current_rate)
+
+    def change_rate(self,offset):
+        self.new_rate = max(self.new_rate+offset,RateController.MINIMUM_RATE)
+
+    def is_active(self):
+        return self.current_rate > RateController.MINIMUM_RATE
+
+    def is_seeding(self):
+        return self.job.state == STATE_SEEDING
+
+    def is_leeching(self):
+        return self.job.state == STATE_RUNNING
+
+class UploadRateController(RateController):
+    def __init__(self,job):
+        RateController.__init__(self,job,job.up_rate/1000.0)
+
+    def apply(self):
+        self.job.dow.setUploadRate(self.new_rate)
+
+class DownloadRateController(RateController):
+    def __init__(self,job):
+        RateController.__init__(self,job,job.down_rate/1000.0)
+
+    def apply(self):
+        self.job.dow.setDownloadRate(self.new_rate)
+
+def distribute_rate(jobs,avail_bw,threshold_bw,step):
+    while avail_bw > 0:
+        saved_bw = avail_bw
+        for j in jobs:
+            if j.is_active() and j.new_rate > threshold_bw:
+                j.change_rate(-step)
+                avail_bw -= step
+            elif not j.is_active():
+                j.change_rate(+avail_bw)
+        if saved_bw == avail_bw:
+            threshold_bw -= step
+
+def change_rates(jobs,rate):
+    for j in jobs:
+        j.change_rate(rate)
+
 class Scheduler(Thread):
 
     file_semaphore = Semaphore()
@@ -236,12 +296,6 @@ class Scheduler(Thread):
     def calculate_upload_rate(self):
         completes = []
         incompletes = []
-        used_bw = 0
-        new_up_rates = []
-        upload_rates = []
-        seed_rates = []
-        used_upload_bw = 0
-        used_seed_bw = 0
 
         class RateController:
             def __init__(self,job):
@@ -276,11 +330,11 @@ class Scheduler(Thread):
             if not j.dow or not hasattr(j.dow.d,'downloader'):
                 continue
             if j.state == STATE_RUNNING:
-                incompletes.append(RateController(j))
+                incompletes.append(UploadRateController(j))
             if j.state == STATE_SEEDING:
-                completes.append(RateController(j))
-        used_upload_bw = sum([j.current_up_rate for j in incompletes])
-        used_seed_bw = sum([j.current_up_rate for j in completes])
+                completes.append(UploadRateController(j))
+        used_upload_bw = sum([j.current_rate for j in incompletes])
+        used_seed_bw = sum([j.current_rate for j in completes])
         used_bw = used_upload_bw+used_seed_bw
 
         all = incompletes+completes
@@ -293,48 +347,52 @@ class Scheduler(Thread):
         #print used_upload_bw,used_seed_bw,used_bw
         #print max_upload_bw,max_seed_bw,max_bw
 
+        distribute_step = 5
+
         if used_seed_bw < max_seed_bw:
             avail_bw = max_seed_bw-used_seed_bw
-            for j in completes:
-                j.change_up_rate(+avail_bw)
+            change_rates(completes,+avail_bw)
+            #for j in completes:
+            #    j.change_rate(+avail_bw)
         else:
             avail_bw = used_seed_bw-max_seed_bw
             avg_bw = avail_bw/max(len(completes),1)
-            step = 5
             compl = completes[:]
             compl.sort()
-            while avail_bw > 0:
-                saved_bw = avail_bw
-                for j in compl:
-                    if j.is_active() and j.new_up_rate > avg_bw:
-                        j.change_up_rate(-step)
-                        avail_bw -= step
-                    elif not j.is_active():
-                        j.change_up_rate(+avail_bw)
-                if saved_bw == avail_bw:
-                    avg_bw -= step
+            distribute_rate(compl,avail_bw,avg_bw,distribute_step)
+            #while avail_bw > 0:
+            #    saved_bw = avail_bw
+            #    for j in compl:
+            #        if j.is_active() and j.new_rate > avg_bw:
+            #            j.change_rate(-step)
+            #            avail_bw -= step
+            #        elif not j.is_active():
+            #            j.change_rate(+avail_bw)
+            #    if saved_bw == avail_bw:
+            #        avg_bw -= step
 
         if used_upload_bw < max_upload_bw:
             avail_bw = max_upload_bw-used_upload_bw
-            #print 'avail_bw',avail_bw
-            for j in incompletes:
-                j.change_up_rate(+avail_bw)
+            change_rates(incompletes,+avail_bw)
+            #for j in incompletes:
+            #    j.change_rate(+avail_bw)
         else:
             avail_bw = used_upload_bw-max_upload_bw
             avg_bw = avail_bw/max(len(incompletes),1)
             step = 5
             incompl = incompletes[:]
             incompl.sort()
-            while avail_bw > 0:
-                saved_bw = avail_bw
-                for j in incompl:
-                    if j.is_active() and j.new_up_rate > avg_bw:
-                        j.change_up_rate(-step)
-                        avail_bw -= step
-                    elif not j.is_active():
-                        j.change_up_rate(+avail_bw)
-                if saved_bw == avail_bw:
-                    avg_bw -= step
+            distribute_rate(incompl,avail_bw,avg_bw,distribute_step)
+            #while avail_bw > 0:
+            #    saved_bw = avail_bw
+            #    for j in incompl:
+            #        if j.is_active() and j.new_rate > avg_bw:
+            #            j.change_rate(-step)
+            #            avail_bw -= step
+            #        elif not j.is_active():
+            #            j.change_rate(+avail_bw)
+            #    if saved_bw == avail_bw:
+            #        avg_bw -= step
 
         all = incompletes+completes
         self.log.verbose('Upload Rate: %s\n' % repr(all))
@@ -342,6 +400,37 @@ class Scheduler(Thread):
             j.apply()
 
     def calculate_download_rate(self):
+        '''Simple download rate adjuster.  Could be enhanced with priorities.'''
+        incompletes = []
+
+        for j in self.queue.get():
+            # duplicate with download rate
+            #j.update_scrape()
+            if not j.dow or not hasattr(j.dow.d,'downloader'):
+                continue
+            if j.state == STATE_RUNNING:
+                incompletes.append(DownloadRateController(j))
+
+        used_bw = sum([j.current_rate for j in incompletes])
+
+        max_bw = float(self.policy(policy.MAX_DOWNLOAD_RATE)) or 1000000
+        distribute_step = 5
+
+        if used_bw < max_bw:
+            avail_bw = max_bw-used_bw
+            change_rates(incompletes,+avail_bw)
+        else:
+            avail_bw = used_bw-max_bw
+            avg_bw = avail_bw/max(len(incompletes),1)
+            incompl = incompletes[:]
+            incompl.sort()
+            distribute_rate(incompl,avail_bw,avg_bw,distribute_step)
+
+        self.log.verbose('Download Rate: %s\n' % repr(incompletes))
+        for j in incompletes:
+            j.apply()
+
+    def old_calculate_download_rate(self):
         '''Simple download rate adjuster.  Could be enhanced with priorities.'''
         completes = []
         incompletes = []

@@ -199,7 +199,7 @@ class Console:
             n = self.max_last_banned
         for ip in self.last_banned[-n:]:
             try:
-                cc,netname = self.ipdb[line].split(':')
+                cc,netname = self.ipdb[line].split(':',1)
             except:
                 cc,netname = 'XX','Unknown'
             print '%-16s %-2s %s' % (ip,cc,netname)
@@ -453,8 +453,8 @@ Clients:
             var = {}
             var.update(i)
             try:
-                var['cc'],var['netname'] = self.ipdb[i['ip']].split(':')
-            except (IndexError,TypeError,KeyError,AssertionError):
+                var['cc'],var['netname'] = self.ipdb[i['ip']].split(':',1)
+            except (IndexError,TypeError,KeyError,AssertionError,ValueError):
                 var['cc'],var['netname'] = 'XX','Unknown'
             var['client'] = var['client'][:12]
             var['netname'] = var['netname'][:11]
@@ -463,7 +463,7 @@ Clients:
     def do_ip(self,line=None):
         '''display full information of given IP'''
         try:
-            cc,netname = self.ipdb[line].split(':')
+            cc,netname = self.ipdb[line].split(':',1)
             fqdn = socket.getfqdn(line)
             if line == fqdn:
                 fqdn = 'not registered'

@@ -120,7 +120,7 @@ class BaseFilter:
 
 class ListFilter(BaseFilter):
     def _process(self):
-        parser = BTListHtmlParser(baseurl)
+        parser = BTListHtmlParser(self.baseurl)
         parser.feed(self.content)
         # mangle the link list
         media_list = List('MediaList')
@@ -154,7 +154,7 @@ class BTAFilter(BaseFilter):
 
     table_item_reg = r'<tr>\s*<td bgcolor="#[^\"]+"><center><b>(?P<id>\d+)</b></center></td>\s*<td bgcolor="#[^\"]+">(?P<date>[^<]+)</td>'+ \
          r'\s*<td bgcolor="#[^\"]+">(<a href="[^\"]+">)?(<b>)?(?P<title>[^<]+)(</a>)? - (?P<episode>\d+)</td>'+ \
-         r'\s*<td bgcolor="#[^\"]+">(?P<publisher>[^<]+)?</td>'+ \
+         r'\s*<td bgcolor="#[^\"]+">(<a href=[^>]+>)?(?P<publisher>[^<]+)?(</a>)?\s*</td>' + \
          r'\s*<td bgcolor="#[^\"]+"><a href="(?P<dllink>[^"]+)" target="outhere">Here</a></td><tr>'
 
     table_item_cre = re.compile(table_item_reg,re.IGNORECASE | re.MULTILINE)
@@ -167,14 +167,14 @@ class BTAFilter(BaseFilter):
                            (m.group('title'),
                             m.group('publisher')))
             link = urlparse.urljoin(self.baseurl,m.group('dllink'))
-            attrs = {'title': urllib.quote(m.group('title')),
+            attrs = {'title': m.group('title'),
                      'episode': m.group('episode'),
                      'link': link}
 
             if m.group('publisher') :
-                attrs['publisher'] = urllib.quote(m.group('publisher'))
+                attrs['publisher'] = m.group('publisher')
             else :
-                attrs['publisher'] = urllib.quote('none')
+                attrs['publisher'] = 'none'
 
             media = Series('Anime',attrs=attrs)
             if self.filter(media):
@@ -210,8 +210,8 @@ class BNBTFilter(BaseFilter):
                             m.group('publisher'),
                             m.group('category')))
             link = urlparse.urljoin(self.baseurl,m.group('dllink'))
-            attrs = {'title': urllib.quote(m.group('title')),
-                     'publisher': urllib.quote(m.group('publisher')),
+            attrs = {'title': m.group('title'),
+                     'publisher': m.group('publisher'),
                      'link': link,
                      'type': m.group('category')}
             media = GenericMedia('Media',attrs=attrs)
@@ -257,8 +257,8 @@ class TorrentBitsFilter(BaseFilter):
             d = re.search(r'<a class="index" href="([^"]+)">',detail,re.I)
             if d:
                 link = urlparse.urljoin(self.baseurl,d.group(1))
-                attrs = {'title': urllib.quote(m.group('title')),
-                         'publisher': urllib.quote(m.group('publisher')),
+                attrs = {'title': m.group('title'),
+                         'publisher': m.group('publisher'),
                          'link': link,
                          'type': m.group('category')}
                 media = GenericMedia('Media',attrs=attrs)
@@ -301,8 +301,8 @@ class InvisionBTFilter(BaseFilter):
             d = re.search(r'<a href="([^\?]+\?act=bt&func=download&id=\d+)">',detail,re.I)
             if d:
                 link = urlparse.urljoin(self.baseurl,d.group(1))
-                attrs = {'title': urllib.quote(m.group('title')),
-                         'publisher': urllib.quote(m.group('publisher')),
+                attrs = {'title': m.group('title'),
+                         'publisher': m.group('publisher'),
                          'link': link,
                          'type': m.group('category')}
                 media = GenericMedia('Media',attrs=attrs)

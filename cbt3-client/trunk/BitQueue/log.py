@@ -37,18 +37,17 @@ class Logger:
                 fd.close()
             except Exception,why:
                 pass
+            if level >= FINE:
+                print msg
 
     def fine(self,msg):
         self._log(FINE,msg)
-        print msg
 
     def finer(self,msg):
         self._log(FINER,msg)
-        print msg
 
     def finest(self,msg):
         self._log(FINEST,msg)
-        print msg
 
     def verbose(self,msg):
         self._log(VERBOSE,msg)
