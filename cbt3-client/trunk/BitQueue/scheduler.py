@@ -531,7 +531,8 @@ class Scheduler(Thread):
             traceback.print_exc()
             print why
         for j in self.queue.get():
-            j.update_scrape()
+            if j.state in [STATE_RUNNING,STATE_SEEDING]:
+                j.update_scrape()
         self.terminate_seeding()
         self.queue.save()
         self.lock.release()
