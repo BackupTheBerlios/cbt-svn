@@ -279,10 +279,14 @@ class QueueEntry:
                      'infohash': 'Info Hash',
                      'title': 'Title',
                      'dest_path': 'Destination',
-                     'activity': 'Activity'}
+                     'activity': 'Activity',
+                     'added_time': 'Added',
+                     'started_time': 'Started',
+                     'finished_time': 'Finished',
+                     'stopped_time': 'Stopped'}
     modifiable_vars = ['title','dest_path','file','priority',
                        'dlsize','ulsize',
-                       'old_dlsize','old_ulsize']
+                       'old_dlsize','old_ulsize','recheck']
 
     def __init__(self,file,priority=-1,dest_path='',id_generator=id_generator):
         if id_generator:
@@ -308,6 +312,7 @@ class QueueEntry:
         self.share_ratio = 0.0
         self.currentseed = '?'
         self.currentpeer = '?'
+        self.recheck = 0
 
         self.added_time = -1
         self.started_time = -1

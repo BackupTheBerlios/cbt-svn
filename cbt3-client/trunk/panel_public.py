@@ -56,7 +56,6 @@ class PanelPublic(wx.MDIChildFrame):
 	def PublicLoadFeeds(self):
 		
 		self.btnPubRefresh.Enable(False)
-		#~ self.statusBar.SetStatusText("Pobieram listê torrentów publicznych...", 0)
 
 		imglist = wx.ImageList(16, 16, True, 2)
 		imglist.Add(self.images.GetImage('pub_folder'))
@@ -91,8 +90,6 @@ class PanelPublic(wx.MDIChildFrame):
 		#~ self.statusBar.SetStatusText("", 0)
 		self.btnPubRefresh.Enable(True)
 		
-		#~ self.logpanel.AddMsg('UMT Feed', 'Zakoñczono pobieranie')
-			
 	def LoadFeed(self, mode, cat=None, user=None):
 		try:
 			if mode == 'pub':

@@ -36,7 +36,7 @@ except NameError:
         return s
 
 _opener = None
-def urlopen(url,data=None):
+def urlopen(url,data=None,referer=None):
     global _opener
     if not _opener:
         _opener = build_opener()
@@ -47,22 +47,22 @@ def urlopen(url,data=None):
     _urlopen = aurlopen
 
     try:
-        fd = _urlopen(url,data)
+        fd = _urlopen(url,data,referer=referer)
     except HTTPError,why:
         raise HTTPError,why
     except (ValueError,URLError,OSError),why:
         try:
-            fd = _urlopen(urllib.unquote(url),data)
+            fd = _urlopen(urllib.unquote(url),data,referer=referer)
         except HTTPError,why:
             raise HTTPError,why
         except (ValueError,URLError,OSError),why:
             from nturl2path import pathname2url
             try:
-                fd = _urlopen('file:'+pathname2url(url),data)
+                fd = _urlopen('file:'+pathname2url(url),data,referer=referer)
             except HTTPError,why:
                 raise HTTPError,why
             except (ValueError,URLError,OSError):
-                fd = _urlopen('file:'+pathname2url(urllib.unquote(url)))
+                fd = _urlopen('file:'+pathname2url(urllib.unquote(url)),referer=referer)
     return fd
 
 class RateController:
@@ -160,9 +160,9 @@ class Scheduler(Thread):
         else:
             self.add_queue.put(item)
 
-    def add_url(self,url):
+    def add_url(self,url,referer=None):
         try:
-            fd = urlopen(url)
+            fd = urlopen(url,referer=referer)
             meta = fd.read()
             fullurl = fd.geturl()
             fd.close()

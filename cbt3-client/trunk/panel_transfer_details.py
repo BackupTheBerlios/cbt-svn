@@ -40,6 +40,8 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		self.note1.SetPageText( 1, _("Parts") )
 		self.note1.SetPageText( 2, _("Connections") )
 		self.note1.SetPageText( 3, _("Files") )
+		
+		self.note1.RemovePage(1)
 
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.Bind(wx.EVT_LEFT_DOWN, self.OnClose, id = XRCID("htmlStats"))
@@ -48,7 +50,7 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		
 		# titles/labels
 		
-		list = self.btq.CbtList()
+		list = self.btq.m.do_list().getreply()
 		for d in list:
 			if d['id'] == qid:
 				self.label.SetLabel(d['title'])
@@ -106,7 +108,7 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		self.UpdateFileList()
 
 	def UpdatePiecesList(self):
-		data = self.btq.CbtDetail(self.qid)
+		data = self.btq.m.do_detail(self.qid).getreply()
 		
 		ftpl = file("tpl.html", "r")
 		tpl = ftpl.read()
@@ -137,48 +139,9 @@ class PanelTransferDetails(wx.MDIChildFrame):
 		
 		self.htmlStats.SetPage(tpl)
 
-		# pieces
-		
-		self.tcount += 1
-		
-		if self.tcount > 5:
-
-			self.tcount = 0
-			
-			try:
-				
-				cnt = ''
-				stat = self.btq.CbtStat(self.qid)
-				
-				total = len(stat['piecescomplete'])
-				pcs = {}
-				it = 0
-				
-				for i in stat['numactive']:
-					if i: 
-						pcs[it] = 2
-					else:
-						pcs[it] = 0
-					it += 1
-			
-				it = 0
-				
-				for i in stat['piecescomplete']:
-					if i and not pcs[it]:
-						cnt = cnt + '<img src="data/blk_1_100.png" width=10 height=11>'
-					elif not i and not pcs[it]:
-						cnt = cnt + '<img src="data/blk_0_100.png" width=10 height=11>'
-					elif pcs[it]:
-						cnt = cnt + '<img src="data/blk_2_100.png" width=10 height=11>'
-					it += 1
-			except:
-				cnt = ''
-					
-			self.htmlParts.SetPage(cnt)
-	
 	def UpdateConnList(self):
 		lst = self.listconn
-		data = self.btq.CbtSpew(self.qid)
+		data = self.btq.m.do_spew(self.qid).getreply()
 		
 		rid = 0
 		

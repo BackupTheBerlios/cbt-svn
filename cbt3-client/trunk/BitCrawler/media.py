@@ -292,7 +292,34 @@ class Param(List):
                        'value': STRING}
 
 class Filter(Generic):
-    BASE_ATTRIBUTES = {'name': STRING}
+    BASE_ATTRIBUTES = {'name': STRING,
+                       'option': STRING}
+    def __init__(self,tag=None,attrs={},content=''):
+        Generic.__init__(self,tag,attrs,content)
+        self.flags = 0
+        if self.option == '-':
+            return
+
+        self.option = self.option or 'I,S,M'
+        options = [i.strip().upper() for i in self.option.split(',')]
+        newopts = []
+        for opt in options:
+            if opt in ['X','VERBOSE']:
+                self.flags |= re.VERBOSE
+                newopts.append('VERBOSE')
+            elif opt in ['I','IGNORECASE']:
+                self.flags |= re.IGNORECASE
+                newopts.append('IGNORECASE')
+            elif opt in ['S','DOTALL']:
+                self.flags |= re.DOTALL
+                newopts.append('DOTALL')
+            elif opt in ['M','MULTILINE']:
+                self.flags |= re.MULTILINE
+                newopts.append('MULTILINE')
+            elif opt in ['U','UNICODE']:
+                self.flags |= re.UNICODE
+                newopts.append('UNICODE')
+        self.option = ','.join(newopts)
 
 class Interest(Generic):
     BASE_ATTRIBUTES = {'attribute': STRING,

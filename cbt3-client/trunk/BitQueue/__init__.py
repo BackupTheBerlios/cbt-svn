@@ -1,5 +1,5 @@
 
-version = "Q-0.0.16 203 (BitQueue)"
+version = "Q-0.0.16 233 (BitQueue)"
 
 version_short = version.split(' ')[0]
 version_num = version.split(' ')[0].split('-')[1]
@@ -15,6 +15,9 @@ except ImportError:
         return 1
 
 mapbase64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-'
+
+class BindException(Exception):
+    pass
 
 def cmp_version(a,b):
     ai = [int(i) for i in a.split('.')]

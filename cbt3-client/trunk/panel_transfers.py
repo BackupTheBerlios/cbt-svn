@@ -18,7 +18,7 @@ class DropTarget(wx.FileDropTarget):
 	def OnDropFiles(self, x, y, filenames):
 		for file in filenames:
 			print file
-			self.btq.do_add(file)
+			self.btq.m.do_add(file)
 
 class PanelTransfers(wx.MDIChildFrame):
 	def __init__(self, parent, id, btq=None):
@@ -93,8 +93,8 @@ class PanelTransfers(wx.MDIChildFrame):
 				 [3, _("ETA"), wx.LIST_FORMAT_LEFT, 70],
 				 [4, _("DL Spd"), wx.LIST_FORMAT_LEFT, 50],
 				 [5, _("UP Spd"), wx.LIST_FORMAT_LEFT, 50],
-				 [6, _("Seeds"), wx.LIST_FORMAT_LEFT, 48],
-				 [7, _("Peers"), wx.LIST_FORMAT_LEFT, 48],
+				 [6, _("Seeds"), wx.LIST_FORMAT_LEFT, 55],
+				 [7, _("Peers"), wx.LIST_FORMAT_LEFT, 55],
 				 [8, _("Ratio"), wx.LIST_FORMAT_LEFT, 54],
 				 [9, _("Last message"), wx.LIST_FORMAT_LEFT, 140]
 				 ]
@@ -134,21 +134,21 @@ class PanelTransfers(wx.MDIChildFrame):
 		
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
-			self.btq.do_superseed(qid)
+			self.btq.m.do_superseed(qid)
 
 	def OnQueueReannounce(self, evt):
 		id = self.list.GetFirstSelected()
 		
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
-			self.btq.do_reannounce(qid)
+			self.btq.m.do_reannounce(qid)
 
 	def OnQueueResume(self, evt):
 		id = self.list.GetFirstSelected()
 		
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
-			self.btq.do_resume(qid)
+			self.btq.m.do_resume(qid)
 			self.parent.log.AddMsg("BTQueue", _("Resumed: %s") % qid)
 			
 	def OnQueuePause(self, evt):
@@ -156,7 +156,7 @@ class PanelTransfers(wx.MDIChildFrame):
 		
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
-			self.btq.do_pause(qid)
+			self.btq.m.do_pause(qid)
 			self.parent.log.AddMsg("BTQueue", _("Paused: %s") % qid)
 		
 	def OnQueueRemove(self, evt):
@@ -164,13 +164,13 @@ class PanelTransfers(wx.MDIChildFrame):
 		
 		if id > -1:
 			qid = str ( self.list.GetItemData(id) )
-			self.btq.do_remove(qid)
+			self.btq.m.do_remove(qid)
 			self.parent.log.AddMsg("BTQueue", _("Removed: %s") % qid)
 		
 	def OnAddUrl(self, evt):
 		url = self.url.GetValue()
 		if url:
-			status = self.btq.do_add(url)
+			status = self.btq.m.do_add(url)
 			print status
 			self.parent.log.AddMsg("BTQueue", _("Added URL: %s") % url)
 			self.url.SetValue('')
@@ -183,7 +183,7 @@ class PanelTransfers(wx.MDIChildFrame):
 	def UpdateList(self):
 		try:
 			lst = self.list
-			data = self.btq.CbtList()
+			data = self.btq.m.do_list().getreply()
 			
 			if lst.GetItemCount() <> len(data):
 				lst.DeleteAllItems()
@@ -193,11 +193,10 @@ class PanelTransfers(wx.MDIChildFrame):
 				for d in data:
 					self.ListItem(lst, d, id=int(d['id']), mode="update")
 		except Exception, e:
-			print str(e)
 			pass
 
 	def ListItem(self, lst, d, id=None, mode=None):
-		
+	
 		if d['btstatus'] == _('paused'):
 			icon = 1
 		elif d['btstatus'] == _('finished'):
@@ -224,7 +223,7 @@ class PanelTransfers(wx.MDIChildFrame):
 		lst.SetStringItem(item_idx, 6, d['seeds'])
 		lst.SetStringItem(item_idx, 7, d['peers'])
 		lst.SetStringItem(item_idx, 8, d['ratio'])
-		lst.SetStringItem(item_idx, 9, d['msg'])
+		lst.SetStringItem(item_idx, 9, d['activity'])
 
 		tid = int(d['id'])
 		lst.SetItemData(item_idx, tid)

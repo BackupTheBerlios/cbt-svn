@@ -369,14 +369,14 @@ class UserDefinedFilter(BaseFilter):
                 continue
             self.log.finer(content+'\n')
             self.log.finest(filter_list[0].content+'\n')
-            cre = re.compile(filter_list[0].content,re.IGNORECASE|re.MULTILINE)
+            cre = re.compile(filter_list[0].content,filter_list[0].flags)
             m = cre.search(content)
             while m:
                 self.attributes = {}
                 self._update_attributes(m,url.url)
                 referer = url.url
                 for filter in filter_list[1:]:
-                    fcre = re.compile(filter.content,re.IGNORECASE|re.MULTILINE)
+                    fcre = re.compile(filter.content,filter.flags)
                     link = self.attributes.get('link','')
                     if not link:
                         break

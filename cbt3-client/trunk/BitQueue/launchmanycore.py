@@ -78,6 +78,9 @@ class SingleDownload:
                      'setDownloadRate','Pause','Unpause','set_super_seed']:
             setattr(self,attr,(getattr(d,attr)))
 
+    def deleteTorrentData(self):
+        self.d.appdataobj.deleteTorrentData(self.d.infohash)
+
     def start(self):
         if not self.d.saveAs(self.saveAs):
             self._shutdown()
@@ -391,6 +394,9 @@ class LaunchManyThread(Thread):
 
             item.dow = d
             item.listen_port = listen_port
+            if item.recheck:
+                d.deleteTorrentData()
+                item.recheck = 0
             d.start()
         except Exception,why:
             import traceback

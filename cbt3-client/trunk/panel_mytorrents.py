@@ -30,7 +30,7 @@ class PanelMyTorrents(wx.MDIChildFrame):
 		win.Show(True)
 		
 	def AddCreatedTorrent(self, rsp):
-		self.parent.btq.do_add(rsp)
+		self.parent.btq.m.do_add(rsp)
 		self.parent.log.AddMsg('BTQueue', _('Added created torrent: %s') % rsp)
 		
 	def OnClose(self, evt):

@@ -50,10 +50,17 @@ ORDER_ACL = 'order_acl'
 MAX_LAST_BANNED = 'max_last_banned'
 VERIFY_LINK = 'verify_link'
 
+DAEMON_STDOUT = 'daemon_stdout'
+DAEMON_STDERR = 'daemon_stderr'
+
+XMLRPC_ID = 'xmlrpc_id'
+XMLRPC_IP = 'xmlrpc_ip'
+XMLRPC_PORT = 'xmlrpc_port'
+
+WEBSERVICE_ = 'webservice_'
 WEBSERVICE_ID = 'webservice_id'
 WEBSERVICE_IP = 'webservice_ip'
 WEBSERVICE_PORT = 'webservice_port'
-WEBSERVICE_ = 'webservice_'
 WEBSERVICE_CLOSE = 'webservice_close'
 WEBSERVICE_QUERY = 'webservice_query'
 WEBSERVICE_ADD = 'webservice_add'
@@ -300,6 +307,11 @@ class Policy:
                        ORDER_ACL: 'allow,deny',
                        MAX_LAST_BANNED: 20,
                        VERIFY_LINK: 0,
+                       DAEMON_STDOUT: '',
+                       DAEMON_STDERR: '',
+                       XMLRPC_IP: '127.0.0.1',
+                       XMLRPC_PORT: 19429,
+                       XMLRPC_ID: 'xmlrpcbt',
                        WEBSERVICE_IP: '127.0.0.1',
                        WEBSERVICE_PORT: 19428,
                        WEBSERVICE_ID: 'cbt',
@@ -382,12 +394,15 @@ class Policy:
             ret = None
         return ret
 
-    def get_path(self,basename):
+    def get_path(self,basename,writable=0):
         if not os.path.exists(self.root_path):
             os.mkdir(self.root_path)
         for prefix in [self.root_path,self.share_path,self.program_path]:
             path = os.path.join(prefix,basename)
             if os.path.exists(path):
+                if writable and \
+                   (not os.access(path,os.W_OK) or prefix != self.root_path):
+                    continue
                 return path
         return os.path.join(self.root_path,basename)
 

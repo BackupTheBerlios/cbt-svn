@@ -13,6 +13,9 @@ if PSYCO:
 	except:
 		print "psyco import failed"
 		pass 
+		
+#~ import warnings
+#~ warnings.resetwarnings()
 
 import wx, os.path, sys, thread
 
@@ -56,10 +59,9 @@ from panel_transfer_details import PanelTransferDetails
 from panel_log import PanelLog
 from panel_maketorrent import PanelMakeTorrent
 
-from BitQueue.manager import Console
-from BitQueue.webservice import WebServiceServer, WebServiceRequestHandler
 from BitQueue import version as btqver
 from BitQueue.i18n import *
+from BitQueue.log import get_logger
 
 from xmlrpclib import Server
 from base64 import encodestring, decodestring
@@ -93,16 +95,18 @@ class ParentFrame(wx.MDIParentFrame):
 			root_path = os.path.dirname(os.path.abspath(sys.argv[0]))
 		else:
 			root_path = os.path.join(os.environ.get('HOME'),'.cbt')
+			
+		#from BitQueue.manager import Daemon
+		#app = Daemon()
+		
+		#try:
+			#app.daemonize()
+		#except Exception,why:
+			#print why
 
 		self.pol = policy.Policy(root_path)
 		self.pol.set_default()
 
-		self.btq = CbtBTQ()
-		self.btq.controller.start()
-		self.btq.queue.start()
-		self.btq.webservice = WebServiceServer(WebServiceRequestHandler, self.btq.queue)
-		self.btq.webservice.start()
-		
 		# menu
 		
 		menu = wx.Menu()
@@ -158,6 +162,11 @@ class ParentFrame(wx.MDIParentFrame):
 			wx.EVT_TASKBAR_RIGHT_UP(self.tray, self.onTaskBarMenu)
 			wx.EVT_MENU(self.tray, self.TBMENU_RESTORE, self.onTaskBarActivate)
 			wx.EVT_MENU(self.tray, self.TBMENU_CLOSE, self.OnClose)
+
+		# btq start
+		
+		from BitQueue.manager import Cbt
+		self.btq = Cbt()
 
 		# timers
 		
@@ -217,12 +226,15 @@ class ParentFrame(wx.MDIParentFrame):
 			self.tdwindows[qid] = 1
 
 	def OnTimer1(self, evt=None):
-		a = self.btq.CbtBw()
-		self.status_txt = _("DL")+': '+str(a[0])+' '+_("kBps")+' / '+ _("UP") + ': ' + str(a[2])+' '+_("kBps")
-		self.SetStatusText(self.status_txt , 2)
-		
-		if sys.platform == 'win32':
-			self.tray.SetIcon(self.trayicon, prog_name_full+'\n'+self.status_txt)
+		try:
+			a = self.btq.m.do_bw().getreply()
+			self.status_txt = _("DL")+': '+str(a['down_rate'])+' '+_("kBps")+' / '+ _("UP") + ': ' + str(a['up_rate'])+' '+_("kBps")
+			self.SetStatusText(self.status_txt , 2)
+			
+			if sys.platform == 'win32':
+				self.tray.SetIcon(self.trayicon, prog_name_full+'\n'+self.status_txt)
+		except:
+			pass
 
 	# new torrent
 
@@ -231,7 +243,7 @@ class ParentFrame(wx.MDIParentFrame):
 		win.Show(True)
 		
 	def AddCreatedTorrent(self, rsp):
-		self.btq.do_add(rsp)
+		self.btq.m.do_add(rsp)
 		self.log.AddMsg('BTQueue', _('Added created torrent: %s') % rsp)
 		
 	#
@@ -244,7 +256,7 @@ class ParentFrame(wx.MDIParentFrame):
 		self.Close(True)
 		
 	def OnClose(self, evt):
-		self.btq.do_quit()
+		self.btq.m.do_quit()
 		
 		if sys.platform == 'win32':
 			del self.tray
@@ -379,154 +391,15 @@ class ParentFrame(wx.MDIParentFrame):
 		self.tray.PopupMenu(menu)
 		menu.Destroy()
 
-
-class CbtBTQ(Console):
+	#~ def CbtBw(self,line=None):
+		#~ dlspeed = 0
+		#~ ulspeed = 0
+		#~ for j in self.queue.jobs():
+			#~ data = j.get()
+			#~ dlspeed += float(data['dlspeed'].split()[0])
+			#~ ulspeed += float(data['ulspeed'].split()[0])
+		#~ return (dlspeed, 0, ulspeed, 0)
 	
-	def CbtBw(self,line=None):
-		dlspeed = 0
-		ulspeed = 0
-		for j in self.queue.jobs():
-			data = j.get()
-			dlspeed += float(data['dlspeed'].split()[0])
-			ulspeed += float(data['ulspeed'].split()[0])
-		#~ max_dl = float(self.policy('max_download_rate'))
-		#~ max_ul = float(self.policy('max_upload_rate'))
-		#~ print 'Download Speed: %4s (%4s%%)' % (dlspeed, dlspeed*100/max_dl)
-		#~ print 'Upload Speed:   %4s (%4s%%)'% (ulspeed, ulspeed*100/max_ul)
-		#~ return (dlspeed, dlspeed*100/max_dl, ulspeed, ulspeed*100/max_ul)
-		return (dlspeed, 0, ulspeed, 0)
-	
-	def CbtList(self,line=None):
-		dataf = []
-		for j in self.queue.jobs():
-			data = j.get()
-			title = data['title']
-			quoted_title = ''
-			for c in title:
-				if ord(c) < 32 or ord(c) > 127:
-					c = '?'
-				quoted_title += c
-			data['title'] = quoted_title
-			data['dlsize'] = data['dlsize'].split()[0]
-			data['totalsize'] = data['totalsize'].split()[0]
-			data['dlspeed'] = data['dlspeed'].split()[0]
-			data['ulspeed'] = data['ulspeed'].split()[0]
-			data2 = vars(j)
-			data['msg'] = data2['activity']
-			
-			dataf.append(data)
-			
-		return dataf
-		
-	def CbtSpew(self,line):
-		if not line:
-			return
-		j = self.queue.job(line)
-		if not j:
-			return
-		spew = j.get_spew()
-		dataf = []
-		for i in spew:
-			var = {}
-			var.update(i)
-			try:
-				var['cc'],var['netname'] = self.ipdb[i['ip']].split(':')
-			except (IndexError,TypeError,KeyError,AssertionError):
-				var['cc'],var['netname'] = 'XX',_('Unknown')
-			#~ var['client'] = var['client']
-			#~ var['netname'] = var['netname']
-			dataf.append(var)
-			
-		return dataf
-		
-	def CbtStat(self,line):
-		if not line:
-			return
-		j = self.queue.job(line)
-		stat = j.statistics
-		
-		dataf = {}
-
-		try:
-			dataf['numcopies'] = stat.numCopies
-		except:
-			pass
-			
-		try:
-			dataf['numcopies2'] = stat.numCopies2
-		except:
-			pass
-			
-		try:
-			dataf['discarded'] = stat.discarded
-		except:
-			pass
-			
-		try:
-			dataf['downtotal'] = stat.downTotal
-		except:
-			pass
-			
-		try:
-			dataf['storage_complete'] = stat.storage_numcomplete
-		except:
-			pass
-			
-		try:
-			dataf['storage_totalpieces'] = stat.storage_totalpieces
-		except:
-			pass
-			
-		try:
-			dataf['uptotal'] = stat.upTotal
-		except:
-			pass
-			
-		try:
-			dataf['piecescomplete'] = stat.connecter.downloader.storage.have
-			dataf['numactive'] = stat.connecter.downloader.storage.numactive
-		except:
-			pass
-		
-		return {"dataf":dataf, "stat":stat}
-
-	def CbtDetail(self,line=None):
-		if not line:
-			print 'need id'
-			return
-		j = self.queue.job(line)
-		if not j:
-			print line,'not found'
-			return
-		data = j.get()
-		data['title'] = data['title']
-		data['dlsize'] = data['dlsize'].split()[0]
-		data['totalsize'] = data['totalsize'].split()[0]
-		data['dlspeed'] = data['dlspeed'].split()[0]
-		data['ulspeed'] = data['ulspeed'].split()[0]
-		
-		return data
-		
-#~ print '''ID:                    %(id)s
-#~ Response:              %(filename)s
-#~ Info Hash:             %(infohash)s
-#~ Announce:              %(announce)s
-#~ Peer ID:               %(peer_id)s
-#~ Name:                  %(title)s
-#~ Destination:           %(dest_path)s
-#~ Size:                  %(totalsize)s
-#~ ETA:                   %(eta)s
-#~ State:                 %(btstatus)s
-#~ Progress:              %(progress)s
-#~ Downloaded/Uploaded:   %(dlsize)s/%(ulsize)s
-#~ Share Ratio:           %(ratio)s
-#~ Download/Upload Speed: %(dlspeed)s/%(ulspeed)s
-#~ Total Speed:           %(totalspeed)s
-#~ Peer Average Progress: %(peeravgprogress)s
-#~ Peers/Seeds/Copies:    %(peers)s/%(seeds)s/%(copies)0.3f
-#~ Last Error:            %(error)s
-#~ ''' % data
-
 #----------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -584,26 +457,6 @@ if __name__ == '__main__':
 			
 	else:
 		
-		command = sys.argv[1]
-		
-		if sys.platform == 'win32' or not os.environ.get('HOME'):
-			root_path = os.path.dirname(os.path.abspath(sys.argv[0]))
-		else:
-			root_path = os.path.join(os.environ.get('HOME'),'.btqueue')
-		
-		pol = policy.Policy(root_path)
-		pol.set_default()
-		
-		if command == "add":
-			from BitQueue.webservice import WebInterface
-			app = WebInterface()
-			from BitQueue import timeoutsocket
-			timeoutsocket.setDefaultSocketTimeout(2)
-			ret = app.process(command,sys.argv[2:])
-			timeoutsocket.setDefaultSocketTimeout(None)
-			#~ if sys.platform == 'win32' and command=='add' and ret:
-				#~ if ret.find('timeout') >= 0: 
-					#~ pass
-				#~ else:
-					#~ raw_input()
+		pass
+
 

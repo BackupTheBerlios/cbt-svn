@@ -1,4 +1,5 @@
 import sys,os
+import time
 
 import policy
 
@@ -29,37 +30,42 @@ class Logger:
     def set_debug_level(self,level):
         self.debug_level = level
 
-    def _log(self,level,msg):
+    def _log(self,level,msg,notime):
         if level <= self.debug_level:
+            now = time.strftime('%Y%m%d-%H:%M:%S')
             try:
                 fd = open(self.file,'a')
+                if not notime:
+                    fd.write(now+'\n')
                 fd.write(msg)
                 fd.close()
             except Exception,why:
                 pass
             if level >= FINE:
+                if not notime:
+                    print now
                 print msg
 
-    def fine(self,msg):
-        self._log(FINE,msg)
+    def fine(self,msg,notime=0):
+        self._log(FINE,msg,notime)
 
-    def finer(self,msg):
-        self._log(FINER,msg)
+    def finer(self,msg,notime=0):
+        self._log(FINER,msg,notime)
 
-    def finest(self,msg):
-        self._log(FINEST,msg)
+    def finest(self,msg,notime=0):
+        self._log(FINEST,msg,notime)
 
-    def verbose(self,msg):
-        self._log(VERBOSE,msg)
+    def verbose(self,msg,notime=0):
+        self._log(VERBOSE,msg,notime)
 
-    def debug(self,msg):
-        self._log(DEBUG,msg)
+    def debug(self,msg,notime=0):
+        self._log(DEBUG,msg,notime)
 
-    def info(self,msg):
-        self._log(INFO,msg)
+    def info(self,msg,notime=0):
+        self._log(INFO,msg,notime)
 
-    def warn(self,msg):
-        self._log(WARN,msg)
+    def warn(self,msg,notime=0):
+        self._log(WARN,msg,notime)
 
-    def error(self,msg):
-        self._log(ERROR,msg)
+    def error(self,msg,notime=0):
+        self._log(ERROR,msg,notime)

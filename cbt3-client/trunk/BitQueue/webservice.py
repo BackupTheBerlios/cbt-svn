@@ -8,11 +8,14 @@ import urllib
 import os
 
 from queue import QueueEntry
-from BitQueue import version
+from BitQueue import version,BindException
 import policy
 from i18n import *
 
 class WebServiceServer(SocketServer.ThreadingTCPServer,Thread):
+
+    allow_reuse_address = 1
+
     def __init__(self,RequestHandlerClass,queue):
         Thread.__init__(self)
         self.queue = queue
@@ -20,7 +23,10 @@ class WebServiceServer(SocketServer.ThreadingTCPServer,Thread):
         self._quit = 0
         addr = self.policy(policy.WEBSERVICE_IP), \
                self.policy(policy.WEBSERVICE_PORT)
-        SocketServer.ThreadingTCPServer.__init__(self,addr,RequestHandlerClass)
+        try:
+            SocketServer.ThreadingTCPServer.__init__(self,addr,RequestHandlerClass)
+        except Exception,why:
+            raise BindException,'%s:%d: %s' % (addr+(str(why),))
 
     def get_request(self):
         while not self._quit:
@@ -42,7 +48,7 @@ class WebServiceServer(SocketServer.ThreadingTCPServer,Thread):
 
     def stop(self):
         self._quit = 1
-        self.socket.close()
+        self.server_close()
 
 class WebServiceRequestHandler(SocketServer.StreamRequestHandler):
     rbufsize = 0
@@ -72,11 +78,11 @@ class WebServiceRequestHandler(SocketServer.StreamRequestHandler):
         return self.connection.send(buf)
 
     def handle_cmd(self,idline,cmdline):
-        key,id = idline.split('|')
+        key,id = idline.split('|',1)
         if key != 'ID' or not id in self.id:
             self.handle_error('mismatch id')
             return
-        cmd,args = cmdline.split('|')
+        cmd,args = cmdline.split('|',1)
         attr = 'do_%s' % cmd
         if hasattr(self,attr):
             if self.policy(policy.WEBSERVICE_+cmd.lower()):
@@ -183,7 +189,7 @@ class WebServiceRequestHandler(SocketServer.StreamRequestHandler):
         ret=''
         setting=urllib.unquote_plus(args)
         #print setting
-        key,value=setting.split('=')
+        key,value=setting.split('=',1)
         self.policy.update(key.strip(),value.strip())
         ret = ret + key + ' = ' + value
         self.policy.save()
