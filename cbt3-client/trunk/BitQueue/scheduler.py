@@ -11,6 +11,7 @@ from BitCrawler.aurllib import urlopen as aurlopen
 
 from queue import Queue,QueueEntry,History
 import policy
+from log import get_logger
 from i18n import *
 
 try:
@@ -81,6 +82,7 @@ class Scheduler(Thread):
 
         self.add_queue = SyncQueue(0)
         self.num_run = 0
+        self.log = get_logger()
 
     def job(self,id):
         return self.queue.get(id)
@@ -240,59 +242,100 @@ class Scheduler(Thread):
         seed_rates = []
         used_upload_bw = 0
         used_seed_bw = 0
+
+        class RateController:
+            def __init__(self,job):
+                self.job = job
+                self.current_up_rate = job.up_rate/1000.0
+                self.new_up_rate = job.up_rate/1000.0
+
+            def __repr__(self):
+                return '(%s,%0.1f,%0.1f)' % (self.job.id,self.current_up_rate,self.new_up_rate)
+
+            def apply(self):
+                self.job.dow.setUploadRate(self.new_up_rate)
+
+            def __cmp__(self,o):
+                return cmp(self.current_up_rate,o.current_up_rate)
+
+            def change_up_rate(self,offset):
+                self.new_up_rate = max(self.new_up_rate+offset,3)
+
+            def is_active(self):
+                return self.current_up_rate > 3
+
+            def is_seeding(self):
+                return self.job.state == STATE_SEEDING
+
+            def is_leeching(self):
+                return self.job.state == STATE_RUNNING
+
         for j in self.queue.get():
             # duplicate with download rate
             #j.update_scrape()
             if not j.dow or not hasattr(j.dow.d,'downloader'):
                 continue
             if j.state == STATE_RUNNING:
-                incompletes.append(j)
-                new_up_rates.append(j.up_rate/1000)
-                upload_rates.append(j.up_rate/1000)
+                incompletes.append(RateController(j))
             if j.state == STATE_SEEDING:
-                completes.append(j)
-                new_up_rates.append(j.up_rate/1000)
-                seed_rates.append(j.up_rate/1000)
-        used_bw = sum(new_up_rates)
-        used_upload_bw = sum(upload_rates)
-        used_seed_bw = sum(seed_rates)
+                completes.append(RateController(j))
+        used_upload_bw = sum([j.current_up_rate for j in incompletes])
+        used_seed_bw = sum([j.current_up_rate for j in completes])
+        used_bw = used_upload_bw+used_seed_bw
 
         all = incompletes+completes
 
         max_bw = float(self.policy(policy.MAX_UPLOAD_RATE))
-        max_seed_rate = float(self.policy(policy.MAX_SEED_RATE))
-        max_bw -= min(max_seed_rate,used_seed_bw)
+        max_seed_bw = float(self.policy(policy.MAX_SEED_RATE))
+        max_upload_bw = max_bw-min(max_seed_bw,used_seed_bw)
+        max_seed_bw = max(max_bw-max_upload_bw,max_seed_bw)
 
-        avail_bw = max_bw - used_bw
-        active_ups = len(all)
-        new_up_rates = []
-        if used_bw == 0:
-            return
-        if avail_bw >= max_bw * 0.85 and active_ups > 1 and len(new_up_rates) == active_ups:
-            avail_avg_bw = avail_bw / active_ups
-            while avail_bw > 0.5:
-                for uj in range(active_ups):
-                    new_rate = new_up_rates[uj] + avail_avg_bw
-                    if all[uj].state == STATE_RUNNING and new_rate < 0.9 * max_bw:
-                        new_up_rates[uj] = new_rate
-                        avail_bw += -new_rate
-                    elif all[uj].state == STATE_SEEDING and new_rate < 0.9 * max_seed_rate:
-                        new_up_rates[uj] = new_rate
-                        avail_bw += -new_rate
-                    else:
-                        pass
-                    avail_avg_bw = avail_bw / active_ups
+        #print used_upload_bw,used_seed_bw,used_bw
+        #print max_upload_bw,max_seed_bw,max_bw
+
+        if used_seed_bw < max_seed_bw:
+            avail_bw = max_seed_bw-used_seed_bw
+            for j in completes:
+                j.change_up_rate(+avail_bw)
         else:
-            avg_up_rate = max_bw/max(1,len(incompletes))
-            avg_seed_rate = max_seed_rate/max(1,len(completes))
-            new_up_rates = []
-            for j in all:
-                if j.state == STATE_RUNNING:
-                    new_up_rates.append(avg_up_rate)
-                else:
-                    new_up_rates.append(avg_seed_rate)       
-        for j in map(None,all,new_up_rates):
-            j[0].dow.setUploadRate(j[1])
+            avail_bw = used_seed_bw-max_seed_bw
+            avg_bw = avail_bw/max(len(completes),1)
+            step = 5
+            compl = completes[:]
+            compl.sort()
+            while avail_bw > 0:
+                saved_bw = avail_bw
+                for j in compl:
+                    if j.is_active() and j.new_up_rate > avg_bw:
+                        j.change_up_rate(-step)
+                        avail_bw -= step
+                if saved_bw == avail_bw:
+                    avg_bw -= step
+
+        if used_upload_bw < max_upload_bw:
+            avail_bw = max_upload_bw-used_upload_bw
+            #print 'avail_bw',avail_bw
+            for j in incompletes:
+                j.change_up_rate(+avail_bw)
+        else:
+            avail_bw = used_upload_bw-max_upload_bw
+            avg_bw = avail_bw/max(len(incompletes),1)
+            step = 5
+            incompl = incompletes[:]
+            incompl.sort()
+            while avail_bw > 0:
+                saved_bw = avail_bw
+                for j in incompl:
+                    if j.is_active() and j.new_up_rate > avg_bw:
+                        j.change_up_rate(-step)
+                        avail_bw -= step
+                if saved_bw == avail_bw:
+                    avg_bw -= step
+
+        all = incompletes+completes
+        self.log.verbose('Upload Rate: %s\n' % repr(all))
+        for j in all:
+            j.apply()
 
     def calculate_download_rate(self):
         '''Simple download rate adjuster.  Could be enhanced with priorities.'''

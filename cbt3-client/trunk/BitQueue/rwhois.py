@@ -838,6 +838,7 @@ class DomainRecord(WhoisRecord):
 
         apnic_fields = (
             {'page_field': "netname",           "rec_field": "domainid"},
+            {'page_field': "country",           "rec_field": "country"},
             )
 
         self._ParseWhois_Generic(apnic_fields)
@@ -846,7 +847,6 @@ class DomainRecord(WhoisRecord):
     def _ParseWhois_Generic(self, fields):
         for field in fields:
             regex = "%s: *(.+)" % field['page_field']
-            #print regex
             if field['rec_field'] == "servers":
                 self.servers = []
                 servers = re.findall(regex, self.page)
@@ -858,7 +858,7 @@ class DomainRecord(WhoisRecord):
                         ip = "?"
                     self.servers.append((server, ip))
             else:
-                m = re.search(regex, self.page)
+                m = re.search(regex, self.page, re.I)
                 #if m: print m.group(1)
                 if m: setattr(self, field['rec_field'], string.strip(m.group(1)))
 

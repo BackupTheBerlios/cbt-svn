@@ -161,10 +161,10 @@ class Console:
 
     def apply_debug_level(self,level):
         import httplib
-        if level == 0:
-            httplib.HTTPConnection.debuglevel = 0
-        elif level >= 2:
+        if level >= 4:
             httplib.HTTPConnection.debuglevel = 1
+        else:
+            httplib.HTTPConnection.debuglevel = 0
         self.log.set_debug_level(level)
 
     def mainloop(self):

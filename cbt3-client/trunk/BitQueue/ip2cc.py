@@ -26,7 +26,7 @@ class DuplicateError(ValueError): pass
 from rwhois import DomainRecord
 
 
-def ip2netname(domain,whoisserver='whois.arin.net'):
+def ip2netname_server(domain,whoisserver='whois.arin.net'):
     try:
         d = DomainRecord(domain)
         d.whois(domain, whoisserver)
@@ -38,16 +38,33 @@ def ip2netname(domain,whoisserver='whois.arin.net'):
     except 'NoSuchDomain', reason:
         print "ERROR: no such domain %s" % domain
 #    except socket.error, (ecode,reason):
-        print reason
+#        print reason
     except "TimedOut", reason:
         print "Timed out", reason
     except error, reason:
+        print '%s: %s' % (str(reason),whoisserver)
+    return 'Unknown'
+
+def ip2netname(domain,zone=''):
+    servers = ['whois.ripe.org','whois.thnic.net','whois.apnic.net','whois.arin.net']
+    if zone:
+        servers = [{'ripencc': 'whois.ripe.org',
+                    'arin': 'whois.arin.net',
+                    'apnic': 'whois.apnic.net',
+                    'lacnic': 'whois.lacnic.net'}[zone]]
+    for server in servers:
+        netname = ip2netname_server(domain,server)
+        if netname != 'Unknown':
+            return netname
+    try:
+        fd = urllib.urlopen('http://www.fixedorbit.com/cgi-bin/cgiip.exe?Machine=%s' % domain)
+        reps = fd.read()
+        m = fixedorbit_cre.search(reps)
+        if m:
+            return m.group(1).split(' ')[0]
+    except Exception,why:
+        print why
         pass
-    fd = urllib.urlopen('http://www.fixedorbit.com/cgi-bin/cgiip.exe?Machine=%s' % domain)
-    reps = fd.read()
-    m = fixedorbit_cre.search(reps)
-    if m:
-        return m.group(1).split(' ')[0]
     return 'Unknown'
 
 
@@ -112,7 +129,14 @@ class IPRangeDB:
             else:
                 db_last = record[:4]
                 if first<=db_last:
-                    if replace:
+                    db_first_int = struct.unpack('!I', db_first)[0]
+                    db_last_int = struct.unpack('!I', db_last)[0]
+                    first_int = struct.unpack('!I', first)[0]
+                    last_int = struct.unpack('!I', last)[0]
+                    print db_first_int,first_int
+                    print db_last_int,last_int
+                    if replace or (db_last_int-db_first_int < last_int-first_int):
+                    #if replace or (db_first_int >= first_int and db_last_int <= last_int):
                         del self.__db[db_first]
                         continue
                     else:
@@ -181,8 +205,10 @@ class CountryByIP(IPRangeDB):
                     last = inet_ntoa(struct.pack('!I', last_int))
                     try:
                         netname = olddb[first].split(':')[1]
+                        #if netname == 'Unknown':
+                        #    netname = ip2netname(first,zone=name)
                     except:
-                        netname = ip2netname(first)
+                        netname = ip2netname(first,zone=name)
                     try:
                         value = '%s:%s' % (parts[1].upper(),netname)
                         print first,value
@@ -190,6 +216,65 @@ class CountryByIP(IPRangeDB):
                     except ValueError:
                         pass
             fp.close()
+
+
+class DescriptionByIP(IPRangeDB):
+
+    dbClass = IPRangeDB
+
+    def __init__(self, filename, mode='r'):
+        IPRangeDB.__init__(self,filename,mode)
+        self.filename = 'radb.db'
+
+    def prefetch(self):
+        fi = urlopen('ftp://ftp.radb.net/radb/dbase/radb.db.gz')
+        fo = open(self.filename+'.gz','wb')
+        fo.write(fi.read())
+        fo.close()
+        fi.close()
+        import gzip
+        fi = gzip.open(self.filename+'.gz')
+        fo = open(self.filename,'wb')
+        fo.write(fi.read())
+        fo.close()
+        fi.close()
+
+    def fetch(self):
+        if not os.path.exists(self.filename):
+            self.prefetch()
+        fd = open(self.filename,'r')
+        record = {}
+        while 1:
+            line = fd.readline()
+            if not line:
+                break
+            line = line.strip()
+            if line == '':
+                if record.has_key('route'):
+                    first,prefix = record['route'].split('/',1)
+                    first_int = struct.unpack('!I', inet_aton(first))[0]
+                    length = pow(2,32-int(prefix))
+                    last_int = first_int+length-1
+                    last = inet_ntoa(struct.pack('!I', last_int))
+                    print first,last,record['descr']
+                    try:
+                        self.add(first,last,record['descr'])
+                    except DuplicateError:
+                        pass
+                record = {}
+                continue
+            try:
+                key,value = line.split(':',1)
+                key,value = key.strip(),value.strip()
+            except:
+                if last_key == 'descr':
+                    key,value = 'descr',line
+                else:
+                    continue
+            if not record.has_key(key) or (key == 'descr' and record.get('descr','') == 'UNINET'):
+                record[key] = value
+            last_key = key
+        fd.close()
 
     
 # ISO 3166-1 A2 codes (latest change: Wednesday 10 October 2003)
@@ -493,6 +578,9 @@ Content-Type: text/html
         if sys.argv[1]=='-prefetch':
             db = CountryByIP(db_file)
             db.prefetch()
+        elif sys.argv[1]=='-updatedesc':
+            ndb = DescriptionByIP('ip2desc.db','n')
+            ndb.fetch()
         elif sys.argv[1]=='-update':
             olddb = CountryByIP(db_file)
             db = CountryByIP(db_file+'.new', 'n')
@@ -528,20 +616,52 @@ Content-Type: text/html
             db.close()
             olddb.close()
             #os.rename(db_file+'.new', db_file)
+	elif sys.argv[1]=='-merge':
+            if db_file.endswith('.new'):
+                db_file = db_file[:-4]
+            olddb = CountryByIP(db_file)
+            db = CountryByIP(db_file+'.new', 'n')
+            dbd = DescriptionByIP('ip2desc.db')
+            for record in iter(olddb):
+                if record:
+                    range,value = record
+                    first,last = range
+                    cc,netname = value.split(':',1)
+                    #print first
+                    #first_int = struct.unpack('!I', first)[0]
+                    try:
+                        desc = dbd[first]
+                    except:
+                        #print inet_ntoa(first_int)
+                        desc = netname
+                    value = '%s:%s' % (cc,desc)
+                    db.add(first, last, value)
+            db.close()
+            olddb.close()
+            os.rename(db_file+'.new', db_file)
         elif sys.argv[1]=='-check':
             db = CountryByIP(db_file)
             print 'There are %s records in database' % len(db)
             missing = {}
+            netnames = []
             for ip_range, cc in db:
-                cc = cc.split(':')[0]
+                cc,netname = cc.split(':')
                 if cc not in cc2name:
                     missing.setdefault(cc, []).append(ip_range)
+                if cc != 'XX' and netname == 'Unknown':
+                    netnames.append(ip_range)
             if missing:
                 for cc, ip_list in missing.items():
                     print 'Missing %s (%s times, sample: %s-%s)' % \
                             (cc, len(ip_list), ip_list[0][0], ip_list[0][1])
             else:
-                print 'Contry codes map is OK'
+                print 'Country codes map is OK'
+            if netnames:
+                for ip_range in netnames:
+                    print 'Missing %s' % str(ip_range)
+                print 'Total %d records' % len(netnames)
+            else:
+                print 'netname is OK'
         else:
             addr = sys.argv[1]
             if is_IP(addr):
@@ -555,11 +675,16 @@ Content-Type: text/html
                 else:
                     addr_str = '%s (%s)' % (addr, ip)
             db = CountryByIP(db_file)
+            #dbd = DescriptionByIP('ip2desc.db')
             try:
                 cc = db[ip]
             except (AssertionError,KeyError):
                 sys.exit('Information for %s not found' % addr_str)
             else:
+                #try:
+                #    desc = dbd[ip]
+                #except (AssertionError,KeyError):
+                #    desc = 'no desc'
                 print '%s is located in %s' % (addr_str, cc2name.get(cc, cc))
     elif len(sys.argv) == 4 and sys.argv[1]=='-set':
         ip = inet_aton(sys.argv[2])
