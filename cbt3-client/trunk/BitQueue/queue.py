@@ -6,6 +6,7 @@ from binascii import a2b_hex
 from sha import sha
 from log import get_logger
 import urllib,os
+import time
 
 try:
     from BitTornado.bencode import bdecode,bencode
@@ -51,6 +52,13 @@ class IDGenerator:
 id_generator = IDGenerator()
 
 def decode_peer_id(id):
+    try:
+        client = _decode_peer_id(id)
+    except:
+        client = 'N/A'
+    return client
+
+def _decode_peer_id(id):
     quoted_id = id
 
     if id[:3] == '0x ':
@@ -242,11 +250,13 @@ class QueueEntry:
                   'ratio','peers','seeds','copies','dlsize','ulsize',
                   'peeravgprogress','totalspeed','totalsize',
                   'error','id','infohash','title','activity','announce',
-                  'dest_path','peer_id']
+                  'dest_path','peer_id',
+                  'added_time','started_time','finished_time','stopped_time']
     default_fields = ['filename','progress','btstatus','eta',
                       'dlspeed','ulspeed',
                       'ratio','peers','seeds','copies','dlsize','ulsize',
-                      'peeravgprogress','totalspeed','totalsize','title']
+                      'peeravgprogress','totalspeed','totalsize','title',
+                      'added_time','started_time','finished_time','stopped_time']
     header_fields = {'filename': 'Filename',
                      'progress': 'Progress',
                      'btstatus': 'BT Status',
@@ -298,6 +308,13 @@ class QueueEntry:
         self.share_ratio = 0.0
         self.currentseed = '?'
         self.currentpeer = '?'
+
+        self.added_time = -1
+        self.started_time = -1
+        self.finished_time = -1
+        self.stopped_time = -1
+        self.added()
+
         self.update_info(fractionDone=0.0,
                          timeEst=0.0,downRate=0.0,upRate=0.0,
                          activity='None',statistics=None,
@@ -402,6 +419,14 @@ class QueueEntry:
             except:
                 peer_id = '-'*20
             return peer_id
+        elif key == 'added_time':
+            return self.added_time
+        elif key == 'started_time':
+            return self.started_time
+        elif key == 'finished_time':
+            return self.finished_time
+        elif key == 'stopped_time':
+            return self.stopped_time
         elif key == None:
             dict = {}
             for key in self.all_fields:
@@ -519,6 +544,7 @@ class QueueEntry:
         self.old_ulsize = self.ulsize
         self.old_dlsize = self.dlsize
         self.clear_stat()
+        self.stopped()
 
     def __repr__(self):
         return '<%s,%s>' % (self.id,self.file)
@@ -540,6 +566,10 @@ class QueueEntry:
             self.dest_path = cfg.get(section,'dest_path')
             self.old_dlsize = long(cfg.get(section,'old_dlsize'))
             self.old_ulsize = long(cfg.get(section,'old_ulsize'))
+            self.added_time = float(cfg.get(section,'added_time'))
+            self.started_time = float(cfg.get(section,'started_time'))
+            self.finished_time = float(cfg.get(section,'finished_time'))
+            self.stopped_time = float(cfg.get(section,'stopped_time'))
             self.local_policy = policy.EntryPolicy(cfg,section)
         except NoOptionError:
             pass
@@ -553,7 +583,25 @@ class QueueEntry:
         cfg.set(section,'dest_path',self.dest_path)
         cfg.set(section,'old_dlsize',str(max(self.old_dlsize,self.dlsize)))
         cfg.set(section,'old_ulsize',str(max(self.old_ulsize,self.ulsize)))
+        cfg.set(section,'added_time',str(self.added_time))
+        cfg.set(section,'started_time',str(self.started_time))
+        cfg.set(section,'finished_time',str(self.finished_time))
+        cfg.set(section,'stopped_time',str(self.stopped_time))
         self.local_policy.save(cfg,section)
+
+    def added(self):
+        self.added_time = time.time()
+
+    def started(self):
+        if self.started_time < 0:
+            self.started_time = time.time()
+
+    def finished(self):
+        if self.finished_time < 0:
+            self.finished_time = time.time()
+
+    def stopped(self):
+        self.stopped_time = time.time()
 
 class Queue:
     def __init__(self):

@@ -190,6 +190,7 @@ class Scheduler(Thread):
 
     def dispatch(self,item):
         item.state = STATE_RUNNING
+        item.started()
         minport = self.policy(policy.MIN_PORT)
         maxport = self.policy(policy.MAX_PORT)
         minpeer = self.policy(policy.MIN_PEER)
@@ -216,6 +217,7 @@ class Scheduler(Thread):
     def cb_finished(self,item):
         self.lock.acquire()
         item.state = STATE_FINISHED
+        item.finished()
         self.lock.release()
 
         hist = History()

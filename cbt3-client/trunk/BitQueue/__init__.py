@@ -1,5 +1,5 @@
 
-version = "Q-0.0.16 163 (BitQueue)"
+version = "Q-0.0.16 168 (BitQueue)"
 
 version_short = version.split(' ')[0]
 version_num = version.split(' ')[0].split('-')[1]
@@ -44,16 +44,30 @@ def decode_build(build):
         build_num += x
     return build_num
 
-def createPeerID(ins = '---'):
-    assert type(ins) is StringType
-    assert len(ins) == 3
-    myid = version_short[0]
-    for subver in version_short[2:].split('.'):
+def encode_version(ver):
+    ver_str = ''
+    for subver in ver.split('.'):
         try:
             subver = int(subver)
         except:
             subver = 0
-        myid += mapbase64[subver]
+        ver_str += mapbase64[subver]
+    return ver_str
+
+def decode_version(ver):
+    for i in range(3):
+        try:
+            index = mapbase64.index(ver[i])
+        except:
+            index = 0
+        ver[i] = str(index)
+    return '.'.join(ver)
+
+def createPeerID(ins = '---'):
+    assert type(ins) is StringType
+    assert len(ins) == 3
+    myid = version_short[0]
+    myid += encode_version(version_short[2:])
     myid += ('-' * (6-len(myid)))
     myid += ins
     myid += encode_build(version_build)

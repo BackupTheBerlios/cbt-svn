@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import cmd,os
+import cmd,os,time
 import socket
 import types
 from urlparse import urlparse,urlunparse
@@ -15,6 +15,11 @@ from webservice import WebServiceServer,WebServiceRequestHandler
 from i18n import *
 from queue import QueueEntry,bdecode,bencode,sha
 from launchmanycore import LaunchManyThread
+
+def format_time(s):
+    if s < 0:
+        return '-'
+    return time.ctime(s)
 
 class OutputHandler:
     def __init__(self,cb_restart=None):
@@ -519,6 +524,10 @@ Clients:
         data['totalsize'] = data['totalsize'].split()[0]
         data['dlspeed'] = data['dlspeed'].split()[0]
         data['ulspeed'] = data['ulspeed'].split()[0]
+        data['added_time'] = format_time(data['added_time'])
+        data['started_time'] = format_time(data['started_time'])
+        data['finished_time'] = format_time(data['finished_time'])
+        data['stopped_time'] = format_time(data['stopped_time'])
         print '''ID:                    %(id)s
 Response:              %(filename)s
 Info Hash:             %(infohash)s
@@ -537,6 +546,10 @@ Total Speed:           %(totalspeed)s
 Peer Average Progress: %(peeravgprogress)s
 Peers/Seeds/Copies:    %(peers)s/%(seeds)s/%(copies)0.3f
 Last Error:            %(error)s
+Added:                 %(added_time)s
+Started:               %(started_time)s
+Finished:              %(finished_time)s
+Stopped:               %(stopped_time)s
 ''' % data
 
     def do_reannounce(self,line=None):
