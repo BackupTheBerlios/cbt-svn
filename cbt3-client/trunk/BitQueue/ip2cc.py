@@ -515,7 +515,7 @@ Content-Type: text/html
             db.close()
             olddb.close()
             #os.rename(db_file+'.new', db_file)
-        elif sys.argv[1]=='-migrate':
+	elif sys.argv[1]=='-migrate':
             if db_file.endswith('.new'):
                 db_file = db_file[:-4]
             olddb = CountryByIP(db_file)

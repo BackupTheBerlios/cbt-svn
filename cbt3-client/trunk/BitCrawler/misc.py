@@ -12,16 +12,21 @@ bt_mimetype = 'x-bittorrent'
 content_dipo = re.compile('.*attachment;.*"filename=(?P<filename>.*)".*')
 
 import sys
-reserved_chars = [os.sep,'.']
+reserved_chars = [os.sep,'_']
 if sys.platform != 'win32':
     reserved_chars.append(':')
+
+def string(s):
+    if type(s) == type(''):
+        s = s.decode('iso-8859-1')
+    return s
 
 def asciiquote(s):
     s = urllib.unquote(s)
     n_s = ''
     for c in s:
         if ord(c) < 32 or ord(c) > 127 or c in reserved_chars:
-            n_s += '.%02X' % ord(c)
+            n_s += '+%02X' % ord(c)
         else:
             n_s += c
     return n_s.replace(' ','_')

@@ -5,6 +5,8 @@ from xml.sax import parse, saxutils
 from xml.sax.handler import ContentHandler
 from xml.sax.saxlib import LexicalHandler
 import string
+import urllib
+import misc
 
 class Element:
     "Class represent each element"
@@ -12,7 +14,9 @@ class Element:
         if not tag:
             tag = self.__class__.__name__
         self.tag = tag
-        self.attrs = attrs
+        self.attrs = {}
+        for key in attrs.keys():
+            self.attrs[key] = misc.string(attrs[key])
         self.parent = None
         self.children = []
         self.content = content
@@ -29,7 +33,7 @@ class Element:
         del self.attrs[index]
 
     def set_content(self,content):
-        self.content = content
+        self.content = misc.string(content)
 
     def add(self,child):
         self.children.append(child)
@@ -104,7 +108,7 @@ class ElementContentHandler(ContentHandler,LexicalHandler) :
         self.push(self.current)
         dict = {}
         for key in attrs.keys():
-            dict[key] = attrs[key]
+            dict[key] = urllib.unquote(misc.string(attrs[key]))
         self.current = Element(tag,dict)
         if not self.root:
             self.root = self.current

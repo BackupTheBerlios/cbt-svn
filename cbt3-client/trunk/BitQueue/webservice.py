@@ -182,7 +182,7 @@ class WebServiceRequestHandler(SocketServer.StreamRequestHandler):
     def do_GSET(self,args):
         ret=''
         setting=urllib.unquote_plus(args)
-        print setting
+        #print setting
         key,value=setting.split('=')
         self.policy.update(key.strip(),value.strip())
         ret = ret + key + ' = ' + value

@@ -57,6 +57,8 @@ class Crawler:
         self.log = get_logger()
         self.wait_list = XMLWrapper(cpolicy.WAIT_FILE,
                                     load=(self.ignore_wait==0))
+        self.failed_list = XMLWrapper(cpolicy.WAIT_FILE,
+                                      load=0)
 
     def process_tracker(self,tracker):
         Filter = get_filter(tracker.filter)
@@ -75,33 +77,39 @@ class Crawler:
             self.process_tracker(tracker)
 
         for media in self.wait_list:
-            self.submit(media)
+            if self.submit(media):
+                self.submitted_list.append(media)
+            else:
+                self.failed_list.append(media)
 
         self.postprocess()
 
     def submit(self,media):
+        ret = 0
+
         media.fetch()
         if not media.exists():
             self.log.error('submission failed: %s not exists\n' % media.title)
-            return
+            return ret
 
         try:
             key,value = self.webreq.add(urllib.quote(media.filename()))
             if value == 'OK':
                 self.log.info('%s submitted\n' % media.title)
-                self.wait_list.remove(media)
+                ret = 1
             else:
                 self.log.error('submission failed: %s %s\n' % (media.title,value))
-            self.submitted_list.append(media)
         except Exception,why:
             self.log.warn('unexpected exception: %s\n' % str(why))
+
+        return ret
 
     def preprocess(self):
         pass
 
     def postprocess(self):
         #self.tracker_list.save()
-        self.wait_list.save()
+        self.failed_list.save()
         self.submitted_list.save()
 
 if __name__ == '__main__':

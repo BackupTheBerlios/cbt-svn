@@ -7,6 +7,7 @@ from base64 import encodestring, decodestring
 import urllib
 import os,random
 import time
+from BitCrawler.aurllib import urlopen as aurlopen
 
 from queue import Queue,QueueEntry,History
 import policy
@@ -24,6 +25,15 @@ except ImportError,why:
         import sys
         sys.exit()
 
+try:
+    sum([1])
+except NameError:
+    def sum(seq,start=0):
+        s = 0
+        for i in seq[start:]:
+            s += i
+        return s
+
 _opener = None
 def urlopen(url,data=None):
     global _opener
@@ -32,23 +42,26 @@ def urlopen(url,data=None):
         _opener.addheaders = [('User-Agent',
                                'Mozilla/4.0 (compatible; Windows; Linux)')]
 
+    #_urlopen = _opener.open
+    _urlopen = aurlopen
+
     try:
-        fd = _opener.open(url,data)
+        fd = _urlopen(url,data)
     except HTTPError,why:
         raise HTTPError,why
     except (ValueError,URLError,OSError),why:
         try:
-            fd = _opener.open(urllib.unquote(url),data)
+            fd = _urlopen(urllib.unquote(url),data)
         except HTTPError,why:
             raise HTTPError,why
         except (ValueError,URLError,OSError),why:
             from nturl2path import pathname2url
             try:
-                fd = _opener.open('file:'+pathname2url(url),data)
+                fd = _urlopen('file:'+pathname2url(url),data)
             except HTTPError,why:
                 raise HTTPError,why
             except (ValueError,URLError,OSError):
-                fd = _opener.open('file:'+pathname2url(urllib.unquote(url)))
+                fd = _urlopen('file:'+pathname2url(urllib.unquote(url)))
     return fd
 
 class Scheduler(Thread):
@@ -91,7 +104,7 @@ class Scheduler(Thread):
             meta = fd.read()
             fullurl = fd.geturl()
             fd.close()
-            save_torrent = 0
+            save_torrent = 1
             if fullurl.startswith('file://'):
                 torrent_file = urllib.unquote(url)
                 if torrent_file.startswith('file://'):
@@ -103,20 +116,19 @@ class Scheduler(Thread):
                     filename = os.path.split(url)[1]
                     torrent_file = os.path.join(self.policy(policy.TORRENT_PATH),
                                                 filename)
-                    save_torrent = 1
             else:
-                filename = os.path.split(url)[1]
+                filename = urllib.unquote(os.path.split(url)[1])
                 torrent_file = os.path.join(self.policy(policy.TORRENT_PATH),
                                             filename)
-                save_torrent = 1
 
             torrent_path = os.path.dirname(torrent_file)
             if not os.path.exists(torrent_path):
                 os.mkdir(torrent_path)
 
-            fd = open(torrent_file,'wb')
-            fd.write(meta)
-            fd.close()
+            if save_torrent:
+                fd = open(torrent_file,'wb')
+                fd.write(meta)
+                fd.close()
 
             #~ d = Download() #cbt
             
@@ -223,8 +235,9 @@ class Scheduler(Thread):
         used_bw = 0
         new_up_rates=[]
         for j in self.queue.get():
-            j.update_scrape()
-            if not j.dow:
+            # duplicate with download rate
+            #j.update_scrape()
+            if not j.dow or not hasattr(j.dow,'downloader'):
                 continue
             if j.state == STATE_RUNNING:
                 incompletes.append(j)
@@ -241,7 +254,7 @@ class Scheduler(Thread):
         new_up_rates = []
         if used_bw == 0:
             return
-        if avail_bw >= max_bw * 0.85 and active_ups > 1:
+        if avail_bw >= max_bw * 0.85 and active_ups > 1 and len(new_up_rates) == active_ups:
             avail_avg_bw = avail_bw / active_ups
             while avail_bw > 0.5:
                 for uj in range(active_ups):
@@ -271,14 +284,15 @@ class Scheduler(Thread):
         used_bw = 0
         dl_rates = []
         for j in self.queue.get():
-            j.update_scrape()
-            if not j.dow:
+            # duplicate with upload rate
+            #j.update_scrape()
+            if not j.dow or not hasattr(j.dow,'downloader'):
                 continue
             if j.state == STATE_RUNNING:
                 incompletes.append(j)
                 dr = j.down_rate/1000
                 dl_rates.append(dr)
-        max_bw = float(self.policy(policy.MAX_DOWNLOAD_RATE))
+        max_bw = min(float(self.policy(policy.MAX_DOWNLOAD_RATE)),1000000)
         active_downs=len(incompletes)
         average_max_bw = max_bw / active_downs
         used_bw = sum( dl_rates )
@@ -319,10 +333,16 @@ class Scheduler(Thread):
             if self.num_run >= self.policy(policy.MAX_JOB_RUN):
                 break
             self.dispatch(item)
-        self.calculate_upload_rate()
-        self.calculate_download_rate()
-        #for j in self.queue.get():
-        #    j.update_scrape()
+        # we are using global upload rate
+        # modify launchmanycore before enable this feature
+        try:
+            if 0:
+                self.calculate_upload_rate()
+            self.calculate_download_rate()
+        except Exception,why:
+            pass
+        for j in self.queue.get():
+            j.update_scrape()
         self.terminate_seeding()
         self.queue.save()
         self.lock.release()

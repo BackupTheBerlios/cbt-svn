@@ -1,5 +1,5 @@
 
-version = "Q-0.0.15 150 (BitQueue)"
+version = "Q-0.0.16 163 (BitQueue)"
 
 version_short = version.split(' ')[0]
 version_num = version.split(' ')[0].split('-')[1]

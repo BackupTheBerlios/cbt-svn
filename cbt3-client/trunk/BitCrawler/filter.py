@@ -24,7 +24,7 @@ content_dispo_re = re.compile(r'.*attachment;.*filename="(?P<filename>[^"]+).*')
 
 def get_filter(name):
     if not name:
-        name = 'ListFilter'
+        name = 'Filter'
     return eval(name)
 
 class BTListHtmlParser(HTMLParser.HTMLParser) :
@@ -105,7 +105,7 @@ class BaseFilter:
         try:
             if self.preload:
                 webfd = urlopen(self.baseurl)
-        self.content = webfd.read()
+                self.content = webfd.read()
             media_list = self._process()
         except Exception,why:
             self.log.error('tracker failed: %s\n' % str(why))
@@ -383,7 +383,7 @@ class UserDefinedFilter(BaseFilter):
                    'publisher' in keys and \
                    'category' in keys and \
                    'download' in keys:
-                    self.log.debug('%s %s %s\n' % \
+                    self.log.debug('filter: %s %s %s\n' % \
                                    (self.attributes['title'],
                                     self.attributes['publisher'],
                                     self.attributes['download']))
@@ -394,6 +394,7 @@ class UserDefinedFilter(BaseFilter):
                              'type': self.attributes.get('category','')}
                     media = GenericMedia('Media',attrs=attrs)
                     if self.filter(media):
+                        media.fetch()
                         media_list.append(media)
 
                 m = cre.search(content,

@@ -18,11 +18,15 @@ def get_logger():
 
 class Logger:
     def __init__(self,progname,debug_level=WARN):
-        self.file = policy.get_policy().get_path(progname+'.log')
-        self.debug_level = debug_level
+        pol = policy.get_policy()
+        self.file = pol.get_path(progname+'.log')
+        self.debug_level = pol(policy.DEBUG_LEVEL)
+
+    def set_debug_level(self,level):
+        self.debug_level = level
 
     def _log(self,level,msg):
-        if self.debug_level >= level:
+        if level <= self.debug_level:
             try:
                 fd = open(self.file,'a')
                 fd.write(msg)

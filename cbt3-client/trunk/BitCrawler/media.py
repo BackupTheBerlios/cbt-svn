@@ -2,13 +2,14 @@ from UserList import UserList
 import copy,re
 import socket,urllib2
 from urllib import urlencode
-import os
+import os,stat
 
+from BitTornado.bencode import bdecode
 from BitQueue import timeoutsocket
 from BitQueue.log import get_logger
 from BitQueue import policy
 from element import Element
-from misc import asciiquote
+from misc import asciiquote,string
 from aurllib import urlopen
 
 STRING = 0
@@ -35,7 +36,7 @@ class Generic:
         self.set_attributes(attrs)
 
     def __repr__(self):
-        return '<%s %s>' % (self.tag,str(self.get_attributes()))
+        return '<%s %s>' % (self.tag,string(self.get_attributes()))
 
     def filename(self):
         torrent_path = policy.get_policy().get(policy.TORRENT_PATH)
@@ -52,7 +53,7 @@ class Generic:
             if not attrs.has_key(key):
                 value = ''
             else:
-                value = attrs[key]
+                value = string(attrs[key])
             atype = self.attributes[key]
             if atype == STRING:
                 pass
@@ -84,7 +85,7 @@ class Generic:
             if atype == LIST:
                 value = ','.join(value)
             else:
-                value = str(value)
+                value = string(value)
             dict[key] = value
         return dict
 
@@ -103,7 +104,12 @@ class Generic:
 
     def fetch(self):
         if self.exists():
-            return
+            try:
+                bdecode(open(self.filename(),'rb').read())
+                return
+            except Exception,why:
+                self.log.warn('invalid existing torrent: %s\n' % self.filename())
+                pass
 
         try:
             web = urlopen(self.link)
@@ -135,9 +141,9 @@ class GenericMedia(Generic):
     COMPARE_ORDER = []
 
 class List(Generic,UserList):
-    def __init__(self,tag=None,attrs={},content=''):
+    def __init__(self,tag=None,attrs={},content='',data=[]):
         Generic.__init__(self,tag,attrs,content)
-        UserList.__init__(self) 
+        UserList.__init__(self,data) 
 
     def to_element(self):
         e = Generic.to_element(self)
@@ -291,7 +297,7 @@ class Interest(Generic):
     def is_interest(self,media):
         if not hasattr(media,self.attribute):
             return 0
-        value = str(getattr(media,self.attribute))
+        value = string(getattr(media,self.attribute))
         found = self.cre.search(value)
         if self.mode == 'include' and found:
             return 1

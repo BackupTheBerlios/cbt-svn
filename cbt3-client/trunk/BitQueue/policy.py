@@ -39,6 +39,7 @@ ALLOW_ACL = 'allow_acl'
 DENY_ACL = 'deny_acl'
 ORDER_ACL = 'order_acl'
 MAX_LAST_BANNED = 'max_last_banned'
+VERIFY_LINK = 'verify_link'
 
 WEBSERVICE_ID = 'webservice_id'
 WEBSERVICE_IP = 'webservice_ip'
@@ -109,7 +110,11 @@ class IPRangeAC(AccessControl):
             self.netmask = ~long(math.pow(2,32-int(prefix))-1) & 4294967295L
             self.network = ip_to_int(network)
         except ValueError:
-            self.network,self.netmask = 0,4294967295L
+            try:
+                self.network = ip_to_int(acl)
+            except ValueError:
+                self.network = 0
+            self.netmask = 4294967295L
 
     def exists(self,ip):
         try:
@@ -271,6 +276,7 @@ class Policy:
                        DENY_ACL: 'NONE',
                        ORDER_ACL: 'allow,deny',
                        MAX_LAST_BANNED: 20,
+                       VERIFY_LINK: 0,
                        WEBSERVICE_IP: '127.0.0.1',
                        WEBSERVICE_PORT: 19428,
                        WEBSERVICE_ID: 'cbt',

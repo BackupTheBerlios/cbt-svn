@@ -2,11 +2,13 @@
 
 import cmd,os
 import socket
-from urllib2 import urlopen
 import types
+from urlparse import urlparse,urlunparse
 
 import policy
 from BitQueue import version
+from BitCrawler.aurllib import urlopen
+from html2text import html2text
 from log import get_logger
 from scheduler import Scheduler
 from webservice import WebServiceServer,WebServiceRequestHandler
@@ -156,6 +158,7 @@ class Console:
             httplib.HTTPConnection.debuglevel = 0
         elif level >= 2:
             httplib.HTTPConnection.debuglevel = 1
+        self.log.set_debug_level(level)
 
     def mainloop(self):
         self.controller.start()
@@ -567,6 +570,30 @@ Last Error:            %(error)s
     def do_savequeue(self,line=None):
         '''save queue immediately'''
         self.queue.save()
+
+    def do_wget(self,line=None):
+        '''retrieve http content using get'''
+        if not line:
+            print 'need url'
+            return
+        try:
+            content = urlopen(line,method='get').read()
+            print html2text(content).encode('iso-8859-1')
+        except Exception,why:
+            import traceback
+            traceback.print_exc()
+            print why
+
+    def do_wpost(self,line=None):
+        '''retrieve http content using post'''
+        if not line:
+            print 'need url'
+            return
+        try:
+            content = urlopen(line,method='post').read()
+            print html2text(content).encode('iso-8859-1')
+        except Exception,why:
+            print why
 
     def do_quit(self,line=None):
         '''quit'''

@@ -22,6 +22,7 @@ class TrackerLoader:
         self.passwd = tracker.password
         self.filter = filter
         self.log = get_logger()
+        self.policy = policy.get_policy()
 
     def prefetch(self):
         urlopener = CookieAURLOpener(self.user,self.passwd)
@@ -31,9 +32,10 @@ class TrackerLoader:
         self.prefetch()
 
         media_list = self.filter.process(self.tracker)
-        for media in media_list:
-            if not (is_movie(media.link) or is_torrent(media.link)) :
-                self.log.warn('link failed: link is not movie or torrent: %s\n' % str(media.link))
+        if self.policy(policy.VERIFY_LINK):
+            for media in media_list:
+                if not (is_movie(media.link) or is_torrent(media.link)) :
+                    self.log.warn('link failed: link is not movie or torrent: %s\n' % str(media.link))
         return media_list
 
 class TorrentBitsLoader(TrackerLoader):
@@ -118,28 +120,28 @@ if __name__ == '__main__' :
     passwd = getpass('password: ')
 
     def test_bnbt(ilist):
-    filter = BNBTFilter(ilist)
-    loader = TrackerLoader(Tracker('Media',
-                           attrs={'url': 'http://th-torrent.mine.nu:6969/',
-                                  'user': 'xxx',
-                                  'password': 'yyy'}),
-                           filter)
-    #loader.fetch().to_element().save(sys.stdout)
+        filter = BNBTFilter(ilist)
+        loader = TrackerLoader(Tracker('Media',
+                               attrs={'url': 'http://th-torrent.mine.nu:6969/',
+                                      'user': 'xxx',
+                                      'password': 'yyy'}),
+                               filter)
+        #loader.fetch().to_element().save(sys.stdout)
 
     def test_tb(ilist):
-    filter = TorrentBitsFilter(ilist)
-    loader = TorrentBitsLoader(Tracker('Media',
-                           attrs={'url': 'http://th-torrent.homeip.net:6969/browse.php',
-                                  'user': user,
-                                  'password': passwd}),
-                           filter)
-    #loader.fetch().to_element().save(sys.stdout)
+        filter = TorrentBitsFilter(ilist)
+        loader = TorrentBitsLoader(Tracker('Media',
+                               attrs={'url': 'http://th-torrent.homeip.net:6969/browse.php',
+                                      'user': user,
+                                      'password': passwd}),
+                               filter)
+        #loader.fetch().to_element().save(sys.stdout)
 
     def test_rss(ilist):
-    filter = RSSFilter(ilist)
-    loader = TrackerLoader(Tracker('Media',
-                           attrs={'url': 'http://www.legaltorrents.com/rss.xml'}),
-                           filter)
+        filter = RSSFilter(ilist)
+        loader = TrackerLoader(Tracker('Media',
+                               attrs={'url': 'http://www.legaltorrents.com/rss.xml'}),
+                               filter)
         #loader.fetch().to_element().save(sys.stdout)
 
     def test_ibbt(ilist):
@@ -149,7 +151,7 @@ if __name__ == '__main__' :
                                       'user': user,
                                       'password': passwd}),
                                filter)
-    loader.fetch().to_element().save(sys.stdout)
+        loader.fetch().to_element().save(sys.stdout)
 
     def test_ud(ilist):
         filter = UserDefinedFilter(ilist)
