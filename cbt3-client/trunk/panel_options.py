@@ -90,7 +90,12 @@ class PanelOptions(wx.MDIChildFrame):
 				#~ thread.start_new_thread(self.parent._jabberLogin, ())
 			except Exception, e:
 				self.parent.log.AddMsg( _('cBT server'), _('Error') + ": " + str(e), "error" )
-			
+				
+		if self.deflang != self.opt_lang.GetSelection():
+			dlg = wx.MessageDialog(self, _('Please restart cBT for applying your language preferences.'), _('Information'), wx.OK | wx.ICON_INFORMATION)
+			dlg.ShowModal()
+			dlg.Destroy()
+
 		self.parent.pol.update(policy.DEST_PATH, self.opt_destdir.GetValue())
 		self.parent.pol.update(policy.TORRENT_PATH, self.opt_torrentdir.GetValue())
 		self.parent.pol.update(policy.CBT_SHOWSPLASH, self.opt_splash.GetValue())
@@ -116,6 +121,8 @@ class PanelOptions(wx.MDIChildFrame):
 		self.deflogin = self.parent.pol(policy.CBT_LOGIN)
 		self.defpasswd = self.rt.decrypt(self.parent.pol(policy.CBT_PASSWORD))
 		self.defrpcurl = self.parent.pol(policy.CBT_RPCURL)
+		self.deflang = self.parent.pol(policy.CBT_LANG)
+		
 		self.opt_login.SetValue(self.parent.pol(policy.CBT_LOGIN))
 		self.opt_password.SetValue(self.rt.decrypt(self.parent.pol(policy.CBT_PASSWORD)))
 		self.opt_rpcurl.SetValue(self.parent.pol(policy.CBT_RPCURL))

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: communityBT\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2004-09-09 08:09+0100\n"
+"PO-Revision-Date: 2004-09-09 12:06+0100\n"
 "Last-Translator: vvarp <vvarp@aster.pl>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -10,41 +10,57 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: English\n"
 
-#: cbt.py:110
+#: cbt.py:108
 msgid "E&xit"
 msgstr ""
 
-#: cbt.py:180
+#: cbt.py:163
+#: cbt.py:190
+#: cbt.py:194
+#: panel_options.py:92
+msgid "cBT server"
+msgstr ""
+
+#: cbt.py:163
+#: panel_maketorrent.py:171
+#: panel_maketorrent.py:256
+#: panel_maketorrent.py:326
+#: panel_maketorrent.py:333
+#: panel_options.py:92
+msgid "Error"
+msgstr ""
+
+#: cbt.py:183
 msgid "cBTS version %s: connected."
 msgstr ""
 
-#: cbt.py:187
+#: cbt.py:190
 msgid "Login error."
 msgstr ""
 
-#: cbt.py:191
+#: cbt.py:194
 msgid "Connection error."
 msgstr ""
 
-#: cbt.py:295
+#: cbt.py:298
 msgid "based on "
 msgstr ""
 
-#: cbt.py:341
+#: cbt.py:344
 msgid "Show main window"
 msgstr ""
 
-#: cbt.py:342
+#: cbt.py:345
 #: panel_maketorrent.py:136
 #: panel_maketorrent.py:255
 msgid "Close"
 msgstr ""
 
-#: cbt.py:385
+#: cbt.py:388
 msgid "Unknown"
 msgstr ""
 
-#: cbt.py:529
+#: cbt.py:532
 msgid "Another instance is already running."
 msgstr ""
 
@@ -59,8 +75,8 @@ msgid "My torrents"
 msgstr ""
 
 #: cbt_widgets.py:36
-#: panel_options.py:15
-#: panel_options.py:104
+#: panel_options.py:16
+#: panel_options.py:116
 msgid "Options"
 msgstr ""
 
@@ -144,19 +160,12 @@ msgid "Choose file"
 msgstr ""
 
 #: panel_maketorrent.py:162
-#: panel_options.py:141
+#: panel_options.py:156
 msgid "Choose directory"
 msgstr ""
 
 #: panel_maketorrent.py:171
 msgid "You didn't choose any file or directory."
-msgstr ""
-
-#: panel_maketorrent.py:171
-#: panel_maketorrent.py:256
-#: panel_maketorrent.py:326
-#: panel_maketorrent.py:333
-msgid "Error"
 msgstr ""
 
 #: panel_maketorrent.py:207
@@ -168,7 +177,7 @@ msgid "Checking file size"
 msgstr ""
 
 #: panel_maketorrent.py:218
-#: panel_options.py:55
+#: panel_options.py:56
 msgid "Cancel"
 msgstr ""
 
@@ -197,72 +206,80 @@ msgstr ""
 msgid "Added created torrent: %s"
 msgstr ""
 
-#: panel_options.py:39
+#: panel_options.py:40
 msgid "Base options"
 msgstr ""
 
-#: panel_options.py:40
+#: panel_options.py:41
 msgid "Engine options"
 msgstr ""
 
-#: panel_options.py:42
+#: panel_options.py:43
 msgid "Community settings:"
 msgstr ""
 
-#: panel_options.py:43
+#: panel_options.py:44
 msgid "GUI settings:"
 msgstr ""
 
-#: panel_options.py:44
+#: panel_options.py:45
 msgid "Paths:"
 msgstr ""
 
-#: panel_options.py:46
+#: panel_options.py:47
 msgid "Login:"
 msgstr ""
 
-#: panel_options.py:47
+#: panel_options.py:48
 msgid "Password:"
 msgstr ""
 
-#: panel_options.py:48
+#: panel_options.py:49
 msgid "URL:"
 msgstr ""
 
-#: panel_options.py:49
+#: panel_options.py:50
 msgid "Download dir:"
 msgstr ""
 
-#: panel_options.py:50
+#: panel_options.py:51
 msgid "Torrents dir:"
 msgstr ""
 
-#: panel_options.py:51
+#: panel_options.py:52
 msgid "Language:"
 msgstr ""
 
-#: panel_options.py:52
+#: panel_options.py:53
 msgid "Show splash screen"
 msgstr ""
 
-#: panel_options.py:54
+#: panel_options.py:55
 msgid "Apply"
 msgstr ""
 
-#: panel_options.py:57
+#: panel_options.py:58
 msgid "Polski"
 msgstr ""
 
-#: panel_options.py:58
+#: panel_options.py:59
 msgid "English"
 msgstr ""
 
-#: panel_options.py:104
+#: panel_options.py:95
+msgid "Information"
+msgstr ""
+
+#: panel_options.py:95
+msgid "Please restart cBT for applying your language preferences."
+msgstr ""
+
+#: panel_options.py:116
 msgid "Saved."
 msgstr ""
 
 #: panel_public.py:34
-#: panel_transfers.py:43
+#: panel_transfers.py:52
 msgid "Title"
 msgstr ""
 
@@ -271,12 +288,12 @@ msgid "Size"
 msgstr ""
 
 #: panel_public.py:36
-#: panel_transfers.py:49
+#: panel_transfers.py:58
 msgid "Seeds"
 msgstr ""
 
 #: panel_public.py:37
-#: panel_transfers.py:50
+#: panel_transfers.py:59
 msgid "Peers"
 msgstr ""
 
@@ -306,12 +323,12 @@ msgid "Sent"
 msgstr ""
 
 #: panel_transfer_details.py:57
-#: panel_transfers.py:48
+#: panel_transfers.py:57
 msgid "UP Spd"
 msgstr ""
 
 #: panel_transfer_details.py:58
-#: panel_transfers.py:47
+#: panel_transfers.py:56
 msgid "DL Spd"
 msgstr ""
 
@@ -328,39 +345,59 @@ msgid "File"
 msgstr ""
 
 #: panel_transfer_details.py:67
-#: panel_transfers.py:45
+#: panel_transfers.py:54
 msgid "Progress"
 msgstr ""
 
+#: panel_transfers.py:43
+msgid "Resume"
+msgstr ""
+
 #: panel_transfers.py:44
-msgid "State"
+msgid "Pause"
+msgstr ""
+
+#: panel_transfers.py:45
+msgid "Remove"
 msgstr ""
 
 #: panel_transfers.py:46
+msgid "Details"
+msgstr ""
+
+#: panel_transfers.py:48
+msgid "Add URL"
+msgstr ""
+
+#: panel_transfers.py:53
+msgid "State"
+msgstr ""
+
+#: panel_transfers.py:55
 msgid "ETA"
 msgstr ""
 
-#: panel_transfers.py:51
+#: panel_transfers.py:60
 msgid "Ratio"
 msgstr ""
 
-#: panel_transfers.py:52
+#: panel_transfers.py:61
 msgid "Last message"
 msgstr ""
 
-#: panel_transfers.py:76
+#: panel_transfers.py:85
 msgid "Resumed: %s"
 msgstr ""
 
-#: panel_transfers.py:84
+#: panel_transfers.py:93
 msgid "Paused: %s"
 msgstr ""
 
-#: panel_transfers.py:92
+#: panel_transfers.py:101
 msgid "Removed: %s"
 msgstr ""
 
-#: panel_transfers.py:99
+#: panel_transfers.py:108
 msgid "Added URL: %s"
 msgstr ""
 

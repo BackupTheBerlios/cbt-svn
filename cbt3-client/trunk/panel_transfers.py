@@ -38,6 +38,15 @@ class PanelTransfers(wx.MDIChildFrame):
 		
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnDisplayDetails, id=XRCID("listDL"))
 		
+		# gettext
+		
+		XRCCTRL(self, "btnDlResume").SetToolTip( wx.ToolTip( _("Resume") ) )
+		XRCCTRL(self, "btnDlPause").SetToolTip( wx.ToolTip( _("Pause") ) )
+		XRCCTRL(self, "btnDlRemove").SetToolTip( wx.ToolTip( _("Remove") ) )
+		XRCCTRL(self, "btnDlDetails").SetToolTip( wx.ToolTip( _("Details") ) )
+		
+		XRCCTRL(self, "btnDLAddURL").SetLabel( _("Add URL") )
+				
 		# cols
 		
 		cols = [ [0, _("Title"), wx.LIST_FORMAT_LEFT, 200],
