@@ -185,8 +185,12 @@ class PanelMakeTorrent(wx.MDIChildFrame):
 			announce = self.annCtl.GetValue().encode('latin-1')
 			comment = self.commentCtl.GetValue().encode('latin-1')
 			
-			cls = self.cat_list.GetSelection()
-			uls = self.upl_list.GetSelection()
+			try:
+				cls = self.cat_list.GetSelection()
+				uls = self.upl_list.GetSelection()
+			except:
+				cls = None
+				uls = None
 			
 			self.nextbutt.Enable(false)
 			self.cancelbutt.Enable(false)
